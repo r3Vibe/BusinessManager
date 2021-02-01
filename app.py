@@ -42,7 +42,13 @@ def dashboard():
     if g.user:
         return render_template("dashboard.html", username=g.user, role=g.role)
     else:
-        return redirect(url_for("login"))
+        return redirect(url_for("unauthenticated"))
+
+
+# unauthenticated url access deny
+@app.route("/unauthenticated", methods=['GET', 'POST'])
+def unauthenticated():
+    return render_template("unauth.html")
 # 404 error handel
 
 
