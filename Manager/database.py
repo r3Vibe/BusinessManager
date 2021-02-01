@@ -1,0 +1,16 @@
+# all importd
+import mysql.connector
+import os
+from datetime import date
+
+# connect to database
+db = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    passwd='',
+    database='businessmanager',
+    auth_plugin='mysql_native_password'
+)
+
+# database curso
+cursor = db.cursor(dictionary=True)
