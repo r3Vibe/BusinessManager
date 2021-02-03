@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="{{url_for('static',filename='sleep.jpeg')}}"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='bootstrap.min.css')}}"
+    />
+    <link rel="stylesheet" href="{{url_for('static',filename='all.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}" />
+    <script src="{{url_for('static',filename='jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static',filename='all.js')}}"></script>
+    <script src="{{url_for('static',filename='script.js')}}"></script>
+    {% block title %} {% endblock %}
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{url_for('dashboard')}}"
+          ><img
+            src="{{url_for('static',filename='sleep.jpeg')}}"
+            alt=""
+            width="80"
+            height="80"
+          />
+          Business Management System</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mc-auto">
+            <li class="nav-item">
+              <span class="nav-link active">Date: {{date}}</span>
+            </li>
+            <li class="nav-item">
+              <span class="nav-link active" id="uptime">Time: {{time}}</span>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style="color: white !important"
+              >
+                <i class="fas fa-user"></i> {{username}}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <a class="dropdown-item" href="{{url_for('logout')}}"
+                    ><i class="fas fa-sign-out-alt"></i> Logout</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% block contents %} {% endblock %}
+  </body>
+</html>

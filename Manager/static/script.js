@@ -1,4 +1,12 @@
 $(document).ready(function () {
+  // update time
+
+  setInterval(() => {
+    $.post("/gettime", { data: "gettime" }, function (res) {
+      $("#uptime").html("Time: " + res);
+    });
+  }, 1000);
+
   // Example starter JavaScript for disabling form submissions if there are invalid fields
   (function () {
     "use strict";

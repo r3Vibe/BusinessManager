@@ -1,9 +1,10 @@
 # all imports
-from flask import render_template, redirect, g, flash, url_for, session
+from flask import render_template, redirect, g, flash, url_for, session, request
 from Manager import app
 from Manager.form import Login
 from Manager.validation import validateUser
 import time
+from datetime import datetime, date
 # base root director(index page)
 
 
@@ -18,6 +19,8 @@ def home():
 def login():
     form = Login()
     if form.validate_on_submit():
+        session.pop('user', None)
+        session.pop('role', None)
         username = form.username.data
         password = form.password.data
         validate = validateUser(username, password)
@@ -36,11 +39,23 @@ def login():
     return render_template("login.html", form=form)
 
 
+# logout page
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    session.pop('user', None)
+    session.pop('role', None)
+    return redirect(url_for("login"))
+
+
 # dashboard page
 @app.route("/dashboard", methods=['GET', 'POST'])
 def dashboard():
     if g.user:
-        return render_template("dashboard.html", username=g.user, role=g.role)
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("dashboard.html", username=g.user, role=g.role, date=date, time=time)
     else:
         return redirect(url_for("unauthenticated"))
 
@@ -64,6 +79,17 @@ def before_request_func():
     if 'user' in session:
         g.user = session['user']
         g.role = session['role']
+
+
+# send time endpoint
+@app.route("/gettime", methods=['GET', 'POST'])
+def gettime():
+    time = datetime.now()
+    time = time.strftime("%H:%M:%S")
+    if request.method == "POST":
+        data = request.form.get("data")
+        if data == "gettime":
+            return str(time)
 
 
 if __name__ == "__main__":
