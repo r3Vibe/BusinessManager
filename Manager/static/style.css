@@ -291,7 +291,7 @@
 }
 
 .notification {
-  width: calc(100% - 18.5%);
+  width: calc(100% - 18.3%);
   height: auto;
   /* background-color: rgb(243, 46, 46); */
   display: flex;

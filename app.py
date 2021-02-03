@@ -5,6 +5,7 @@ from Manager.form import Login
 from Manager.validation import validateUser
 import time
 from datetime import datetime, date
+
 # base root director(index page)
 
 
@@ -38,8 +39,23 @@ def login():
 
     return render_template("login.html", form=form)
 
+# inventory management page
+
+
+@app.route("/inventory", methods=['GET', 'POST'])
+def inventory():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("inventory.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('login'))
 
 # logout page
+
+
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
     session.pop('user', None)
@@ -64,6 +80,7 @@ def dashboard():
 @app.route("/unauthenticated", methods=['GET', 'POST'])
 def unauthenticated():
     return render_template("unauth.html")
+
 # 404 error handel
 
 
@@ -84,12 +101,15 @@ def before_request_func():
 # send time endpoint
 @app.route("/gettime", methods=['GET', 'POST'])
 def gettime():
-    time = datetime.now()
-    time = time.strftime("%H:%M:%S")
-    if request.method == "POST":
-        data = request.form.get("data")
-        if data == "gettime":
-            return str(time)
+    if g.user:
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "POST":
+            data = request.form.get("data")
+            if data == "gettime":
+                return str(time)
+    else:
+        return "Unauthenticated"
 
 
 if __name__ == "__main__":

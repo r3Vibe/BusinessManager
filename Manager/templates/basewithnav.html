@@ -75,6 +75,31 @@
         </div>
       </div>
     </nav>
+    <div class="sidebar">
+      <ul>
+        <li id="dashboardlink">
+          <a href="{{url_for('dashboard')}}">Dashboard</a>
+        </li>
+        <li id="inventorylink">
+          <a href="{{url_for('inventory')}}">Inventory</a>
+        </li>
+        <li id="invoicinglink">
+          <a href="{{url_for('dashboard')}}">Invoicing</a>
+        </li>
+        <li id="saleslink">
+          <a href="{{url_for('dashboard')}}">Sales</a>
+        </li>
+        <li id="crmlink">
+          <a href="{{url_for('dashboard')}}">CRM</a>
+        </li>
+        <li id="rechargelink">
+          <a href="{{url_for('dashboard')}}">Recharge</a>
+        </li>
+        <li id="managementlink">
+          <a href="{{url_for('dashboard')}}">Management</a>
+        </li>
+      </ul>
+    </div>
     {% block contents %} {% endblock %}
   </body>
 </html>
