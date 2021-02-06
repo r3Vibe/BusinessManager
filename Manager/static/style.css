@@ -229,8 +229,8 @@
 }
 
 .showimage {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
@@ -400,6 +400,40 @@ h2 {
   align-items: center;
   justify-content: center;
   background-color: rgb(8, 8, 8);
+}
+.navigation3 {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(172, 165, 165);
+}
+.navigation3 ul {
+  list-style: none;
+  text-align: center;
+  text-transform: capitalize;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin-bottom: 0;
+}
+.navigation3 ul li {
+  display: inline-block;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.navigation3 ul li a {
+  color: #ffffff;
+  padding: 7px;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+}
+.navigation3 ul li .active {
+  background-color: rgb(145, 145, 145);
+  box-shadow: 0 5px 5px -5px black;
 }
 .navigation2 ul {
   list-style: none;

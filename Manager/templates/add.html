@@ -11,23 +11,27 @@
     </ul>
   </div>
   <div class="addproductform">
-    <form action="" style="width: 100%">
-      <center><h2>Add Product To Master Data</h2></center>
+    <form action="">
+      <div class="navigation3">
+        <ul>
+          <li>
+            <a href="{{url_for('addmasterdata')}}" class="active"> Image</a>
+          </li>
+          <li><a href="http://" class=""> Product</a></li>
+          <li><a href="http://" class=""> Pricing</a></li>
+          <li><a href="http://" class=""> Logistics</a></li>
+        </ul>
+      </div>
       <br />
-      <div class="row row-cols-3">
+      <center><h3>Add Product To Master Data</h3></center>
+      <br />
+      <div class="row">
         <div class="col">
-          <div class="input-group">
+          <div class="mb-3 felex">
+            <div class="showimage"></div>
+          </div>
+          <div class="input-group mb-3">
             <input type="file" class="form-control" />
-          </div>
-        </div>
-        <div class="col">
-          <div class="input-group">
-            <input type="text" class="form-control" />
-          </div>
-        </div>
-        <div class="col">
-          <div class="input-group">
-            <input type="text" class="form-control" />
           </div>
         </div>
       </div>
