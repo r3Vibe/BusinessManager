@@ -53,6 +53,19 @@ def inventory():
     else:
         return redirect(url_for('login'))
 
+
+# add to master data
+@app.route("/addmasterdata", methods=['GET', 'POST'])
+def addmasterdata():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("add.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('login'))
+
 # logout page
 
 

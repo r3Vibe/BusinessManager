@@ -391,3 +391,50 @@ h2 {
 .sideactive a {
   color: aqua;
 }
+
+/* inventory page */
+.navigation2 {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(8, 8, 8);
+}
+.navigation2 ul {
+  list-style: none;
+  text-align: center;
+  text-transform: capitalize;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin-bottom: 0;
+}
+.navigation2 ul li {
+  display: inline-block;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.navigation2 ul li a {
+  color: #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+  padding: 5px;
+}
+.navigation2 ul li .active {
+  color: aqua;
+  border-color: aqua;
+}
+
+.addproductform {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(172, 165, 165);
+  padding: 15px;
+  color: #000000 !important;
+}
