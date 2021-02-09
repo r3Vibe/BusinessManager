@@ -10,29 +10,54 @@
       <li><a href="{{url_for('addmasterdata')}}" class="active"> Add</a></li>
     </ul>
   </div>
+  <style>
+    .col {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-direction: column;
+    }
+  </style>
   <div class="addproductform">
-    <form action="">
-      <div class="navigation3">
-        <ul>
-          <li>
-            <a href="{{url_for('addmasterdata')}}" class="active"> Image</a>
-          </li>
-          <li><a href="http://" class=""> Product</a></li>
-          <li><a href="http://" class=""> Pricing</a></li>
-          <li><a href="http://" class=""> Logistics</a></li>
-        </ul>
-      </div>
+    <form action="" style="width: auto">
+      {{form.hidden_tag()}}
+      <center><h3>Update Master Data</h3></center>
       <br />
-      <center><h3>Add Product To Master Data</h3></center>
-      <br />
-      <div class="row">
+      <div class="row row-cols-4">
         <div class="col">
+          <center><h3>General Info</h3></center>
+          <br />
           <div class="mb-3 felex">
             <div class="showimage"></div>
           </div>
-          <div class="input-group mb-3">
-            <input type="file" class="form-control" />
-          </div>
+          <div class="mb-3">{{form.image(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.name(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.productid(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.barcode(class="form-control-sm")}}</div>
+        </div>
+        <div class="col">
+          <center><h3>Product Info</h3></center>
+          <br />
+          <div class="mb-3">{{form.variationtype(class="form-select-sm")}}</div>
+          <div class="mb-3">{{form.variations(class="form-select-sm")}}</div>
+          <div class="mb-3">{{form.category(class="form-select-sm")}}</div>
+          <div class="mb-3">{{form.vendor(class="form-select-sm")}}</div>
+          <div class="mb-3">{{form.quantity(class="form-control-sm")}}</div>
+        </div>
+        <div class="col">
+          <center><h3>Pricing Info</h3></center>
+          <br />
+          <div class="mb-3">{{form.cost(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.sellprice(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.tax(class="form-control-sm")}}</div>
+        </div>
+        <div class="col">
+          <center><h3>Logistics Info</h3></center>
+          <br />
+          <div class="mb-3">{{form.length(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.bredth(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.height(class="form-control-sm")}}</div>
+          <div class="mb-3">{{form.weight(class="form-control-sm")}}</div>
         </div>
       </div>
     </form>

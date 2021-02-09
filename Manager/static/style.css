@@ -229,8 +229,8 @@
 }
 
 .showimage {
-  width: 250px;
-  height: 250px;
+  width: 150px;
+  height: 150px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
@@ -471,4 +471,8 @@ h2 {
   background-color: rgb(172, 165, 165);
   padding: 15px;
   color: #000000 !important;
+}
+
+.form-select-sm {
+  width: 164px;
 }
