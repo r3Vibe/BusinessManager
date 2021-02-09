@@ -15,7 +15,7 @@ class Login(FlaskForm):
 
 
 class productImage(FlaskForm):
-    image = FileField("Upload Product Image", validators=[DataRequired()])
+    image = FileField("Upload Image", validators=[DataRequired()])
     name = StringField("Product Name", validators=[DataRequired()], render_kw={
                        "placeholder": "Enter Product Name"})
     productid = StringField("Product ID", validators=[DataRequired()], render_kw={
@@ -46,3 +46,4 @@ class productImage(FlaskForm):
                          'placeholder': "Enter Product Height"})
     weight = StringField("Weight", validators=[DataRequired()], render_kw={
                          'placeholder': "Enter Product Weight"})
+    submit = SubmitField("Add")

@@ -28,9 +28,14 @@
           <center><h3>General Info</h3></center>
           <br />
           <div class="mb-3 felex">
-            <div class="showimage"></div>
+            <div class="showimage">
+              <img id="updateimage" src="./static/sleep.jpeg" />
+            </div>
           </div>
-          <div class="mb-3">{{form.image(class="form-control-sm")}}</div>
+          <div class="mb-3" id="imageholder">
+            {{form.image.label(class="form-label-sm")}}
+            {{form.image(class="form-control-sm")}}
+          </div>
           <div class="mb-3">{{form.name(class="form-control-sm")}}</div>
           <div class="mb-3">{{form.productid(class="form-control-sm")}}</div>
           <div class="mb-3">{{form.barcode(class="form-control-sm")}}</div>
@@ -60,12 +65,22 @@
           <div class="mb-3">{{form.weight(class="form-control-sm")}}</div>
         </div>
       </div>
+      <div class="row" style="width: 100%">
+        <div class="mb-3">{{form.submit(class="btn mybtn")}}</div>
+      </div>
     </form>
   </div>
 </div>
 <script>
   $(document).ready(function () {
     $("#inventorylink").addClass("sideactive");
+
+    $(function () {
+      $("#image").change(function (event) {
+        var x = URL.createObjectURL(event.target.files[0]);
+        $("#updateimage").attr("src", x);
+      });
+    });
   });
 </script>
 {% endblock %}
