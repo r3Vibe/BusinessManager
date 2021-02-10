@@ -15,21 +15,19 @@ class Login(FlaskForm):
 
 
 class productImage(FlaskForm):
-    image = FileField("Upload Image", validators=[DataRequired()])
+    image = FileField("+", validators=[DataRequired()])
     name = StringField("Product Name", validators=[DataRequired()], render_kw={
                        "placeholder": "Enter Product Name"})
     productid = StringField("Product ID", validators=[DataRequired()], render_kw={
                             "placeholder": "Enter Product ID"})
     barcode = StringField("Barcode", render_kw={
                           "placeholder": "Barcode If Any"})
-    variationtype = SelectField("Variation Type", validators=[
-                                DataRequired()], choices=["Choose One"])
     variations = SelectField("Variations", validators=[
-                             DataRequired()], choices=["Choose One"])
+                             DataRequired()], choices=["Select Variation"])
     category = SelectField("Category", validators=[
-        DataRequired()], choices=["Choose One"])
+        DataRequired()], choices=["Select Category"])
     vendor = SelectField("Vendor", validators=[
-        DataRequired()], choices=["Choose One"])
+        DataRequired()], choices=["Select Vendor"])
     quantity = StringField("Quantity", validators=[DataRequired()], render_kw={
                            'placeholder': "Enter Quantity"})
     cost = StringField("Cost", validators=[DataRequired()], render_kw={

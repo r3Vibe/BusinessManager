@@ -14,3 +14,10 @@ db = mysql.connector.connect(
 
 # database curso
 cursor = db.cursor(dictionary=True)
+
+
+class dbQuery():
+    def getVarType(self):
+        cursor.execute(f"SELECT * FROM variation")
+        types = cursor.fetchall()
+        return types

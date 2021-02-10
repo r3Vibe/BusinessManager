@@ -3,6 +3,7 @@ from flask import render_template, redirect, g, flash, url_for, session, request
 from Manager import app
 from Manager.form import Login, productImage
 from Manager.validation import validateUser
+from Manager.database import dbQuery
 import time
 from datetime import datetime, date
 
@@ -59,13 +60,14 @@ def inventory():
 def addmasterdata():
     if g.user:
         form = productImage()
+        types = dbQuery().getVarType()
         if request.method == "POST":
             pass
         date = datetime.today()
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        return render_template("add.html", username=g.user, role=g.role, date=date, time=time, form=form)
+        return render_template("add.html", username=g.user, role=g.role, date=date, time=time, form=form, vartype=types)
     else:
         return redirect(url_for('login'))
 

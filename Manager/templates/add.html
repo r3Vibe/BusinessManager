@@ -29,11 +29,11 @@
           <br />
           <div class="mb-3 felex">
             <div class="showimage">
+              {{form.image.label(class="form-label-sm")}}
               <img id="updateimage" src="./static/sleep.jpeg" />
             </div>
           </div>
           <div class="mb-3" id="imageholder">
-            {{form.image.label(class="form-label-sm")}}
             {{form.image(class="form-control-sm")}}
           </div>
           <div class="mb-3">{{form.name(class="form-control-sm")}}</div>
@@ -43,7 +43,22 @@
         <div class="col">
           <center><h3>Product Info</h3></center>
           <br />
-          <div class="mb-3">{{form.variationtype(class="form-select-sm")}}</div>
+          <div class="mb-3" style="margin-top: 63%">
+            <select
+              class="form-select-sm"
+              name="vartype"
+              id="vartype"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Variation Type</option>
+              <option value="addvartype" id="addvartype">
+                Add Variation Type
+              </option>
+              {% for x in vartype %}
+              <option value="{{x['type']}}">{{x['type']}}</option>
+              {% endfor %}
+            </select>
+          </div>
           <div class="mb-3">{{form.variations(class="form-select-sm")}}</div>
           <div class="mb-3">{{form.category(class="form-select-sm")}}</div>
           <div class="mb-3">{{form.vendor(class="form-select-sm")}}</div>
@@ -52,14 +67,18 @@
         <div class="col">
           <center><h3>Pricing Info</h3></center>
           <br />
-          <div class="mb-3">{{form.cost(class="form-control-sm")}}</div>
+          <div class="mb-3" style="margin-top: 115%">
+            {{form.cost(class="form-control-sm")}}
+          </div>
           <div class="mb-3">{{form.sellprice(class="form-control-sm")}}</div>
           <div class="mb-3">{{form.tax(class="form-control-sm")}}</div>
         </div>
         <div class="col">
           <center><h3>Logistics Info</h3></center>
           <br />
-          <div class="mb-3">{{form.length(class="form-control-sm")}}</div>
+          <div class="mb-3" style="margin-top: 84%">
+            {{form.length(class="form-control-sm")}}
+          </div>
           <div class="mb-3">{{form.bredth(class="form-control-sm")}}</div>
           <div class="mb-3">{{form.height(class="form-control-sm")}}</div>
           <div class="mb-3">{{form.weight(class="form-control-sm")}}</div>
