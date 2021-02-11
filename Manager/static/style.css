@@ -245,7 +245,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.308);
+  background-color: rgba(163, 155, 155, 0.308);
   color: #ffffff;
   font-size: 40px;
   display: flex;
@@ -509,4 +509,5 @@ h2 {
 #addvartype {
   background-color: rgba(68, 65, 65, 0.911);
   font-weight: bold;
+  color: #ffffff;
 }

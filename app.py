@@ -94,7 +94,21 @@ def dashboard():
         return redirect(url_for("unauthenticated"))
 
 
+# get variations
+@app.route("/getvars", methods=['GET', 'POST'])
+def getvars():
+    if g.user:
+        if request.method == 'POST':
+            data = request.form.get('data')
+            allVars = dbQuery().getAllVars(data)[0]['variations']
+            return(allVars)
+
+    else:
+        return "Unauthenticated"
+
 # unauthenticated url access deny
+
+
 @app.route("/unauthenticated", methods=['GET', 'POST'])
 def unauthenticated():
     return render_template("unauth.html")

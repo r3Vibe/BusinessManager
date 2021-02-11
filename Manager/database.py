@@ -21,3 +21,8 @@ class dbQuery():
         cursor.execute(f"SELECT * FROM variation")
         types = cursor.fetchall()
         return types
+
+    def getAllVars(self, typess):
+        cursor.execute(f"SELECT * FROM variation WHERE type = '{typess}'")
+        types = cursor.fetchall()
+        return types
