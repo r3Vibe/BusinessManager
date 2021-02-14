@@ -55,7 +55,7 @@
                 value="addvartype"
                 id="addvartype"
                 type="button"
-                data-bs-target="#exampleModal"
+                data-bs-target="#addvartypemodal"
                 data-bs-toggle="modal"
               >
                 Add Variation Type
@@ -65,9 +65,69 @@
               {% endfor %}
             </select>
           </div>
-          <div class="mb-3">{{form.variations(class="form-select-sm")}}</div>
-          <div class="mb-3">{{form.category(class="form-select-sm")}}</div>
-          <div class="mb-3">{{form.vendor(class="form-select-sm")}}</div>
+          <div class="mb-3">
+            <select
+              class="form-select-sm"
+              name="vars"
+              id="vars"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Variation</option>
+              <option
+                value="addvars"
+                id="addvars"
+                type="button"
+                data-bs-target="#addvarsmodal"
+                data-bs-toggle="modal"
+              >
+                Add Variation
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <select
+              class="form-select-sm"
+              name="catg"
+              id="catg"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Category</option>
+              <option
+                value="catg"
+                id="catgs"
+                type="button"
+                data-bs-target="#catgmodal"
+                data-bs-toggle="modal"
+              >
+                Add Category
+              </option>
+              {% for x in catg %}
+              <option value="{{x['category']}}">{{x['category']}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <select
+              class="form-select-sm"
+              name="seller"
+              id="seller"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Vendor</option>
+              <option
+                value="seller"
+                id="sellers"
+                type="button"
+                data-bs-target="#sellermodal"
+                data-bs-toggle="modal"
+              >
+                Add Vendor
+              </option>
+              {% for x in seller %}
+              <option value="{{x['seller']}}">{{x['seller']}}</option>
+              {% endfor %}
+            </select>
+          </div>
           <div class="mb-3">{{form.quantity(class="form-control-sm")}}</div>
         </div>
         <div class="col">
@@ -97,18 +157,119 @@
   </div>
 </div>
 
+<!-- all modals here -->
+
 <!-- Add Variation Type Modal -->
 <div
   class="modal fade"
-  id="exampleModal"
+  id="addvartypemodal"
   tabindex="-1"
-  aria-labelledby="exampleModalLabel"
+  aria-labelledby="addvartypeLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="addvartypeLabel">var type title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add variation modal -->
+<div
+  class="modal fade"
+  id="addvarsmodal"
+  tabindex="-1"
+  aria-labelledby="addvarsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvarsLabel">vaariations title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add Category modal -->
+<div
+  class="modal fade"
+  id="catgmodal"
+  tabindex="-1"
+  aria-labelledby="addvarsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvarsLabel">CAtegory title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add seller modal -->
+<div
+  class="modal fade"
+  id="sellermodal"
+  tabindex="-1"
+  aria-labelledby="addvarsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvarsLabel">seller title</h5>
         <button
           type="button"
           class="btn-close"
@@ -132,20 +293,33 @@
 
 <script>
   $(document).ready(function () {
+    //heightlight current page link
     $("#inventorylink").addClass("sideactive");
 
+    //live show selected image before upload to server
     $(function () {
       $("#image").change(function (event) {
         var x = URL.createObjectURL(event.target.files[0]);
         $("#updateimage").attr("src", x);
       });
     });
+
+    //get all variation  from server and update select field
     $("#vartype").change(function () {
       var x = $(this).val();
+      $("#vars").html(
+        '<option value="addvars" id="addvars" type="button" data-bs-target="#addvarsmodal" data-bs-toggle="modal">Add Variation</option>'
+      );
       $.post("/getvars", { data: x }, function (res) {
         var allVar = res.split(",");
         for (var i = 0; i < allVar.length; i++) {
-          console.log(allVar[i]);
+          $("#vars").append(
+            "<option value=" +
+              allVar[i] +
+              'id="addvars">' +
+              allVar[i] +
+              "</option>"
+          );
         }
       });
     });

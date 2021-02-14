@@ -22,12 +22,6 @@ class productImage(FlaskForm):
                             "placeholder": "Enter Product ID"})
     barcode = StringField("Barcode", render_kw={
                           "placeholder": "Barcode If Any"})
-    variations = SelectField("Variations", validators=[
-                             DataRequired()], choices=["Select Variation"])
-    category = SelectField("Category", validators=[
-        DataRequired()], choices=["Select Category"])
-    vendor = SelectField("Vendor", validators=[
-        DataRequired()], choices=["Select Vendor"])
     quantity = StringField("Quantity", validators=[DataRequired()], render_kw={
                            'placeholder': "Enter Quantity"})
     cost = StringField("Cost", validators=[DataRequired()], render_kw={

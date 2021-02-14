@@ -24,5 +24,15 @@ class dbQuery():
 
     def getAllVars(self, typess):
         cursor.execute(f"SELECT * FROM variation WHERE type = '{typess}'")
-        types = cursor.fetchall()
-        return types
+        allvars = cursor.fetchall()
+        return allvars
+
+    def getAllCatg(self):
+        cursor.execute(f"SELECT * FROM category")
+        catgs = cursor.fetchall()
+        return catgs
+
+    def getAllvendor(self):
+        cursor.execute(f"SELECT * FROM seller")
+        seller = cursor.fetchall()
+        return seller

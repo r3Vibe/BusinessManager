@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  // update time
+  // update time form main script
 
   setInterval(() => {
     $.post("/gettime", { data: "gettime" }, function (res) {
@@ -7,6 +7,7 @@ $(document).ready(function () {
     });
   }, 1000);
 
+  //################  bootstrap form validation  ################//
   // Example starter JavaScript for disabling form submissions if there are invalid fields
   (function () {
     "use strict";
