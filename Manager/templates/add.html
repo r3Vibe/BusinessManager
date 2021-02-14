@@ -19,7 +19,7 @@
     }
   </style>
   <div class="addproductform">
-    <form action="" style="width: auto">
+    <form method="POST" style="width: auto" class="needs-validation" novalidate>
       {{form.hidden_tag()}}
       <center><h3>Update Master Data</h3></center>
       <br />
@@ -35,9 +35,19 @@
           </div>
           <div class="mb-3" id="imageholder">
             {{form.image(class="form-control-sm")}}
+            <div class="invalid-feedback">Please Choose An Image</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
-          <div class="mb-3">{{form.name(class="form-control-sm")}}</div>
-          <div class="mb-3">{{form.productid(class="form-control-sm")}}</div>
+          <div class="mb-3">
+            {{form.name(class="form-control-sm")}}
+            <div class="invalid-feedback">Please Enter Name</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.productid(class="form-control-sm")}}
+            <div class="invalid-feedback">Please Enter Product Id</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
           <div class="mb-3">{{form.barcode(class="form-control-sm")}}</div>
         </div>
         <div class="col">
@@ -45,6 +55,7 @@
           <br />
           <div class="mb-3" style="margin-top: 63%">
             <select
+              required
               class="form-select-sm"
               name="vartype"
               id="vartype"
@@ -64,9 +75,12 @@
               <option value="{{x['type']}}">{{x['type']}}</option>
               {% endfor %}
             </select>
+            <div class="invalid-feedback">Please Choose Type</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
           <div class="mb-3">
             <select
+              required
               class="form-select-sm"
               name="vars"
               id="vars"
@@ -83,9 +97,12 @@
                 Add Variation
               </option>
             </select>
+            <div class="invalid-feedback">Please Choose Variation</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
           <div class="mb-3">
             <select
+              required
               class="form-select-sm"
               name="catg"
               id="catg"
@@ -105,9 +122,12 @@
               <option value="{{x['category']}}">{{x['category']}}</option>
               {% endfor %}
             </select>
+            <div class="invalid-feedback">Please Choose Category</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
           <div class="mb-3">
             <select
+              required
               class="form-select-sm"
               name="seller"
               id="seller"
@@ -127,27 +147,113 @@
               <option value="{{x['seller']}}">{{x['seller']}}</option>
               {% endfor %}
             </select>
+            <div class="invalid-feedback">Please Choose Vendor</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
-          <div class="mb-3">{{form.quantity(class="form-control-sm")}}</div>
+          <div class="mb-3">
+            {{form.quantity(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalp"
+            ></span>
+            <div class="invalid-feedback">Please Enter Quantity</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
         </div>
         <div class="col">
           <center><h3>Pricing Info</h3></center>
           <br />
           <div class="mb-3" style="margin-top: 115%">
             {{form.cost(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpcost"
+            ></span>
+            <div class="invalid-feedback">Please Enter Cost</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
-          <div class="mb-3">{{form.sellprice(class="form-control-sm")}}</div>
-          <div class="mb-3">{{form.tax(class="form-control-sm")}}</div>
+          <div class="mb-3">
+            {{form.sellprice(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpsp"
+            ></span>
+            <div class="invalid-feedback">Please Enter Sale Price</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.tax(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalptax"
+            ></span>
+            <div class="invalid-feedback">Please Enter Tax</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
         </div>
         <div class="col">
           <center><h3>Logistics Info</h3></center>
           <br />
-          <div class="mb-3" style="margin-top: 84%">
-            {{form.length(class="form-control-sm")}}
+          <div class="mb-3" style="margin-top: 27%">
+            <select required name="measure" id="measure" class="form-select-sm">
+              <option selected disabled>Select Measurement</option>
+              <option value="cm">Centimeter</option>
+              <option value="mm">Milimeter</option>
+              <option value="in">Inch</option>
+            </select>
+            <div class="invalid-feedback">Please Choose a Measure</div>
+            <div class="valid-feedback">Looks Good!</div>
           </div>
-          <div class="mb-3">{{form.bredth(class="form-control-sm")}}</div>
-          <div class="mb-3">{{form.height(class="form-control-sm")}}</div>
-          <div class="mb-3">{{form.weight(class="form-control-sm")}}</div>
+          <div class="mb-3">
+            {{form.length(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalplen"
+            ></span>
+            <div class="invalid-feedback">Please Enter Length</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.bredth(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpbre"
+            ></span>
+            <div class="invalid-feedback">Please Enter Breadth</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.height(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalphei"
+            ></span>
+            <div class="invalid-feedback">Please Enter Height</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            <select
+              required
+              name="weightmeasure"
+              id="weightmeasure"
+              class="form-select-sm"
+            >
+              <option selected disabled>Select Measurement</option>
+              <option value="kg">Kilo Gram</option>
+              <option value="gm">Gram</option>
+            </select>
+            <div class="invalid-feedback">Please Choose a Measure</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.weight(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpwei"
+            ></span>
+            <div class="invalid-feedback">Please Enter Weight</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
         </div>
       </div>
       <div class="row" style="width: 100%">
@@ -293,6 +399,87 @@
 
 <script>
   $(document).ready(function () {
+    //check for alphabate input in numeric sections
+    //quantity
+    $("#quantity").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalp").html("Only Numbers Allowed");
+        $("#noalp").css("display", "block");
+        $("#quantity").val("");
+      } else {
+        $("#noalp").css("display", "none");
+      }
+    });
+    //cost
+    $("#cost").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpcost").html("Only Numbers Allowed");
+        $("#noalpcost").css("display", "block");
+        $("#cost").val("");
+      } else {
+        $("#noalpcost").css("display", "none");
+      }
+    });
+    //sell price
+    $("#sellprice").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpsp").html("Only Numbers Allowed");
+        $("#noalpsp").css("display", "block");
+        $("#sellprice").val("");
+      } else {
+        $("#noalpsp").css("display", "none");
+      }
+    });
+    //tax
+    $("#tax").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalptax").html("Only Numbers Allowed");
+        $("#noalptax").css("display", "block");
+        $("#tax").val("");
+      } else {
+        $("#noalptax").css("display", "none");
+      }
+    });
+    //length
+    $("#length").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalplen").html("Only Numbers Allowed");
+        $("#noalplen").css("display", "block");
+        $("#length").val("");
+      } else {
+        $("#noalplen").css("display", "none");
+      }
+    });
+    //breadth
+    $("#bredth").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpbre").html("Only Numbers Allowed");
+        $("#noalpbre").css("display", "block");
+        $("#bredth").val("");
+      } else {
+        $("#noalpbre").css("display", "none");
+      }
+    });
+    //height
+    $("#height").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalphei").html("Only Numbers Allowed");
+        $("#noalphei").css("display", "block");
+        $("#height").val("");
+      } else {
+        $("#noalphei").css("display", "none");
+      }
+    });
+    //weight
+    $("#weight").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpwei").html("Only Numbers Allowed");
+        $("#noalpwei").css("display", "block");
+        $("#weight").val("");
+      } else {
+        $("#noalpwei").css("display", "none");
+      }
+    });
     //heightlight current page link
     $("#inventorylink").addClass("sideactive");
 
@@ -308,7 +495,7 @@
     $("#vartype").change(function () {
       var x = $(this).val();
       $("#vars").html(
-        '<option value="addvars" id="addvars" type="button" data-bs-target="#addvarsmodal" data-bs-toggle="modal">Add Variation</option>'
+        '<option selected disabled>Select Variation</option><option value="addvars" id="addvars" type="button" data-bs-target="#addvarsmodal" data-bs-toggle="modal">Add Variation</option>'
       );
       $.post("/getvars", { data: x }, function (res) {
         var allVar = res.split(",");

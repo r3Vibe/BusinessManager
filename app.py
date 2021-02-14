@@ -76,8 +76,8 @@ def addmasterdata():
         types = dbQuery().getVarType()
         allCategory = dbQuery().getAllCatg()
         allSeller = dbQuery().getAllvendor()
-        if request.method == "POST":
-            pass
+        if form.validate_on_submit():
+            print(form.data)
         date = datetime.today()
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
