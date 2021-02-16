@@ -1,4 +1,4 @@
-from Manager.database import cursor, db
+from Manager.database import cursor, db, dbQuery
 from werkzeug.security import check_password_hash
 from datetime import datetime
 # user validation
@@ -58,3 +58,34 @@ class validateUser():
                         f"UPDATE employee SET attempt = '{newattempt}' WHERE username = '{self.username}'")
                     db.commit()
                     return "error2"
+
+
+class validateProduct():
+    def __init__(self, product):
+        self.productImage = product['image']
+        self.productName = product['name']
+        self.productId = product['productid']
+        self.barcode = product['barcode']
+        self.quantity = product['quantity']
+        self.cost = product['cost']
+        self.sellprice = product['sellprice']
+        self.tax = product['tax']
+        self.length = product['length']
+        self.bredth = product['bredth']
+        self.height = product['height']
+        self.weight = product['weight']
+
+    def startValidation(self):
+        # image validation
+        allowed = ['jpeg', 'jpg', 'png']
+        ext = self.productImage.split('.')
+        if len(ext) > 2:
+            return "error1"
+        elif ext[1].lower() not in allowed:
+            return "error2"
+        # file size validation add later
+        # check if product already added to inventory
+        elif len(dbQuery().checkPid(self.productId)) >= 1:
+            return "error3"
+        else:
+            return "success"

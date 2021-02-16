@@ -258,6 +258,28 @@
       </div>
       <div class="row" style="width: 100%">
         <div class="mb-3">{{form.submit(class="btn mybtn")}}</div>
+        <div class="mb-3">
+          <center id="errormsg">
+            {% for cat , msg in get_flashed_messages(with_categories=true)%} {%
+            if cat == 'error'%}
+            <div
+              class="alert alert-danger"
+              role="alert"
+              style="text-shadow: none; font-size: 1rem"
+            >
+              {{msg}}
+            </div>
+            {%endif%} {% if cat == 'success'%}
+            <div
+              class="alert alert-success"
+              role="alert"
+              style="text-shadow: none; font-size: 1rem"
+            >
+              {{msg}}
+            </div>
+            {%endif%} {%endfor%}
+          </center>
+        </div>
       </div>
     </form>
   </div>

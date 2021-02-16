@@ -36,3 +36,13 @@ class dbQuery():
         cursor.execute(f"SELECT * FROM seller")
         seller = cursor.fetchall()
         return seller
+
+    def checkPid(self, pid):
+        cursor.execute(f"SELECT * FROM products WHERE productid = '{pid}'")
+        pids = cursor.fetchall()
+        return pids
+
+
+class updateDb():
+    def addProduct(self, details):
+        return("success")

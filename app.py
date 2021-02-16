@@ -2,8 +2,8 @@
 from flask import render_template, redirect, g, flash, url_for, session, request
 from Manager import app
 from Manager.form import Login, productImage
-from Manager.validation import validateUser
-from Manager.database import dbQuery
+from Manager.validation import validateUser, validateProduct
+from Manager.database import dbQuery, updateDb
 import time
 from datetime import datetime, date
 
@@ -77,7 +77,19 @@ def addmasterdata():
         allCategory = dbQuery().getAllCatg()
         allSeller = dbQuery().getAllvendor()
         if form.validate_on_submit():
-            print(form.data)
+            res = validateProduct(form.data)
+            validate = res.startValidation()
+            if validate == "error1":
+                flash("Don't Do That", "error")
+            elif validate == "error2":
+                flash("You Can Not Upload This File", "error")
+            elif validate == "error3":
+                flash(
+                    "This Product Already In Inventory Place Order From Order Page", "error")
+            else:
+                res = updateDb().addProduct(form.data)
+                if res == "success":
+                    flash("New Product Added Successfully", "success")
         date = datetime.today()
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
