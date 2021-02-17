@@ -19,7 +19,13 @@
     }
   </style>
   <div class="addproductform">
-    <form method="POST" style="width: auto" class="needs-validation" novalidate>
+    <form
+      method="POST"
+      style="width: auto"
+      class="needs-validation"
+      novalidate
+      enctype="multipart/form-data"
+    >
       {{form.hidden_tag()}}
       <center><h3>Update Master Data</h3></center>
       <br />
@@ -523,11 +529,7 @@
         var allVar = res.split(",");
         for (var i = 0; i < allVar.length; i++) {
           $("#vars").append(
-            "<option value=" +
-              allVar[i] +
-              'id="addvars">' +
-              allVar[i] +
-              "</option>"
+            "<option value=" + allVar[i] + ">" + allVar[i] + "</option>"
           );
         }
       });

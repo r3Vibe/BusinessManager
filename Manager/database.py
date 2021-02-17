@@ -2,6 +2,7 @@
 import mysql.connector
 import os
 from datetime import date
+import uuid
 
 # connect to database
 db = mysql.connector.connect(
@@ -44,5 +45,19 @@ class dbQuery():
 
 
 class updateDb():
-    def addProduct(self, details):
-        return("success")
+    def addProduct(self, details, imagename):
+        today = date.today()
+        todate = today.strftime("%m/%d/%y")
+        barcode = details['barcode']
+        dimension = f"{details['length']}x{details['bredth']}x{details['height']} {details['measure']}"
+        weight = f"{details['weight']} {details['weightmeasure']}"
+        if barcode == "":
+            barcode = "nocode"
+        cursor.execute(
+            f"INSERT INTO products(name,productid,barcode,vartype,vars,category,seller,quantity,unitprice,sellprice,tax,dimension,weight,image,date) VALUES('{details['name']}','{details['productid']}','{barcode}','{details['vartype']}','{details['vars']}','{details['catg']}','{details['seller']}','{details['quantity']}','{details['cost']}','{details['sellprice']}','{details['tax']}','{dimension}','{weight}','{imagename}','{todate}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"

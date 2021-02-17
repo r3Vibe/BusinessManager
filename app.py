@@ -6,6 +6,10 @@ from Manager.validation import validateUser, validateProduct
 from Manager.database import dbQuery, updateDb
 import time
 from datetime import datetime, date
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
+import os
+import uuid
 
 ################ home page ################
 
@@ -76,8 +80,12 @@ def addmasterdata():
         types = dbQuery().getVarType()
         allCategory = dbQuery().getAllCatg()
         allSeller = dbQuery().getAllvendor()
-        if form.validate_on_submit():
-            res = validateProduct(form.data)
+        if request.method == "POST":
+            # assets_dir = os.path.join(
+            #     os.path.dirname(app.instance_path), 'static'
+            # )
+
+            res = validateProduct(request.form, request.files)
             validate = res.startValidation()
             if validate == "error1":
                 flash("Don't Do That", "error")
@@ -87,9 +95,25 @@ def addmasterdata():
                 flash(
                     "This Product Already In Inventory Place Order From Order Page", "error")
             else:
-                res = updateDb().addProduct(form.data)
-                if res == "success":
-                    flash("New Product Added Successfully", "success")
+                # upload image first
+                extinsion = request.files['image'].filename.rsplit('.')
+                originalFilename = extinsion[0]
+                extinsion = extinsion[1].lower()
+                rootPath = os.path.join(
+                    app.root_path, 'static', 'uploads')
+                newname = str(uuid.uuid4().hex)+'.'+str(extinsion)
+                destination = "/".join([rootPath, newname])
+                try:
+                    request.files['image'].save(destination)
+                except Exception as e:
+                    flash("Unable To Upload Product Image. Contact Admin", "error")
+                else:
+                    # update database with new product
+                    res = updateDb().addProduct(request.form, newname)
+                    if res == "success":
+                        flash("New Product Added Successfully", "success")
+                    else:
+                        flash("Can Not Update Database. Contact Admin", "error")
         date = datetime.today()
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()

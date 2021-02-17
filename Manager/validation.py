@@ -61,8 +61,8 @@ class validateUser():
 
 
 class validateProduct():
-    def __init__(self, product):
-        self.productImage = product['image']
+    def __init__(self, product, files):
+        self.productImage = files['image'].filename
         self.productName = product['name']
         self.productId = product['productid']
         self.barcode = product['barcode']
