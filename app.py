@@ -67,7 +67,11 @@ def inventory():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        return render_template("inventory.html", username=g.user, role=g.role, date=date, time=time)
+        if request.method == "POST":
+            specificProduct = dbQuery().getSpeProducts(request.form.get('search'))
+            return render_template("inventory.html", username=g.user, role=g.role, date=date, time=time, products=specificProduct)
+        allProduct = dbQuery().getProducts()
+        return render_template("inventory.html", username=g.user, role=g.role, date=date, time=time, products=allProduct)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -81,10 +85,6 @@ def addmasterdata():
         allCategory = dbQuery().getAllCatg()
         allSeller = dbQuery().getAllvendor()
         if request.method == "POST":
-            # assets_dir = os.path.join(
-            #     os.path.dirname(app.instance_path), 'static'
-            # )
-
             res = validateProduct(request.form, request.files)
             validate = res.startValidation()
             if validate == "error1":

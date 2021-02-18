@@ -43,6 +43,17 @@ class dbQuery():
         pids = cursor.fetchall()
         return pids
 
+    def getProducts(self):
+        cursor.execute("SELECT * FROM products")
+        product = cursor.fetchall()
+        return product
+
+    def getSpeProducts(self, keys):
+        cursor.execute(
+            f"SELECT * FROM products WHERE name LIKE '%{keys}%' OR productid LIKE '%{keys}%' OR category LIKE '%{keys}%' OR vars LIKE '%{keys}%' OR sellprice LIKE '%{keys}%' OR date LIKE '%{keys}%'")
+        product = cursor.fetchall()
+        return product
+
 
 class updateDb():
     def addProduct(self, details, imagename):

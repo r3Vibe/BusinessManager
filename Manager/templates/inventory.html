@@ -4,16 +4,111 @@
 <div class="notification">
   <div class="navigation2">
     <ul>
-      <li><a href="{{url_for('inventory')}}" class="active"> View</a></li>
-      <li><a href="http://" class=""> Order</a></li>
-      <li><a href="http://" class=""> Modify</a></li>
-      <li><a href="{{url_for('addmasterdata')}}" class=""> Add</a></li>
+      <li>
+        <a href="{{url_for('inventory')}}" class="active"> View Products</a>
+      </li>
+      <li><a href="http://" class=""> Place Order</a></li>
+      <li>
+        <a href="{{url_for('addmasterdata')}}"> Add New</a>
+      </li>
+      <li>
+        <form method="post" id="searchform">
+          <input
+            type="search"
+            name="search"
+            id="search"
+            placeholder="Search Product"
+            style="
+              border-radius: 25px;
+              border: none;
+              outline: none;
+              padding: 3px;
+              font-size: medium;
+            "
+          />
+        </form>
+      </li>
     </ul>
+  </div>
+  <div class="showAllproduct">
+    <table
+      class="table table-hover table-striped"
+      style="text-transform: capitalize"
+    >
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Image</th>
+          <th scope="col">Name</th>
+          <th scope="col">Product id</th>
+          <th scope="col">Category</th>
+          <th scope="col">Type</th>
+          <th scope="col">Variation</th>
+          <th scope="col">Vendor</th>
+          <th scope="col">Cost</th>
+          <th scope="col" style="width: 80px">Price</th>
+          <th scope="col" style="width: 80px">Tax</th>
+          <th scope="col">Dimensions</th>
+          <th scope="col">Weight</th>
+          <th scope="col">Date</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in products %}
+        <tr>
+          <th scope="row">{{x['id']}}</th>
+          <th>
+            <img src="static/uploads/{{x['image']}}" width="50" height="50" />
+          </th>
+          <th>{{x['name']}}</th>
+          <th>{{x['productid']}}</th>
+          <th>{{x['category']}}</th>
+          <th>{{x['vartype']}}</th>
+          <th>{{x['vars']}}</th>
+          <th>{{x['seller']}}</th>
+          <th><i class="fas fa-rupee-sign"></i> {{x['unitprice']}}</th>
+          <th><i class="fas fa-rupee-sign"></i> {{x['sellprice']}}</th>
+          <th>{{x['tax']}} %</th>
+          <th>{{x['dimension']}}</th>
+          <th>{{x['weight']}}</th>
+          <th>{{x['date']}}</th>
+          <th>
+            <button
+              style="width: 80px"
+              class="btn mybtn"
+              onclick="modProduct(`{{x['id']}}`)"
+            >
+              Modify
+            </button>
+            <button
+              style="width: 80px"
+              class="btn mybtn"
+              onclick="delProduct(`{{x['id']}}`)"
+            >
+              Delete
+            </button>
+          </th>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 <script>
   $(document).ready(function () {
     $("#inventorylink").addClass("sideactive");
+    $("#search").change(function () {
+      $("#searchform").submit();
+    });
   });
+  //modify product onclick
+  function modProduct(id) {
+    alert(id);
+  }
+  //delete product onclick
+  function delProduct(id) {
+    alert(id);
+  }
 </script>
 {% endblock %}

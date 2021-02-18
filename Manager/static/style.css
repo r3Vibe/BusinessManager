@@ -502,6 +502,20 @@ h2 {
   color: #000000 !important;
 }
 
+.showAllproduct {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+.showAllproduct table {
+  width: 100%;
+  height: auto;
+  font-size: small;
+}
+
 .form-select-sm {
   width: 164px;
 }
