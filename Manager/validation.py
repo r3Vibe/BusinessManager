@@ -89,3 +89,14 @@ class validateProduct():
             return "error3"
         else:
             return "success"
+
+    def imageValidate(self):
+        # image validation
+        allowed = ['jpeg', 'jpg', 'png']
+        ext = self.productImage.split('.')
+        if len(ext) > 2:
+            return "error1"
+        elif ext[1].lower() not in allowed:
+            return "error2"
+        else:
+            return "success"

@@ -122,6 +122,61 @@ def addmasterdata():
     else:
         return redirect(url_for('unauthenticated'))
 
+# modify
+
+
+@app.route("/modify/<product>", methods=['GET', 'POST'])
+def modify(product):
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        product2modify = dbQuery().getThisproduct(product)
+        types = dbQuery().getVarType()
+        allCategory = dbQuery().getAllCatg()
+        allSeller = dbQuery().getAllvendor()
+        form = productImage()
+        if request.method == "POST":
+            if request.files['image'].filename != "":
+                res = validateProduct(
+                    request.form, request.files).imageValidate()
+                if res == "success":
+                    # upload image first
+                    extinsion = request.files['image'].filename.rsplit('.')
+                    originalFilename = extinsion[0]
+                    extinsion = extinsion[1].lower()
+                    rootPath = os.path.join(
+                        app.root_path, 'static', 'uploads')
+                    newname = str(uuid.uuid4().hex)+'.'+str(extinsion)
+                    destination = "/".join([rootPath, newname])
+                    try:
+                        request.files['image'].save(destination)
+                    except Exception as e:
+                        flash(
+                            "Unable To Upload Product Image. Contact Admin", "error")
+                    else:
+                        updateProduct = updateDb().updateProduct(
+                            request.form, newname)
+                        if updateProduct == "success":
+                            flash("Product Updated", "success")
+                        else:
+                            flash(
+                                "Unable To Update Product. Contact Admin!", "error")
+                elif res == "error1":
+                    flash("dowble ext", "error")
+                elif res == "error2":
+                    flash("other file", "error")
+            else:
+                updateProduct = updateDb().updateProduct(
+                    request.form, product2modify[0]['image'])
+                if updateProduct == "success":
+                    flash("Product Updated", "success")
+                else:
+                    flash("Unable To Update Product. Contact Admin!", "error")
+        return render_template("modify.html", form=form, username=g.user, role=g.role, date=date, time=time, pid=product, details=product2modify[0], vartype=types, catg=allCategory, seller=allSeller)
+    else:
+        return redirect(url_for('unauthenticated'))
 
 ################ remove session variable and redirect ################
 # logout page

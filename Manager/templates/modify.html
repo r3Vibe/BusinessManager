@@ -7,7 +7,7 @@
       <li><a href="{{url_for('inventory')}}"> View Products</a></li>
       <li><a href="http://" class=""> Place Order</a></li>
       <li>
-        <a href="{{url_for('addmasterdata')}}" class="active"> Add New</a>
+        <a href="/modify/{{pid}}" class="active"> Modify</a>
       </li>
     </ul>
   </div>
@@ -37,7 +37,10 @@
           <div class="mb-3 felex">
             <div class="showimage">
               {{form.image.label(class="form-label-sm")}}
-              <img id="updateimage" src="../static/sleep.jpeg" />
+              <img
+                id="updateimage"
+                src="../static/uploads/{{details['image']}}"
+              />
             </div>
           </div>
           <div class="mb-3" id="imageholder">
@@ -425,9 +428,47 @@
     </div>
   </div>
 </div>
-
 <script>
   $(document).ready(function () {
+    //update form
+    var dimension = "{{details['dimension']}}";
+    var length = dimension.split("x")[0];
+    var bredth = dimension.split("x")[1];
+    var height = dimension.split("x")[2].split(" ")[0];
+    var measure = dimension.split("x")[2].split(" ")[1];
+    var weightmeasure = "{{details['weight']}}".split(" ")[1];
+    var weight = "{{details['weight']}}".split(" ")[0];
+    $("#name").val("{{details['name']}}");
+    $("#image").removeAttr("required");
+    $("#submit").val("Update");
+    $("#productid").val("{{details['productid']}}");
+    $("#barcode").val("{{details['barcode']}}");
+    $("#quantity").val("{{details['quantity']}}");
+    $("#cost").val("{{details['unitprice']}}");
+    $("#sellprice").val("{{details['sellprice']}}");
+    $("#tax").val("{{details['tax']}}");
+    $("#length").val(length);
+    $("#bredth").val(bredth);
+    $("#height").val(height);
+    $("#weight").val(weight);
+    $("#measure").val(measure);
+    $("#weightmeasure").val(weightmeasure);
+    $("#vartype").val("{{details['vartype']}}");
+    var x = "{{details['vartype']}}";
+    $("#vars").html(
+      '<option selected disabled>Select Variation</option><option value="addvars" id="addvars" type="button" data-bs-target="#addvarsmodal" data-bs-toggle="modal">Add Variation</option>'
+    );
+    $.post("/getvars", { data: x }, function (res) {
+      var allVar = res.split(",");
+      for (var i = 0; i < allVar.length; i++) {
+        $("#vars").append(
+          "<option value=" + allVar[i] + ">" + allVar[i] + "</option>"
+        );
+      }
+      $("#vars").val("{{details['vars']}}");
+    });
+    $("#catg").val("{{details['category']}}");
+    $("#seller").val("{{details['seller']}}");
     //check for alphabate input in numeric sections
     //quantity
     $("#quantity").change(function () {
