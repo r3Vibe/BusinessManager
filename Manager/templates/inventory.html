@@ -37,41 +37,33 @@
     >
       <thead>
         <tr>
-          <th scope="col">ID</th>
           <th scope="col">Image</th>
           <th scope="col">Name</th>
-          <th scope="col">Product id</th>
+          <th scope="col">Id</th>
+          <th scope="col">Status</th>
           <th scope="col">Category</th>
-          <th scope="col">Type</th>
           <th scope="col">Variation</th>
           <th scope="col">Vendor</th>
-          <th scope="col">Cost</th>
           <th scope="col" style="width: 80px">Price</th>
-          <th scope="col" style="width: 80px">Tax</th>
-          <th scope="col">Dimensions</th>
-          <th scope="col">Weight</th>
           <th scope="col">Date</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
         {% for x in products %}
-        <tr>
-          <th scope="row">{{x['id']}}</th>
+        <tr id="rem{{x['id']}}">
           <th>
             <img src="static/uploads/{{x['image']}}" width="50" height="50" />
           </th>
           <th>{{x['name']}}</th>
           <th>{{x['productid']}}</th>
+          <th class="status" id="change{{x['id']}}">
+            <span class="{{x['status']}}">{{x['status']}}</span>
+          </th>
           <th>{{x['category']}}</th>
-          <th>{{x['vartype']}}</th>
           <th>{{x['vars']}}</th>
           <th>{{x['seller']}}</th>
-          <th><i class="fas fa-rupee-sign"></i> {{x['unitprice']}}</th>
           <th><i class="fas fa-rupee-sign"></i> {{x['sellprice']}}</th>
-          <th>{{x['tax']}} %</th>
-          <th>{{x['dimension']}}</th>
-          <th>{{x['weight']}}</th>
           <th>{{x['date']}}</th>
           <th>
             <button
@@ -87,6 +79,13 @@
               onclick="delProduct(`{{x['id']}}`)"
             >
               Delete
+            </button>
+            <button
+              style="width: 80px"
+              class="btn mybtn"
+              onclick="changeProduct(`{{x['id']}}`)"
+            >
+              Status
             </button>
           </th>
         </tr>
@@ -108,7 +107,23 @@
   }
   //delete product onclick
   function delProduct(id) {
-    alert(id);
+    $.post("/removeProduct", { id: id }, function (res) {
+      if (res == "True") {
+        $("#rem" + id).remove();
+      } else {
+        alert("Unable To Delete Record!");
+      }
+    });
+  }
+  //change status
+  function changeProduct(id) {
+    $.post("/statusToggle", { id: id }, function (res) {
+      if (res == "false") {
+        alert("Unable To Change Status!");
+      } else {
+        $("#change" + id).html("<span class=" + res + ">" + res + "</span>");
+      }
+    });
   }
 </script>
 {% endblock %}

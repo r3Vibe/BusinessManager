@@ -157,9 +157,9 @@ def modify(product):
                             "Unable To Upload Product Image. Contact Admin", "error")
                     else:
                         updateProduct = updateDb().updateProduct(
-                            request.form, newname)
+                            request.form, product, newname)
                         if updateProduct == "success":
-                            flash("Product Updated", "success")
+                            flash("Product Updated Successfully", "success")
                         else:
                             flash(
                                 "Unable To Update Product. Contact Admin!", "error")
@@ -169,9 +169,9 @@ def modify(product):
                     flash("other file", "error")
             else:
                 updateProduct = updateDb().updateProduct(
-                    request.form, product2modify[0]['image'])
+                    request.form, product, product2modify[0]['image'])
                 if updateProduct == "success":
-                    flash("Product Updated", "success")
+                    flash("Product Updated Successfully", "success")
                 else:
                     flash("Unable To Update Product. Contact Admin!", "error")
         return render_template("modify.html", form=form, username=g.user, role=g.role, date=date, time=time, pid=product, details=product2modify[0], vartype=types, catg=allCategory, seller=allSeller)
@@ -196,6 +196,38 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+# chnage product status
+
+
+@app.route("/statusToggle", methods=['GET', 'POST'])
+def statusToggle():
+    if g.user:
+        if request.method == "POST":
+            product = request.form.get("id")
+            toggle = dbQuery().changeProduct(product)
+            if toggle == "error":
+                return "false"
+            else:
+                return toggle
+    else:
+        return "Please Login"
+
+
+# delete product from db
+
+
+@app.route("/removeProduct", methods=['GET', 'POST'])
+def removeProduct():
+    if g.user:
+        if request.method == "POST":
+            product = request.form.get("id")
+            delPro = dbQuery().deleteProduct(product)
+            if delPro == "success":
+                return "True"
+            else:
+                return "False"
+    else:
+        return "Please Login"
 
 # get variations endpoint
 

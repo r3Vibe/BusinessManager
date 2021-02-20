@@ -61,6 +61,32 @@ class dbQuery():
         product = cursor.fetchall()
         return product
 
+    def deleteProduct(self, pid):
+        cursor.execute(f"DELETE FROM products WHERE id = '{pid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def changeProduct(self, pid):
+        cursor.execute(f"SELECT * FROM products WHERE id = '{pid}'")
+        product = cursor.fetchall()
+        currentStatus = product[0]['status']
+        if currentStatus == "active":
+            newstatus = "stopped"
+        else:
+            newstatus = "active"
+        cursor.execute(
+            f"UPDATE  products SET status = '{newstatus}' WHERE id = '{pid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return newstatus
+
 
 class updateDb():
     def addProduct(self, details, imagename):
@@ -81,20 +107,20 @@ class updateDb():
         else:
             return "success"
 
-    def updateProduct(self, details, imagename):
-        # today = date.today()
-        # todate = today.strftime("%m/%d/%y")
-        # barcode = details['barcode']
-        # dimension = f"{details['length']}x{details['bredth']}x{details['height']} {details['measure']}"
-        # weight = f"{details['weight']} {details['weightmeasure']}"
-        # if barcode == "":
-        #     barcode = "nocode"
-        # cursor.execute(
-        #     f"UPDATE products SET name='{details['name']}',productid='{details['productid']}',barcode='{details['barcode']}',vartype='{details['vartype']}',vars='{details['vars']}',category='{details['catg']}',seller='{details['seller']}',quantity='{details['quantity']}',unitprice='{details['cost']}',sellprice='{details['sellprice']}',tax='{details['tax']}',dimension='{details['dimension']}',weight='{details['weight']}',image='{imagename}',date='{todate}'")
-        # try:
-        #     db.commit()
-        # except Exception as e:
-        #     return "error"
-        # else:
-        #     return "success"
-        print(imagename)
+    def updateProduct(self, details, proid, imagename):
+        product = proid.split('=')
+        today = date.today()
+        todate = today.strftime("%m/%d/%y")
+        barcode = details['barcode']
+        dimension = f"{details['length']}x{details['bredth']}x{details['height']} {details['measure']}"
+        weight = f"{details['weight']} {details['weightmeasure']}"
+        if barcode == "":
+            barcode = "nocode"
+        cursor.execute(
+            f"UPDATE products SET name='{details['name']}',productid='{details['productid']}',barcode='{details['barcode']}',vartype='{details['vartype']}',vars='{details['vars']}',category='{details['catg']}',seller='{details['seller']}',quantity='{details['quantity']}',unitprice='{details['cost']}',sellprice='{details['sellprice']}',tax='{details['tax']}',dimension='{dimension}',weight='{weight}',image='{imagename}',date='{todate}' WHERE id = '{product[1]}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
