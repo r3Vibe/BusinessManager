@@ -58,8 +58,22 @@ def dashboard():
 
 
 ################ inventory management page ################
+# place order page
+@app.route("/placeorder", methods=['GET', 'POST'])
+def placeorder():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        allProduct = dbQuery().getProducts()
+        return render_template("placeorder.html", username=g.user, role=g.role, date=date, time=time, product=allProduct)
+    else:
+        return redirect(url_for('unauthenticated'))
 
 # inventory page
+
+
 @app.route("/inventory", methods=['GET', 'POST'])
 def inventory():
     if g.user:

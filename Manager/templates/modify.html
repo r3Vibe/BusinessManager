@@ -5,7 +5,7 @@
   <div class="navigation2">
     <ul>
       <li><a href="{{url_for('inventory')}}"> View Products</a></li>
-      <li><a href="http://" class=""> Place Order</a></li>
+      <li><a href="{{url_for('placeorder')}}"> Place Order</a></li>
       <li>
         <a href="/modify/{{pid}}" class="active"> Modify</a>
       </li>
@@ -374,7 +374,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addvarsLabel">CAtegory title</h5>
+        <h5 class="modal-title" id="addvarsLabel">Category title</h5>
         <button
           type="button"
           class="btn-close"
