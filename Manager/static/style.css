@@ -540,3 +540,9 @@ h2 {
   padding: 3px;
   color: white;
 }
+
+.nothing {
+  border: none;
+  outline: none;
+  background: none;
+}

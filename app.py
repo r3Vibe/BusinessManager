@@ -67,7 +67,8 @@ def placeorder():
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
         allProduct = dbQuery().getProducts()
-        return render_template("placeorder.html", username=g.user, role=g.role, date=date, time=time, product=allProduct)
+        allVendor = dbQuery().getAllvendor()
+        return render_template("placeorder.html", username=g.user, role=g.role, date=date, time=time, product=allProduct, vendor=allVendor)
     else:
         return redirect(url_for('unauthenticated'))
 

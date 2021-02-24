@@ -1,6 +1,12 @@
 {% extends 'basewithnav.html' %} {% block title %}
 <title>Inventory Management</title>
 {% endblock %} {% block contents %}
+<style>
+  input {
+    text-align: center;
+    text-transform: capitalize;
+  }
+</style>
 <div class="notification">
   <div class="navigation2">
     <ul>
@@ -14,20 +20,87 @@
     </ul>
   </div>
   <div class="addproductform">
-    <form method="post">
-      <div class="mb-3">
-        <select name="product" id="product" class="form-select">
-          <option selected disabled>Select Product</option>
-          {% for x in product %}
-          <option value="{{x['name']}}">{{x['name']}}</option>
-          {% endfor %}
-        </select>
+    <form method="post" style="width: 100%">
+      <div class="row row-cols-2">
+        <div class="col">
+          <div class="mb-3">
+            <select name="vendor" id="vendor" class="form-select-sm">
+              <option selected disabled>Select Vendor</option>
+              {% for x in vendor %}
+              <option value="{{x['seller']}}">{{x['seller']}}</option>
+              {%endfor%}
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input type="date" name="date" id="date" class="form-control-sm" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-hover border-white">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+              <th scope="col">Tax</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyproduct">
+            <tr>
+              <td>
+                <select
+                  name="product"
+                  id="product"
+                  class="nothing form-select-sm"
+                  onchange="update(this.value)"
+                >
+                  <option selected disabled>Select One</option>
+                  {% for x in product %}
+                  <option value="{{x['name']}}">{{x['name']}}</option>
+                  {% endfor %}
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" class="btn mybtn" id="addRow">Add Row</button>
       </div>
     </form>
   </div>
 </div>
 <script>
-  //heightlight current page link
-  $("#inventorylink").addClass("sideactive");
+  $(document).ready(function () {
+    //heightlight current page link
+    $("#inventorylink").addClass("sideactive");
+    //add row
+    $("#addRow").click(function () {
+      var tr = document.createElement("tr");
+      var td = document.createElement("td");
+      var select = document.createElement("select");
+      var option = document.createElement("option");
+      option.innerText = "Select One";
+      option.setAttribute("selected", "");
+      option.setAttribute("disabled", "");
+      select.appendChild(option);
+      ("{% for x in product%}");
+      var option = document.createElement("option");
+      option.setAttribute("value", "{{x['name']}}");
+      option.innerText = "{{x['name']}}";
+      select.appendChild(option);
+      ("{% endfor %}");
+      select.setAttribute("class", "form-select-sm nothing");
+      select.setAttribute("onchange", "update(this.value)");
+      td.appendChild(select);
+      tr.appendChild(td);
+      document.getElementById("tbodyproduct").appendChild(tr);
+    });
+  });
+  function update(e) {
+    alert(e);
+  }
 </script>
 {% endblock %}
