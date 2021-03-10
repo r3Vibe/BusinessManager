@@ -320,7 +320,7 @@ h3 {
 }
 
 .notification {
-  width: calc(100% - 18.3%);
+  width: calc(100% - 14.7%);
   height: auto;
   /* background-color: rgb(243, 46, 46); */
   display: flex;
@@ -374,7 +374,7 @@ h2 {
 }
 
 .sidebar {
-  width: 250px;
+  width: 200px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -481,9 +481,6 @@ h2 {
   margin-right: 10px;
 }
 .navigation2 ul li a {
-  color: #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #ffffff;
   padding: 5px;
 }
 .navigation2 ul li .active {

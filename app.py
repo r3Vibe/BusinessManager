@@ -272,6 +272,19 @@ def gettime():
     else:
         return "Unauthenticated"
 
+#get product of certain seller endpoint
+@app.route("/getProductofSeller", methods=['GET', 'POST'])
+def getProductofSeller():
+    if g.user:
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "POST":
+            data = request.form.get("data")
+            allProducts = dbQuery().getSellerProduct(data)
+            
+            
+    else:
+        return "Unauthenticated"
 
 ################ Errors ################
 # 404 error handel

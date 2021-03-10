@@ -87,6 +87,10 @@ class dbQuery():
         else:
             return newstatus
 
+    def getSellerProduct(self,seller):
+        cursor.execute(f"SELECT * FROM products WHERE seller = '{seller}'")
+        product = cursor.fetchall()
+        return product
 
 class updateDb():
     def addProduct(self, details, imagename):
@@ -99,7 +103,7 @@ class updateDb():
         if barcode == "":
             barcode = "nocode"
         cursor.execute(
-            f"INSERT INTO products(name,productid,barcode,vartype,vars,category,seller,quantity,unitprice,sellprice,tax,dimension,weight,image,date) VALUES('{details['name']}','{details['productid']}','{barcode}','{details['vartype']}','{details['vars']}','{details['catg']}','{details['seller']}','{details['quantity']}','{details['cost']}','{details['sellprice']}','{details['tax']}','{dimension}','{weight}','{imagename}','{todate}')")
+            f"INSERT INTO products(name,productid,status,barcode,vartype,vars,category,seller,quantity,unitprice,sellprice,tax,dimension,weight,image,date) VALUES('{details['name']}','{details['productid']}','active','{barcode}','{details['vartype']}','{details['vars']}','{details['catg']}','{details['seller']}','{details['quantity']}','{details['cost']}','{details['sellprice']}','{details['tax']}','{dimension}','{weight}','{imagename}','{todate}')")
         try:
             db.commit()
         except Exception as e:

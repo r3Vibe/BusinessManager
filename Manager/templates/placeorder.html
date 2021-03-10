@@ -24,7 +24,7 @@
       <div class="row row-cols-2">
         <div class="col">
           <div class="mb-3">
-            <select name="vendor" id="vendor" class="form-select-sm">
+            <select name="vendor" id="vendor" class="form-select-sm" onchange="findProducts(this.value)">
               <option selected disabled>Select Vendor</option>
               {% for x in vendor %}
               <option value="{{x['seller']}}">{{x['seller']}}</option>
@@ -67,7 +67,7 @@
             </tr>
           </tbody>
         </table>
-        <button type="button" class="btn mybtn" id="addRow">Add Row</button>
+        <button type="button" class="btn mybtn" id="addRow" style="width: 100px;margin-left: 10px;">Add Row</button>
       </div>
     </form>
   </div>
@@ -101,6 +101,12 @@
   });
   function update(e) {
     alert(e);
+  }
+    //when vendor is selected we find products specific to that vendor
+  function findProducts(vendor){
+    $.post("/getProductofSeller",{data:vendor},function(res){
+      alert(res);
+    })
   }
 </script>
 {% endblock %}
