@@ -272,17 +272,23 @@ def gettime():
     else:
         return "Unauthenticated"
 
+
+
 #get product of certain seller endpoint
 @app.route("/getProductofSeller", methods=['GET', 'POST'])
 def getProductofSeller():
     if g.user:
+        productDict = {
+            "productname":[]
+        }
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
         if request.method == "POST":
             data = request.form.get("data")
             allProducts = dbQuery().getSellerProduct(data)
-            
-            
+            for x in allProducts:
+                productDict['productname'].append(x['name'])
+            return productDict   
     else:
         return "Unauthenticated"
 

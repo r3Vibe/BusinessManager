@@ -105,7 +105,7 @@
     //when vendor is selected we find products specific to that vendor
   function findProducts(vendor){
     $.post("/getProductofSeller",{data:vendor},function(res){
-      alert(res);
+      console.log(res['productname'].length);
     })
   }
 </script>
