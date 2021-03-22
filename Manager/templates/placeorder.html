@@ -24,7 +24,12 @@
       <div class="row row-cols-2">
         <div class="col">
           <div class="mb-3">
-            <select name="vendor" id="vendor" class="form-select-sm" onchange="findProducts(this.value)">
+            <select
+              name="vendor"
+              id="vendor"
+              class="form-select-sm"
+              onchange="findProducts(this.value)"
+            >
               <option selected disabled>Select Vendor</option>
               {% for x in vendor %}
               <option value="{{x['seller']}}">{{x['seller']}}</option>
@@ -51,7 +56,7 @@
           </thead>
           <tbody id="tbodyproduct">
             <tr>
-              <td>
+              <td id="tdproduct">
                 <select
                   name="product"
                   id="product"
@@ -67,17 +72,26 @@
             </tr>
           </tbody>
         </table>
-        <button type="button" class="btn mybtn" id="addRow" style="width: 100px;margin-left: 10px;">Add Row</button>
+        <button
+          type="button"
+          class="btn mybtn"
+          id="addRow"
+          style="width: 100px; margin-left: 10px"
+        >
+          Add Row
+        </button>
       </div>
     </form>
   </div>
 </div>
 <script>
   $(document).ready(function () {
+    var productRow = 1;
     //heightlight current page link
     $("#inventorylink").addClass("sideactive");
     //add row
     $("#addRow").click(function () {
+      productRow++;
       var tr = document.createElement("tr");
       var td = document.createElement("td");
       var select = document.createElement("select");
@@ -86,13 +100,17 @@
       option.setAttribute("selected", "");
       option.setAttribute("disabled", "");
       select.appendChild(option);
-      ("{% for x in product%}");
-      var option = document.createElement("option");
-      option.setAttribute("value", "{{x['name']}}");
-      option.innerText = "{{x['name']}}";
-      select.appendChild(option);
-      ("{% endfor %}");
+      var vendor = $("#vendor").val();
+      $.post("/getProductofSeller", { data: vendor }, function (res) {
+        for (var i = 0; i < res["productname"].length; i++) {
+          var option = document.createElement("option");
+          option.setAttribute("value", res["productname"][i]);
+          option.innerText = res["productname"][i];
+          select.appendChild(option);
+        }
+      });
       select.setAttribute("class", "form-select-sm nothing");
+      select.setAttribute("id", "product" + productRow);
       select.setAttribute("onchange", "update(this.value)");
       td.appendChild(select);
       tr.appendChild(td);
@@ -102,11 +120,26 @@
   function update(e) {
     alert(e);
   }
-    //when vendor is selected we find products specific to that vendor
-  function findProducts(vendor){
-    $.post("/getProductofSeller",{data:vendor},function(res){
-      console.log(res['productname'].length);
-    })
+  //when vendor is selected we find products specific to that vendor
+  function findProducts(vendor) {
+    $.post("/getProductofSeller", { data: vendor }, function (res) {
+      console.log(res["productname"].length);
+      $("#tdproduct").html(
+        "<select name='product' id='product' class='nothing form-select-sm' onchange='update(this.value)'>"
+      );
+      $("#product").append("<option selected disabled>Select One</option>");
+      for (var i = 0; i < res["productname"].length; i++) {
+        $("#product").append(
+          "<option value=" +
+            res["productname"][i] +
+            ">" +
+            res["productname"][i] +
+            "</option>"
+        );
+      }
+    });
   }
 </script>
 {% endblock %}
+
+<!-- update select field depending on tthe productRow number -->
