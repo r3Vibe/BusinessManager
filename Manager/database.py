@@ -87,10 +87,16 @@ class dbQuery():
         else:
             return newstatus
 
-    def getSellerProduct(self,seller):
+    def getSellerProduct(self, seller):
         cursor.execute(f"SELECT * FROM products WHERE seller = '{seller}'")
         product = cursor.fetchall()
         return product
+
+    def getSelectedProduct(self, pid):
+        cursor.execute(f"SELECT * FROM products WHERE productid = '{pid}'")
+        product = cursor.fetchall()
+        return product
+
 
 class updateDb():
     def addProduct(self, details, imagename):

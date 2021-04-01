@@ -63,10 +63,7 @@
                   class="nothing form-select-sm"
                   onchange="update(this.value)"
                 >
-                  <option selected disabled>Select One</option>
-                  {% for x in product %}
-                  <option value="{{x['name']}}">{{x['name']}}</option>
-                  {% endfor %}
+                  <option selected disabled>Please Select Vendor</option>
                 </select>
               </td>
             </tr>
@@ -87,8 +84,10 @@
 <script>
   $(document).ready(function () {
     var productRow = 1;
+
     //heightlight current page link
     $("#inventorylink").addClass("sideactive");
+
     //add row
     $("#addRow").click(function () {
       productRow++;
@@ -117,13 +116,21 @@
       document.getElementById("tbodyproduct").appendChild(tr);
     });
   });
+
+  //get details of a selected product when product is selected
   function update(e) {
-    alert(e);
+    $.post("/getSelectedDetails", { data: e }, function (res) {
+      for (var i = 0; i < res["quantity"].length; i++) {
+        console.log(res["quantity"][i]);
+        console.log(res["price"][i]);
+        console.log(res["tax"][i]);
+      }
+    });
   }
+
   //when vendor is selected we find products specific to that vendor
   function findProducts(vendor) {
     $.post("/getProductofSeller", { data: vendor }, function (res) {
-      console.log(res["productname"].length);
       $("#tdproduct").html(
         "<select name='product' id='product' class='nothing form-select-sm' onchange='update(this.value)'>"
       );
@@ -131,7 +138,7 @@
       for (var i = 0; i < res["productname"].length; i++) {
         $("#product").append(
           "<option value=" +
-            res["productname"][i] +
+            res["productid"][i] +
             ">" +
             res["productname"][i] +
             "</option>"

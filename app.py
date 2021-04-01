@@ -273,13 +273,13 @@ def gettime():
         return "Unauthenticated"
 
 
-
-#get product of certain seller endpoint
+# get product of certain seller endpoint
 @app.route("/getProductofSeller", methods=['GET', 'POST'])
 def getProductofSeller():
     if g.user:
         productDict = {
-            "productname":[]
+            "productname": [],
+            "productid": []
         }
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
@@ -288,9 +288,32 @@ def getProductofSeller():
             allProducts = dbQuery().getSellerProduct(data)
             for x in allProducts:
                 productDict['productname'].append(x['name'])
-            return productDict   
+                productDict['productid'].append(x['productid'])
+            return productDict
     else:
         return "Unauthenticated"
+
+
+# get product details of selected producct
+@app.route("/getSelectedDetails", methods=['GET', 'POST'])
+def getSelectedDetails():
+    if g.user:
+        productDict = {
+            "quantity": [],
+            "price": [],
+            "tax": []
+        }
+        if request.method == "POST":
+            product = request.form.get("data")
+            allProduct = dbQuery().getSelectedProduct(product)
+            for x in allProduct:
+                productDict['quantity'].append(x['quantity'])
+                productDict['price'].append(x['sellprice'])
+                productDict['tax'].append(x['tax'])
+            return productDict
+    else:
+        return "Unauthenticated"
+
 
 ################ Errors ################
 # 404 error handel
