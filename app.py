@@ -305,11 +305,14 @@ def getSelectedDetails():
         }
         if request.method == "POST":
             product = request.form.get("data")
+            print(product)
             allProduct = dbQuery().getSelectedProduct(product)
+            print(allProduct)
             for x in allProduct:
                 productDict['quantity'].append(x['quantity'])
                 productDict['price'].append(x['sellprice'])
                 productDict['tax'].append(x['tax'])
+            print(productDict)
             return productDict
     else:
         return "Unauthenticated"

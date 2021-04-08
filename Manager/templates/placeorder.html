@@ -2,9 +2,13 @@
 <title>Inventory Management</title>
 {% endblock %} {% block contents %}
 <style>
+  select,
   input {
     text-align: center;
     text-transform: capitalize;
+    font-weight: bold;
+    color: black;
+    font-size: 15px;
   }
 </style>
 <div class="notification">
@@ -72,7 +76,7 @@
                   name="qt"
                   id="qt"
                   placeholder="Enter Quantity"
-                  onchange="calculate(this.value)"
+                  onchange="calculate(this.value,this.id)"
                 />
               </td>
               <td>
@@ -107,6 +111,12 @@
               </td>
             </tr>
           </tbody>
+          <tr>
+            <td colspan="4" style="font-weight: bold; font-size: 15px">
+              Total
+            </td>
+            <td style="font-weight: bold; font-size: 15p" id="totalprice">0</td>
+          </tr>
         </table>
         <button
           type="button"
@@ -148,7 +158,7 @@
         $.post("/getProductofSeller", { data: vendor }, function (res) {
           for (var i = 0; i < res["productname"].length; i++) {
             var option = document.createElement("option");
-            option.setAttribute("value", res["productname"][i]);
+            option.setAttribute("value", res["productid"][i]);
             option.innerText = res["productname"][i];
             select.appendChild(option);
           }
@@ -166,7 +176,7 @@
         input.setAttribute("type", "text");
         input.setAttribute("name", "qt" + productRow);
         input.setAttribute("id", "qt" + productRow);
-        input.setAttribute("onchange", "calculate(this.value)");
+        input.setAttribute("onchange", "calculate(this.value,this.id)");
         td.appendChild(input);
         tr.appendChild(td);
         //create td and input for 3rd column price
@@ -208,22 +218,47 @@
   });
   //get details of a selected product when product is selected
   function update(e, f) {
-    alert(f);
-    $.post("/getSelectedDetails", { data: e }, function (res) {
-      for (var i = 0; i < res["quantity"].length; i++) {
-        $("#price").val(res["price"][i]);
-        $("#tax").val(res["tax"][i]);
-      }
-    });
+    if (f == "product") {
+      $.post("/getSelectedDetails", { data: e }, function (res) {
+        for (var i = 0; i < res["quantity"].length; i++) {
+          $("#price").val(res["price"][i]);
+          $("#tax").val(res["tax"][i]);
+        }
+      });
+    } else {
+      var rowNo = f.split("product")[1];
+      $.post("/getSelectedDetails", { data: e }, function (res) {
+        for (var i = 0; i < res["quantity"].length; i++) {
+          $("#price" + rowNo).val(res["price"][i]);
+          $("#tax" + rowNo).val(res["tax"][i]);
+        }
+      });
+    }
   }
 
   //calculate total price
-  function calculate(e) {
-    var pp = $("#price").val();
-    var tot = pp * e;
-    var tottax = (tot * $("#tax").val()) / 100;
-    var subt = tot + tottax;
-    $("#sttl").val(subt);
+  function calculate(e, f) {
+    if (f == "qt") {
+      var pp = $("#price").val();
+      var tot = pp * e;
+      var tottax = (tot * $("#tax").val()) / 100;
+      var subt = tot + tottax;
+      $("#sttl").val(subt);
+      $("#totalprice").html(subt);
+    } else {
+      var rowNo = f.split("qt")[1];
+      var pp = $("#price" + rowNo).val();
+      var tot = pp * e;
+      var tottax = (tot * $("#tax" + rowNo).val()) / 100;
+      var subt = tot + tottax;
+      $("#sttl" + rowNo).val(subt);
+      var add = 0;
+      for (var i = 1; i < rowNo; i++) {
+        add = parseInt(add) + parseInt($("#sttl" + (i + 1)).val());
+      }
+      var addup = parseInt(add) + parseInt($("#sttl").val());
+      $("#totalprice").html(addup);
+    }
   }
 
   //when vendor is selected we find products specific to that vendor
