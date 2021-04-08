@@ -30,7 +30,7 @@
               class="form-select-sm"
               onchange="findProducts(this.value)"
             >
-              <option selected disabled>Select Vendor</option>
+              <option selected disabled value="0">Select Vendor</option>
               {% for x in vendor %}
               <option value="{{x['seller']}}">{{x['seller']}}</option>
               {%endfor%}
@@ -61,10 +61,49 @@
                   name="product"
                   id="product"
                   class="nothing form-select-sm"
-                  onchange="update(this.value)"
                 >
                   <option selected disabled>Please Select Vendor</option>
                 </select>
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="qt"
+                  id="qt"
+                  placeholder="Enter Quantity"
+                  onchange="calculate(this.value)"
+                />
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="price"
+                  id="price"
+                  value="0"
+                  disabled
+                />
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="tax"
+                  id="tax"
+                  value="0"
+                  disabled
+                />
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="sttl"
+                  id="sttl"
+                  value="0"
+                  disabled
+                />
               </td>
             </tr>
           </tbody>
@@ -90,49 +129,108 @@
 
     //add row
     $("#addRow").click(function () {
-      productRow++;
-      var tr = document.createElement("tr");
-      var td = document.createElement("td");
-      var select = document.createElement("select");
-      var option = document.createElement("option");
-      option.innerText = "Select One";
-      option.setAttribute("selected", "");
-      option.setAttribute("disabled", "");
-      select.appendChild(option);
-      var vendor = $("#vendor").val();
-      $.post("/getProductofSeller", { data: vendor }, function (res) {
-        for (var i = 0; i < res["productname"].length; i++) {
-          var option = document.createElement("option");
-          option.setAttribute("value", res["productname"][i]);
-          option.innerText = res["productname"][i];
-          select.appendChild(option);
-        }
-      });
-      select.setAttribute("class", "form-select-sm nothing");
-      select.setAttribute("id", "product" + productRow);
-      select.setAttribute("onchange", "update(this.value)");
-      td.appendChild(select);
-      tr.appendChild(td);
-      document.getElementById("tbodyproduct").appendChild(tr);
-    });
-  });
-
-  //get details of a selected product when product is selected
-  function update(e) {
-    $.post("/getSelectedDetails", { data: e }, function (res) {
-      for (var i = 0; i < res["quantity"].length; i++) {
-        console.log(res["quantity"][i]);
-        console.log(res["price"][i]);
-        console.log(res["tax"][i]);
+      var check = $("#vendor").val();
+      if (check == null) {
+        alert("Select Vendor First!");
+      } else {
+        //count how many products
+        productRow++;
+        //create tr td select for first column
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        var select = document.createElement("select");
+        var option = document.createElement("option");
+        option.innerText = "Select One";
+        option.setAttribute("selected", "");
+        option.setAttribute("disabled", "");
+        select.appendChild(option);
+        var vendor = $("#vendor").val();
+        $.post("/getProductofSeller", { data: vendor }, function (res) {
+          for (var i = 0; i < res["productname"].length; i++) {
+            var option = document.createElement("option");
+            option.setAttribute("value", res["productname"][i]);
+            option.innerText = res["productname"][i];
+            select.appendChild(option);
+          }
+        });
+        select.setAttribute("class", "form-select-sm nothing");
+        select.setAttribute("id", "product" + productRow);
+        select.setAttribute("onchange", "update(this.value,this.id)");
+        td.appendChild(select);
+        tr.appendChild(td);
+        //create td and input 2nd column quantity
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("placeholder", "Enter Quantity");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "qt" + productRow);
+        input.setAttribute("id", "qt" + productRow);
+        input.setAttribute("onchange", "calculate(this.value)");
+        td.appendChild(input);
+        tr.appendChild(td);
+        //create td and input for 3rd column price
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "price" + productRow);
+        input.setAttribute("id", "price" + productRow);
+        input.setAttribute("value", "0");
+        input.setAttribute("disabled", "disabled");
+        td.appendChild(input);
+        tr.appendChild(td);
+        //create td and input for 4rd column tax
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "tax" + productRow);
+        input.setAttribute("id", "tax" + productRow);
+        input.setAttribute("value", "0");
+        input.setAttribute("disabled", "disabled");
+        td.appendChild(input);
+        tr.appendChild(td);
+        //create td and input for 5rd column subtotal
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "sttl" + productRow);
+        input.setAttribute("id", "sttl" + productRow);
+        input.setAttribute("value", "0");
+        input.setAttribute("disabled", "disabled");
+        td.appendChild(input);
+        tr.appendChild(td);
+        document.getElementById("tbodyproduct").appendChild(tr);
       }
     });
+  });
+  //get details of a selected product when product is selected
+  function update(e, f) {
+    alert(f);
+    $.post("/getSelectedDetails", { data: e }, function (res) {
+      for (var i = 0; i < res["quantity"].length; i++) {
+        $("#price").val(res["price"][i]);
+        $("#tax").val(res["tax"][i]);
+      }
+    });
+  }
+
+  //calculate total price
+  function calculate(e) {
+    var pp = $("#price").val();
+    var tot = pp * e;
+    var tottax = (tot * $("#tax").val()) / 100;
+    var subt = tot + tottax;
+    $("#sttl").val(subt);
   }
 
   //when vendor is selected we find products specific to that vendor
   function findProducts(vendor) {
     $.post("/getProductofSeller", { data: vendor }, function (res) {
       $("#tdproduct").html(
-        "<select name='product' id='product' class='nothing form-select-sm' onchange='update(this.value)'>"
+        "<select name='product' id='product' class='nothing form-select-sm' onchange='update(this.value,this.id)'>"
       );
       $("#product").append("<option selected disabled>Select One</option>");
       for (var i = 0; i < res["productname"].length; i++) {
