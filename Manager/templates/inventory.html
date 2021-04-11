@@ -5,11 +5,14 @@
   <div class="navigation2">
     <ul>
       <li>
-        <a href="{{url_for('inventory')}}" class="active"> View Products</a>
+        <a href="{{url_for('inventory')}}" class="active"> Products</a>
       </li>
-      <li><a href="{{url_for('placeorder')}}"> Place Order</a></li>
+      <li><a href="{{url_for('placeorder')}}"> Order</a></li>
       <li>
-        <a href="{{url_for('addmasterdata')}}"> Add New</a>
+        <a href="{{url_for('addmasterdata')}}"> New</a>
+      </li>
+      <li>
+        <a href="{{url_for('addmasterdata')}}"> Order List</a>
       </li>
       <li>
         <form method="post" id="searchform">

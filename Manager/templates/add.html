@@ -4,10 +4,15 @@
 <div class="notification">
   <div class="navigation2">
     <ul>
-      <li><a href="{{url_for('inventory')}}"> View Products</a></li>
-      <li><a href="{{url_for('placeorder')}}"> Place Order</a></li>
+      <li><a href="{{url_for('inventory')}}"> Products</a></li>
       <li>
-        <a href="{{url_for('addmasterdata')}}" class="active"> Add New</a>
+        <a href="{{url_for('placeorder')}}"> Order</a>
+      </li>
+      <li>
+        <a href="{{url_for('addmasterdata')}}" class="active"> New</a>
+      </li>
+      <li>
+        <a href="{{url_for('addmasterdata')}}"> Order List</a>
       </li>
     </ul>
   </div>

@@ -68,7 +68,8 @@ def placeorder():
         time = time.strftime("%H:%M:%S")
         allProduct = dbQuery().getProducts()
         allVendor = dbQuery().getAllvendor()
-        return render_template("placeorder.html", username=g.user, role=g.role, date=date, time=time, product=allProduct, vendor=allVendor)
+        newOrderID = dbQuery().getNewOrderID()
+        return render_template("placeorder.html", username=g.user, role=g.role, date=date, time=time, product=allProduct, vendor=allVendor, orderid=newOrderID)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -305,18 +306,22 @@ def getSelectedDetails():
         }
         if request.method == "POST":
             product = request.form.get("data")
-            print(product)
             allProduct = dbQuery().getSelectedProduct(product)
-            print(allProduct)
             for x in allProduct:
                 productDict['quantity'].append(x['quantity'])
-                productDict['price'].append(x['sellprice'])
+                productDict['price'].append(x['unitprice'])
                 productDict['tax'].append(x['tax'])
-            print(productDict)
             return productDict
     else:
         return "Unauthenticated"
 
+
+@app.route("/test", methods=['GET', 'POST'])
+def test():
+    if request.method == "POST":
+        details = request.form
+        print(details)
+        return "ok"
 
 ################ Errors ################
 # 404 error handel

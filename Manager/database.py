@@ -97,6 +97,9 @@ class dbQuery():
         product = cursor.fetchall()
         return product
 
+    def getNewOrderID(self):
+        return "#2287655"
+
 
 class updateDb():
     def addProduct(self, details, imagename):
