@@ -100,6 +100,37 @@ class dbQuery():
     def getNewOrderID(self):
         return "#2287655"
 
+    def makePurchaseOrder(self, products):
+        if int(products['totoalrow']) == 1:
+            orderid = products['orderid']
+            vendor = products['vendor']
+            date = products['date']
+            product = products['product']
+            qt = products['qt']
+            price = products['price']
+            tax = products['tax']
+            total = products['sttl']
+            print(
+                f"Order ID: {orderid} Vendor: {vendor} Date: {date} Product: {product} Quantity: {qt} Price: {price} Tax: {tax} Total: {total}")
+        else:
+            i = 2
+            while i <= int(products['totoalrow']):
+                orderid = products[f'orderid']
+                vendor = products[f'vendor']
+                date = products[f'date']
+                product = products[f'product{i}']
+                qt = products[f'qt{i}']
+                price = products[f'price{i}']
+                tax = products[f'tax{i}']
+                total = products[f'sttl']
+                print(
+                    f"Order ID: {orderid} Vendor: {vendor} Date: {date} Product: {product} Quantity: {qt} Price: {price} Tax: {tax} Total: {total}")
+                i += 1
+                if i > int(products['totoalrow']):
+                    break
+
+        return "ok"
+
 
 class updateDb():
     def addProduct(self, details, imagename):

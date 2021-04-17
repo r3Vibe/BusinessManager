@@ -137,7 +137,7 @@
           </tr>
         </table>
         <div class="row" id="allButtons">
-          <div class="col">
+          <div class="col" id="validateorderCol">
             <button
               type="button"
               class="btn mybtn"
@@ -147,7 +147,7 @@
               Confirm
             </button>
           </div>
-          <div class="col">
+          <div class="col" id="addRowCol">
             <button
               type="button"
               class="btn mybtn"
@@ -326,6 +326,10 @@
     });
   }
 
+  function fresh() {
+    location.reload();
+  }
+
   $("#validateorder").on("click", function () {
     var datestate = $("#date").val();
     if (datestate == "") {
@@ -333,8 +337,19 @@
     } else {
       var myform = document.getElementById("orderlistform");
       var myformdata = new FormData(myform);
+      $("#validateorderCol").css("display", "none");
+      $("#addRowCol").css("display", "none");
+      $("#allButtons").append(
+        '<div class="col"><button type="button" class="btn mybtn" id="mailOrder" style="width: 200px; margin-left: 10px">Mail Order</button></div>'
+      );
+      $("#allButtons").append(
+        '<div class="col"><button type="button" class="btn mybtn" id="printOrder" style="width: 200px; margin-left: 10px">Print Order</button></div>'
+      );
+      $("#allButtons").append(
+        '<div class="col"><button type="button" class="btn mybtn" id="refresh" onclick="fresh()" style="width: 200px; margin-left: 10px">Refresh</button></div>'
+      );
       $.ajax({
-        url: "/test",
+        url: "/makePurchaseOrder",
         data: myformdata,
         cache: false,
         processData: false,

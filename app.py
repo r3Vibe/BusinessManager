@@ -316,12 +316,12 @@ def getSelectedDetails():
         return "Unauthenticated"
 
 
-@app.route("/test", methods=['GET', 'POST'])
-def test():
+@app.route("/makePurchaseOrder", methods=['GET', 'POST'])
+def makePurchaseOrder():
     if request.method == "POST":
         details = request.form
-        print(details)
-        return "ok"
+        makeOrder = dbQuery().makePurchaseOrder(details)
+        return makeOrder
 
 ################ Errors ################
 # 404 error handel
