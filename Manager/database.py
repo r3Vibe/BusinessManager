@@ -3,6 +3,7 @@ import mysql.connector
 import os
 from datetime import date
 import uuid
+import xlsxwriter
 
 # connect to database
 db = mysql.connector.connect(
@@ -110,22 +111,149 @@ class dbQuery():
             price = products['price']
             tax = products['tax']
             total = products['sttl']
-            print(
-                f"Order ID: {orderid} Vendor: {vendor} Date: {date} Product: {product} Quantity: {qt} Price: {price} Tax: {tax} Total: {total}")
+            grandtotal = products['totalpricef']
+
+            # create workbook
+            workbook = xlsxwriter.Workbook(
+                filename=f'./Manager/static/purchaseorder/{orderid}.xlsx')
+
+            # create worksheet
+            worksheet = workbook.add_worksheet(name='purchaseorder')
+
+            # widen columns
+            worksheet.set_column('A:F', 20)
+
+            # Create a format to use in the merged range.
+            merge_format = workbook.add_format({
+                'bold': 1,
+                'border': 1,
+                'align': 'center',
+                'valign': 'vcenter'})
+            # increase font size
+            merge_format.set_font_size(16)
+
+            # merge top cells heaser
+            worksheet.merge_range('A1:E1', 'Purchase Order', merge_format)
+
+            # add compuulsury details to worksheet
+            worksheet.write('A3', 'Order ID', merge_format)
+            worksheet.write('D3', 'Date', merge_format)
+            worksheet.write('A4', 'Vendor', merge_format)
+
+            # add data to compulsury details of worksheet
+            worksheet.write('B3', f'{orderid}', merge_format)
+            worksheet.write('E3', f'{date}', merge_format)
+            worksheet.write('B4', f'{vendor}', merge_format)
+
+            # make purchase details table
+            worksheet.write('A6', 'Product', merge_format)
+            worksheet.write('B6', 'Quantity', merge_format)
+            worksheet.write('C6', 'Unit Price', merge_format)
+            worksheet.write('D6', 'Tax', merge_format)
+            worksheet.write('E6', 'Subtotal', merge_format)
+
+            # add data to table
+            worksheet.write('A7', f'{product}', merge_format)
+            worksheet.write_number('B7', int(qt), merge_format)
+            worksheet.write_number('C7', int(price), merge_format)
+            worksheet.write_number('D7', int(tax), merge_format)
+            worksheet.write_number('E7', int(total), merge_format)
+
+            # merge grand total cells
+            worksheet.merge_range('A8:D8', 'Grand Total', merge_format)
+
+            # grad total
+            worksheet.write_number('E8', int(grandtotal), merge_format)
+
+            # close
+            workbook.close()
+
         else:
             i = 2
+
+            orderid = products[f'orderid']
+            vendor = products[f'vendor']
+            date = products[f'date']
+            grandtotal = products['totalpricef']
+
+            # create workbook
+            workbook = xlsxwriter.Workbook(
+                filename=f'./Manager/static/purchaseorder/{orderid}.xlsx')
+
+            # create worksheet
+            worksheet = workbook.add_worksheet(name='purchaseorder')
+
+            # widen columns
+            worksheet.set_column('A:F', 20)
+
+            # Create a format to use in the merged range.
+            merge_format = workbook.add_format({
+                'bold': 1,
+                'border': 1,
+                'align': 'center',
+                'valign': 'vcenter'})
+            # increase font size
+            merge_format.set_font_size(16)
+
+            # merge top cells heaser
+            worksheet.merge_range('A1:E1', 'Purchase Order', merge_format)
+
+            # add compuulsury details to worksheet
+            worksheet.write('A3', 'Order ID', merge_format)
+            worksheet.write('D3', 'Date', merge_format)
+            worksheet.write('A4', 'Vendor', merge_format)
+
+            # add data to compulsury details of worksheet
+            worksheet.write('B3', f'{orderid}', merge_format)
+            worksheet.write('E3', f'{date}', merge_format)
+            worksheet.write('B4', f'{vendor}', merge_format)
+
+            # make purchase details table
+            worksheet.write('A6', 'Product', merge_format)
+            worksheet.write('B6', 'Quantity', merge_format)
+            worksheet.write('C6', 'Unit Price', merge_format)
+            worksheet.write('D6', 'Tax', merge_format)
+            worksheet.write('E6', 'Subtotal', merge_format)
+
+            product = products[f'product']
+            qt = products[f'qt']
+            price = products[f'price']
+            tax = products[f'tax']
+            total = products[f'sttl']
+
+            worksheet.write(f'A{7}', f'{product}', merge_format)
+            worksheet.write_number(f'B{7}', int(qt), merge_format)
+            worksheet.write_number(f'C{7}', int(price), merge_format)
+            worksheet.write_number(f'D{7}', int(tax), merge_format)
+            worksheet.write_number(f'E{7}', int(total), merge_format)
+
+            # add data to table
             while i <= int(products['totoalrow']):
-                orderid = products[f'orderid']
-                vendor = products[f'vendor']
-                date = products[f'date']
                 product = products[f'product{i}']
                 qt = products[f'qt{i}']
                 price = products[f'price{i}']
                 tax = products[f'tax{i}']
-                total = products[f'sttl']
-                print(
-                    f"Order ID: {orderid} Vendor: {vendor} Date: {date} Product: {product} Quantity: {qt} Price: {price} Tax: {tax} Total: {total}")
+                total = products[f'sttl{i}']
+
+                worksheet.write(f'A{6+i}', f'{product}', merge_format)
+                worksheet.write_number(f'B{6+i}', int(qt), merge_format)
+                worksheet.write_number(f'C{6+i}', int(price), merge_format)
+                worksheet.write_number(f'D{6+i}', int(tax), merge_format)
+                worksheet.write_number(f'E{6+i}', int(total), merge_format)
+
+                # merge grand total cells
+                worksheet.merge_range(
+                    f'A{6+i+1}:D{6+i+1}', 'Grand Total', merge_format)
+
+                # grad total
+                worksheet.write_number(
+                    f'E{6+i+1}', int(grandtotal), merge_format)
+
+                # close
+                workbook.close()
+
                 i += 1
+
                 if i > int(products['totoalrow']):
                     break
 
@@ -134,7 +262,6 @@ class dbQuery():
 
 class updateDb():
     def addProduct(self, details, imagename):
-        print(details)
         today = date.today()
         todate = today.strftime("%m/%d/%y")
         barcode = details['barcode']

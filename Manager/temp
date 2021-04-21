@@ -1,0 +1,60 @@
+import xlsxwriter
+
+
+# //create workbook
+workbook = xlsxwriter.Workbook("test.xlsx")
+# create worksheet
+worksheet = workbook.add_worksheet(name='lol')
+
+myborder = workbook.add_format({'border': 1, 'border_color': '#000000'})
+
+# widen columns
+worksheet.set_column('A:F', 20)
+
+# merge formet
+# Create a format to use in the merged range.
+merge_format = workbook.add_format({
+    'bold': 1,
+    'border': 1,
+    'align': 'center',
+    'valign': 'vcenter'})
+merge_format.set_font_size(16)
+# merge cells
+worksheet.merge_range('A1:E1', 'Purchase Order', merge_format)
+
+# add content to worksheet
+worksheet.write('A3', 'Order ID', merge_format)
+worksheet.write('D3', 'Date', merge_format)
+worksheet.write('A4', 'Vendor', merge_format)
+
+# product table
+worksheet.write('A6', 'Product', merge_format)
+worksheet.write('B6', 'Quantity', merge_format)
+worksheet.write('C6', 'Unit Price', merge_format)
+worksheet.write('D6', 'Tax', merge_format)
+worksheet.write('E6', 'Subtotal', merge_format)
+
+# # add data to worksheet
+worksheet.write('B3', '#65464646989', merge_format)
+worksheet.write('E3', '10/05/1995', merge_format)
+worksheet.write('B4', 'MotivateBox', merge_format)
+
+# add data to table
+for x in range(1, 10):
+    worksheet.write(f'A{6+x}', f'myprod{x}', merge_format)
+    worksheet.write_number(f'B{6+x}', 55+x, merge_format)
+    worksheet.write_number(f'C{6+x}', 40+x, merge_format)
+    worksheet.write_number(f'D{6+x}', 5+x, merge_format)
+    worksheet.write_number(f'E{6+x}', 66+x, merge_format)
+
+# merge cells
+worksheet.merge_range(f'A{int(6+x+1)}:D{int(6+x+1)}',
+                      'Grand Total', merge_format)
+
+# grand totoal
+worksheet.write_formula(
+    f'E{int(6+x+1)}', f'=sum(E7:E{int(6+x)})', merge_format)
+
+
+# close workbook
+workbook.close()
