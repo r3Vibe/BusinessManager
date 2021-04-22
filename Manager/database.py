@@ -99,7 +99,13 @@ class dbQuery():
         return product
 
     def getNewOrderID(self):
-        return "#2287655"
+        return "2287655"
+
+    def getCurrentOrders(self):
+        cursor.execute(
+            f"SELECT * FROM purchaseorder WHERE status = 'processing'")
+        product = cursor.fetchall()
+        return product
 
     def makePurchaseOrder(self, products):
         if int(products['totoalrow']) == 1:
@@ -112,6 +118,10 @@ class dbQuery():
             tax = products['tax']
             total = products['sttl']
             grandtotal = products['totalpricef']
+
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product}'")
+            productName = cursor.fetchall()[0]['name']
 
             # create workbook
             workbook = xlsxwriter.Workbook(
@@ -153,7 +163,7 @@ class dbQuery():
             worksheet.write('E6', 'Subtotal', merge_format)
 
             # add data to table
-            worksheet.write('A7', f'{product}', merge_format)
+            worksheet.write('A7', f'{productName}', merge_format)
             worksheet.write_number('B7', int(qt), merge_format)
             worksheet.write_number('C7', int(price), merge_format)
             worksheet.write_number('D7', int(tax), merge_format)
@@ -167,6 +177,18 @@ class dbQuery():
 
             # close
             workbook.close()
+
+            # update purchaseorder database
+            cursor.execute(
+                f"INSERT INTO purchaseorder(orderid,vendor,date,status) VALUES('{orderid}','{vendor}','{date}','processing')")
+            cursor.execute(
+                f"INSERT INTO orderprocess(orderid,product,quantity) VALUES('{orderid}','{product}','{qt}')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                return "success"
 
         else:
             i = 2
@@ -215,17 +237,26 @@ class dbQuery():
             worksheet.write('D6', 'Tax', merge_format)
             worksheet.write('E6', 'Subtotal', merge_format)
 
+            # first product
             product = products[f'product']
             qt = products[f'qt']
             price = products[f'price']
             tax = products[f'tax']
             total = products[f'sttl']
 
-            worksheet.write(f'A{7}', f'{product}', merge_format)
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product}'")
+            productName = cursor.fetchall()[0]['name']
+
+            # first product entry
+            worksheet.write(f'A{7}', f'{productName}', merge_format)
             worksheet.write_number(f'B{7}', int(qt), merge_format)
             worksheet.write_number(f'C{7}', int(price), merge_format)
             worksheet.write_number(f'D{7}', int(tax), merge_format)
             worksheet.write_number(f'E{7}', int(total), merge_format)
+
+            prodDb = product
+            qtDb = qt
 
             # add data to table
             while i <= int(products['totoalrow']):
@@ -235,7 +266,14 @@ class dbQuery():
                 tax = products[f'tax{i}']
                 total = products[f'sttl{i}']
 
-                worksheet.write(f'A{6+i}', f'{product}', merge_format)
+                cursor.execute(
+                    f"SELECT * FROM products WHERE productid = '{product}'")
+                productName = cursor.fetchall()[0]['name']
+
+                prodDb += f':{product}'
+                qtDb += f':{qt}'
+
+                worksheet.write(f'A{6+i}', f'{productName}', merge_format)
                 worksheet.write_number(f'B{6+i}', int(qt), merge_format)
                 worksheet.write_number(f'C{6+i}', int(price), merge_format)
                 worksheet.write_number(f'D{6+i}', int(tax), merge_format)
@@ -256,6 +294,18 @@ class dbQuery():
 
                 if i > int(products['totoalrow']):
                     break
+
+            # update purchaseorder database
+            cursor.execute(
+                f"INSERT INTO purchaseorder(orderid,vendor,date,status) VALUES('{orderid}','{vendor}','{date}','processing')")
+            cursor.execute(
+                f"INSERT INTO orderprocess(orderid,product,quantity) VALUES('{orderid}','{prodDb}','{qtDb}')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                return "success"
 
         return "ok"
 

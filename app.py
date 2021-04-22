@@ -1,5 +1,5 @@
 ################ all imports ################
-from flask import render_template, redirect, g, flash, url_for, session, request
+from flask import render_template, redirect, g, flash, url_for, session, request, send_file
 from Manager import app
 from Manager.form import Login, productImage
 from Manager.validation import validateUser, validateProduct
@@ -194,6 +194,21 @@ def modify(product):
     else:
         return redirect(url_for('unauthenticated'))
 
+# order list
+
+
+@app.route("/orderlist", methods=['GET', 'POST'])
+def orderlist():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        currentOrders = dbQuery().getCurrentOrders()
+        return render_template("orderlist.html", username=g.user, role=g.role, date=date, time=time, orders=currentOrders)
+    else:
+        return redirect(url_for('unauthenticated'))
+
 ################ remove session variable and redirect ################
 # logout page
 
@@ -315,14 +330,30 @@ def getSelectedDetails():
     else:
         return "Unauthenticated"
 
+# create xlsx file with details given
+
 
 @app.route("/makePurchaseOrder", methods=['GET', 'POST'])
 def makePurchaseOrder():
-    if request.method == "POST":
-        details = request.form
-        makeOrder = dbQuery().makePurchaseOrder(details)
-        return makeOrder
+    if g.user:
+        if request.method == "POST":
+            details = request.form
+            makeOrder = dbQuery().makePurchaseOrder(details)
+            return makeOrder
+    else:
+        return "Unauthenticated"
 
+# download xlsx file
+
+
+@app.route("/downloadOrder/<filename>", methods=['GET', 'POST'])
+def downloadOrder(filename):
+    if g.user:
+        filename = filename.split('=')
+        fileee = f"static/purchaseorder/{filename[1]}.xlsx"
+        return send_file(fileee, as_attachment=True)
+    else:
+        return "Unauthenticated"
 ################ Errors ################
 # 404 error handel
 
