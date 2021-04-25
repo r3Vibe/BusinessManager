@@ -392,6 +392,21 @@ def downloadOrder(filename):
         return send_file(fileee, as_attachment=True)
     else:
         return "Unauthenticated"
+
+# print file
+
+
+@app.route("/printFile/<filename>", methods=['GET', 'POST'])
+def printFile(filename):
+    if g.user:
+        filename = filename.split('=')
+        location = os.getcwd()
+        filee = f"{location}/Manager/static/purchaseorder/{filename[1]}.xlsx"
+        os.startfile(filee, "print")
+        return redirect(url_for('orderlist'))
+    else:
+        return "Unauthenticated"
+
 ################ Errors ################
 # 404 error handel
 
