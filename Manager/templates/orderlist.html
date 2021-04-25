@@ -14,6 +14,17 @@
       <li>
         <a href="{{url_for('orderlist')}}" class="active"> Order List</a>
       </li>
+      <li>
+        <form method="POST" id="sortby">
+          <select name="sort" id="sort" class="form-select-sm">
+            <option value="" selected disabled>Sort By</option>
+            <option value="all">All</option>
+            <option value="processing">Processing</option>
+            <option value="received">Received</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </form>
+      </li>
     </ul>
   </div>
   <div class="showAllproduct">
@@ -44,8 +55,24 @@
           <th>{{x['date']}}</th>
           <th>{{x['status']}}</th>
           <th>
-            <button style="width: 80px" class="btn mybtn">Receive</button>
-            <button style="width: 80px" class="btn mybtn">Cancel</button>
+            {% if x['status'] == "Received" or x['status'] == "Cancelled" %}
+            <span>No Action Available</span>
+            {% else %}
+            <button
+              style="width: 80px"
+              class="btn mybtn"
+              onclick="receive(`{{x['orderid']}}`)"
+            >
+              Receive
+            </button>
+            <button
+              style="width: 80px"
+              class="btn mybtn"
+              onclick="cancel(`{{x['orderid']}}`)"
+            >
+              Cancel
+            </button>
+            {% endif %}
           </th>
         </tr>
         {% endfor %}
@@ -56,10 +83,33 @@
 <script>
   $(document).ready(function () {
     $("#inventorylink").addClass("sideactive");
+    $("#sort").change(function () {
+      $("#sortby").submit();
+    });
   });
 
   function downloadfile(id) {
     location.href = "/downloadOrder/filename=" + id;
+  }
+
+  function receive(order) {
+    $.post("/receiveit", { id: order }, function (res) {
+      if (res == "ok") {
+        location.reload();
+      } else {
+        alert("There Was an Error Please Try Later");
+      }
+    });
+  }
+
+  function cancel(order) {
+    $.post("/cancelit", { id: order }, function (res) {
+      if (res == "ok") {
+        location.reload();
+      } else {
+        alert("There Was an Error Please Try Later");
+      }
+    });
   }
 </script>
 {% endblock %}

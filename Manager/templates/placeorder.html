@@ -343,7 +343,7 @@
         '<div class="col"><button type="button" class="btn mybtn" id="mailOrder" style="width: 200px; margin-left: 10px">Mail Order</button></div>'
       );
       $("#allButtons").append(
-        '<div class="col"><button type="button" class="btn mybtn" id="printOrder" style="width: 200px; margin-left: 10px">Print Order</button></div>'
+        '<div class="col"><button type="button" class="btn mybtn" id="printOrder" onclick="printExecl(`{{orderid}}`)" style="width: 200px; margin-left: 10px">Print Order</button></div>'
       );
       $("#allButtons").append(
         '<div class="col"><button type="button" class="btn mybtn" id="refresh" onclick="fresh()" style="width: 200px; margin-left: 10px">Refresh</button></div>'
@@ -362,6 +362,8 @@
       });
     }
   });
+
+  function printExecl(id) {}
 </script>
 {% endblock %}
 

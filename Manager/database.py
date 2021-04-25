@@ -99,13 +99,23 @@ class dbQuery():
         return product
 
     def getNewOrderID(self):
-        return "2287655"
+        cursor.execute("SELECT * FROM purchaseorder ORDER BY id DESC")
+        allOrder = cursor.fetchall()
+        if len(allOrder) == 0:
+            return "2287655"
+        else:
+            return str(int(allOrder[0]['orderid']) + 1)
 
-    def getCurrentOrders(self):
-        cursor.execute(
-            f"SELECT * FROM purchaseorder WHERE status = 'processing'")
-        product = cursor.fetchall()
-        return product
+    def getCurrentOrders(self, parameter):
+        if parameter == 'all':
+            cursor.execute(f"SELECT * FROM purchaseorder")
+            product = cursor.fetchall()
+            return product
+        else:
+            cursor.execute(
+                f"SELECT * FROM purchaseorder WHERE status = '{parameter}'")
+            product = cursor.fetchall()
+            return product
 
     def makePurchaseOrder(self, products):
         if int(products['totoalrow']) == 1:
@@ -308,6 +318,56 @@ class dbQuery():
                 return "success"
 
         return "ok"
+
+    def updateReceived(self, order):
+        cursor.execute(f"SELECT * FROM orderprocess WHERE orderid = '{order}'")
+        orderDetails = cursor.fetchall()[0]
+
+        # update respective products
+        totalProducts = len(orderDetails['product'].split(':'))
+        print(totalProducts)
+        Products = orderDetails['product'].split(':')
+        quantity = orderDetails['quantity'].split(':')
+        i = 0
+        while i < int(totalProducts):
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{Products[i]}'")
+            quantityDb = cursor.fetchall()[0]['quantity']
+            newQt = int(quantityDb) + int(quantity[i])
+            cursor.execute(
+                f"UPDATE products SET quantity='{newQt}' WHERE productid = '{Products[i]}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "Unable To Update Please Contact System Admin"
+            else:
+                i += 1
+            if i > totalProducts:
+                break
+
+        # change status of orderlist
+        cursor.execute(
+            f"UPDATE purchaseorder SET status='Received' WHERE orderid = '{order}'")
+        cursor.execute(
+            f"UPDATE orderprocess SET status='Received' WHERE orderid = '{order}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "Unable To Update Please Contact System Admin"
+        else:
+            return "success"
+
+    def updateCancelled(self, order):
+        cursor.execute(
+            f"UPDATE orderprocess SET status='Cancelled' WHERE orderid = '{order}'")
+        cursor.execute(
+            f"UPDATE purchaseorder SET status='Cancelled' WHERE orderid = '{order}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "Unable To Update Please Contact System Admin"
+        else:
+            return "success"
 
 
 class updateDb():

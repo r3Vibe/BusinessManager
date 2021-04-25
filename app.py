@@ -204,8 +204,13 @@ def orderlist():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        currentOrders = dbQuery().getCurrentOrders()
-        return render_template("orderlist.html", username=g.user, role=g.role, date=date, time=time, orders=currentOrders)
+        if request.method == "GET":
+            currentOrders = dbQuery().getCurrentOrders('all')
+            return render_template("orderlist.html", username=g.user, role=g.role, date=date, time=time, orders=currentOrders)
+        if request.method == "POST":
+            param = request.form.get('sort')
+            currentOrders = dbQuery().getCurrentOrders(param)
+            return render_template("orderlist.html", username=g.user, role=g.role, date=date, time=time, orders=currentOrders)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -227,6 +232,39 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+
+# receive products from order list
+
+
+@app.route("/receiveit", methods=['GET', 'POST'])
+def receiveit():
+    if g.user:
+        if request.method == "POST":
+            orderid = request.form.get("id")
+            status = dbQuery().updateReceived(orderid)
+            if status == 'success':
+                return "ok"
+            else:
+                return "error"
+    else:
+        return "Please Login"
+
+# cancel products from order list
+
+
+@app.route("/cancelit", methods=['GET', 'POST'])
+def cancelit():
+    if g.user:
+        if request.method == "POST":
+            orderid = request.form.get("id")
+            status = dbQuery().updateCancelled(orderid)
+            if status == 'success':
+                return "ok"
+            else:
+                return "error"
+    else:
+        return "Please Login"
+
 # chnage product status
 
 
