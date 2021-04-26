@@ -1,0 +1,28 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Inventory Management</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('accounting')}}"> Overview</a>
+      </li>
+      <li>
+        <a href="{{url_for('transactions')}}"> Transactions</a>
+      </li>
+      <li>
+        <a href="{{url_for('newtransaction')}}"> New</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}" class="active"> Dues</a>
+      </li>
+    </ul>
+  </div>
+  <div class="showAllproduct"></div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#accountslink").addClass("sideactive");
+  });
+</script>
+{% endblock %}

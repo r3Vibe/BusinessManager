@@ -138,7 +138,7 @@ def addmasterdata():
     else:
         return redirect(url_for('unauthenticated'))
 
-# modify
+# inventory page modify product
 
 
 @app.route("/modify/<product>", methods=['GET', 'POST'])
@@ -194,7 +194,7 @@ def modify(product):
     else:
         return redirect(url_for('unauthenticated'))
 
-# order list
+# inventory page order list
 
 
 @app.route("/orderlist", methods=['GET', 'POST'])
@@ -213,6 +213,64 @@ def orderlist():
             return render_template("orderlist.html", username=g.user, role=g.role, date=date, time=time, orders=currentOrders)
     else:
         return redirect(url_for('unauthenticated'))
+
+
+################ Accounts management page ################
+#### main page ####
+@app.route("/accounting", methods=['GET', 'POST'])
+def accounting():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("account.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+#####################################
+#### transactions page ####
+@app.route("/transactions", methods=['GET', 'POST'])
+def transactions():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("transaction.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+##########################
+#### newtransaction page ####
+@app.route("/newtransaction", methods=['GET', 'POST'])
+def newtransaction():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("new.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+##########################
+#### dues page ####
+@app.route("/alldues", methods=['GET', 'POST'])
+def alldues():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("due.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
 
 ################ remove session variable and redirect ################
 # logout page

@@ -107,6 +107,21 @@
   background-color: #fff;
 }
 
+.boxx {
+  width: 250px;
+  height: 200px;
+  margin: 10px;
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid black;
+  box-shadow: 0 5px 5px -5px black;
+  text-transform: capitalize;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .containers .buy {
   background: url("add.png");
   background-repeat: no-repeat;
