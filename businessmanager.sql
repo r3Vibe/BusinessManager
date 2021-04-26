@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 28, 2021 at 12:45 PM
+-- Generation Time: Apr 26, 2021 at 06:43 AM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.2.34
 
@@ -65,7 +65,31 @@ CREATE TABLE `employee` (
 --
 
 INSERT INTO `employee` (`id`, `username`, `fullname`, `email`, `contact`, `password`, `role`, `image`, `lastlogin`, `attempt`) VALUES
-(1, 'rever', 'arnab gupta', 'rever@rd.com', '7044287686', 'pbkdf2:sha256:150000$PyZKQE0C$887260c6e2c94515fc9a75f692da7ee4836f64d90f450505a5ca8e9801d56ce3', 'superuser', 'test.png', '00:56:38', 0);
+(1, 'rever', 'arnab gupta', 'rever@rd.com', '7044287686', 'pbkdf2:sha256:150000$PyZKQE0C$887260c6e2c94515fc9a75f692da7ee4836f64d90f450505a5ca8e9801d56ce3', 'superuser', 'test.png', '22:40:19', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orderprocess`
+--
+
+CREATE TABLE `orderprocess` (
+  `id` int(100) NOT NULL,
+  `orderid` varchar(255) NOT NULL,
+  `product` varchar(255) NOT NULL,
+  `quantity` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `orderprocess`
+--
+
+INSERT INTO `orderprocess` (`id`, `orderid`, `product`, `quantity`, `status`) VALUES
+(1, '2287655', 'selfless', '20', ''),
+(2, '2287656', 'selfless', '10', ''),
+(3, '2287657', 'sar2', '10', ''),
+(4, '2287658', 'test12345', '20', '');
 
 -- --------------------------------------------------------
 
@@ -98,9 +122,34 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `productid`, `status`, `barcode`, `vartype`, `vars`, `category`, `seller`, `quantity`, `unitprice`, `sellprice`, `tax`, `dimension`, `weight`, `image`, `date`) VALUES
-(19, 'saringan2.5', 'test1234', 'active', 'nocode', 'color', 'red', 'sticker', 'new2', '50', '20', '41', '5', '15x12x2 mm', '500 gm', 'c9942021bb564529b8b658de61569a1f.jpeg', '02/20/21'),
-(20, 'saringanshoot', 'test1234', 'active', 'nocode', 'color', 'red', 'sticker', 'new2', '50', '20', '41', '5', '15x12x2 mm', '500 gm', '4b684a38a8cc4d0cbd7cf867c2b3c73f.png', '02/25/21'),
-(21, 'saringan', 'sar2', 'active', 'nocode', 'shape', 'test', 'mystick', 'vendor 2', '100', '50', '100', '10', '15x12x2 cm', '600', '4b684a38a8cc4d0cbd7cf867c2b3c73f.png', '02/20/21');
+(19, 'saringan2.5', 'test1234', 'active', 'nocode', 'color', 'red', 'sticker', 'new2', '110', '20', '41', '5', '15x12x2 mm', '500 gm', 'c9942021bb564529b8b658de61569a1f.jpeg', '02/20/21'),
+(20, 'saringanshoot', 'test12345', 'active', 'nocode', 'color', 'red', 'sticker', 'new2', '100', '20', '41', '5', '15x12x2 mm', '500 gm', '4b684a38a8cc4d0cbd7cf867c2b3c73f.png', '02/25/21'),
+(21, 'saringan', 'sar2', 'active', 'nocode', 'shape', 'test', 'mystick', 'vendor 2', '170', '50', '100', '10', '15x12x2 cm', '600', '4b684a38a8cc4d0cbd7cf867c2b3c73f.png', '02/20/21'),
+(22, 'myself', 'selfless', 'active', '00123457', 'shape', 'test', 'mystick', 'vendor 2', '80', '50', '100', '5', '50x50x50 in', '85 kg', '8eeb1dd2fa7f4d0db056987e1c06bee3.jpeg', '04/24/21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `purchaseorder`
+--
+
+CREATE TABLE `purchaseorder` (
+  `id` int(100) NOT NULL,
+  `orderid` varchar(255) NOT NULL,
+  `vendor` varchar(255) NOT NULL,
+  `date` varchar(100) NOT NULL,
+  `status` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `purchaseorder`
+--
+
+INSERT INTO `purchaseorder` (`id`, `orderid`, `vendor`, `date`, `status`) VALUES
+(1, '2287655', 'vendor 2', '2021-04-25', 'processing'),
+(2, '2287656', 'vendor 2', '2021-04-25', 'processing'),
+(3, '2287657', 'vendor 2', '2021-04-25', 'processing'),
+(4, '2287658', 'new2', '2021-04-25', 'processing');
 
 -- --------------------------------------------------------
 
@@ -162,9 +211,21 @@ ALTER TABLE `employee`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `orderprocess`
+--
+ALTER TABLE `orderprocess`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `purchaseorder`
+--
+ALTER TABLE `purchaseorder`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -196,10 +257,22 @@ ALTER TABLE `employee`
   MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `orderprocess`
+--
+ALTER TABLE `orderprocess`
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `purchaseorder`
+--
+ALTER TABLE `purchaseorder`
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `seller`
