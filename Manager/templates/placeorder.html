@@ -28,6 +28,12 @@
   </div>
   <div class="addproductform">
     <form method="post" style="width: 100%" id="orderlistform">
+      <center>
+        <h1 style="color: white; text-shadow: 1px 1px black">
+          Place new Order
+        </h1>
+      </center>
+      <br />
       <input type="hidden" name="totoalrow" id="totoalrow" />
       <div class="row row-cols-3">
         <div class="col">
@@ -59,7 +65,13 @@
         </div>
         <div class="col">
           <div class="mb-3">
-            <input type="date" name="date" id="date" class="form-control-sm" />
+            <input
+              type="date"
+              timezone="kolkata"
+              name="date"
+              id="date"
+              class="form-control-sm"
+            />
           </div>
         </div>
       </div>
@@ -337,24 +349,38 @@
     } else {
       var myform = document.getElementById("orderlistform");
       var myformdata = new FormData(myform);
-      $("#validateorderCol").css("display", "none");
-      $("#addRowCol").css("display", "none");
-      $("#allButtons").append(
-        '<div class="col"><button type="button" class="btn mybtn" id="view" onclick="viewlist()" style="width: 200px; margin-left: 10px">Show Orders</button></div>'
-      );
-      $("#allButtons").append(
-        '<div class="col"><button type="button" class="btn mybtn" id="refresh" onclick="fresh()" style="width: 200px; margin-left: 10px">Refresh</button></div>'
-      );
       $.ajax({
-        url: "/makePurchaseOrder",
+        url: "/checkBalance",
         data: myformdata,
         cache: false,
         processData: false,
         contentType: false,
         type: "POST",
         success: function (res) {
-          // do something with the result
-          console.log(res);
+          if (res == "available") {
+            $("#validateorderCol").css("display", "none");
+            $("#addRowCol").css("display", "none");
+            $("#allButtons").append(
+              '<div class="col"><button type="button" class="btn mybtn" id="view" onclick="viewlist()" style="width: 200px; margin-left: 10px">Show Orders</button></div>'
+            );
+            $("#allButtons").append(
+              '<div class="col"><button type="button" class="btn mybtn" id="refresh" onclick="fresh()" style="width: 200px; margin-left: 10px">Refresh</button></div>'
+            );
+            $.ajax({
+              url: "/makePurchaseOrder",
+              data: myformdata,
+              cache: false,
+              processData: false,
+              contentType: false,
+              type: "POST",
+              success: function (res) {
+                // do something with the result
+                alert("Order Placed");
+              },
+            });
+          } else {
+            alert("You Dont Have Enough Balance To MAke A Purchase");
+          }
         },
       });
     }

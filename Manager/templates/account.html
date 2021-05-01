@@ -19,30 +19,88 @@
     </ul>
   </div>
   <div class="showAllproduct" style="flex-direction: column">
-    <div class="row row-cols-3">
-      <div class="col">
+    <div class="row row-cols-4">
+      <div class="col felex">
         <div class="totalcash boxx">
-          <span>Cash</span>
+          <div class="container">
+            <div class="row">
+              <center><h2>Balance</h2></center>
+            </div>
+            <div class="row">
+              <center>
+                <span
+                  ><i class="fas fa-rupee-sign"></i> {{bal[0]['balance']}}</span
+                >
+              </center>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col">
-        <div class="totalinbank boxx">
-          <span>Bank</span>
+      <div class="col felex">
+        <div class="totaldue boxx">
+          <div class="container">
+            <div class="row">
+              <center><h2>Dues</h2></center>
+            </div>
+            <div class="row">
+              <center>
+                <span><i class="fas fa-rupee-sign"></i> {{due}}</span>
+              </center>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col">
-        <div class="assets boxx">
-          <span>Assets</span>
+      <div class="col felex">
+        <div class="totalinv boxx">
+          <div class="container">
+            <div class="row">
+              <center><h2>Investment</h2></center>
+            </div>
+            <div class="row">
+              <center>
+                <span><i class="fas fa-rupee-sign"></i> 100000</span>
+              </center>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col felex">
+        <div class="totalearn boxx">
+          <div class="container">
+            <div class="row">
+              <center><h2>Earning</h2></center>
+            </div>
+            <div class="row">
+              <center>
+                <span><i class="fas fa-rupee-sign"></i>60000</span>
+              </center>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="row row-cols-2">
-      <div class="col">
-        <button class="btn mybtn">Profit And Loss Statement</button>
-      </div>
-      <div class="col">
-        <button class="btn mybtn">Balance Sheet</button>
-      </div>
+    <div class="row" style="margin: 10px; padding: 10px">
+      <form method="post" id="statementform" style="width: 100%">
+        <br />
+        <h2>Generate Profit & Loss Statement</h2>
+        <br />
+        <div class="row row-cols-2">
+          <div class="col felex">
+            <div class="mb-3">
+              <select name="fyear" id="fyear" class="form-select">
+                <option selected disabled>Select Finantial Year</option>
+                <option value="555">555</option>
+                <option value="666">666</option>
+              </select>
+            </div>
+          </div>
+          <div class="col felex">
+            <div class="mb-3">
+              <button class="btn mybtn">Generate</button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

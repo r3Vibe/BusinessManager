@@ -21,10 +21,16 @@
   <div class="showAllproduct">
     <div class="addproductform">
       <form method="post" style="width: 100%" id="newtransactionform">
-        <div class="row row-cols-3">
+        <center>
+          <h1 style="color: white; text-shadow: 1px 1px black">
+            Add New Transaction
+          </h1>
+        </center>
+        <br />
+        <div class="row row-cols-4">
           <div class="col">
             <div class="mb-3">
-              <select name="type" id="type" class="form-select">
+              <select name="type" id="type" class="form-select-sm">
                 <option value="" selected disabled>Select Type</option>
                 <option value="debit">Debit</option>
                 <option value="credit">Credit</option>
@@ -34,11 +40,12 @@
           </div>
           <div class="col">
             <div class="mb-3">
-              <select name="account" id="account" class="form-select">
+              <select name="account" id="account" class="form-select-sm">
                 <option value="" selected disabled>Select Account</option>
                 <option value="recharge">Recharge</option>
                 <option value="xerox">Xerox</option>
                 <option value="service">Service</option>
+                <option value="purchase">Purchase</option>
                 <option value="salary">Salary</option>
                 <option value="investor">Investor</option>
                 <option value="emergency">Emergency</option>
@@ -46,23 +53,55 @@
             </div>
           </div>
           <div class="col">
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">
-                <i class="fas fa-rupee-sign"></i>
-              </span>
+            <div class="mb-3">
               <input
                 type="text"
-                class="form-control"
+                class="form-control-sm"
                 placeholder="Enter Amount"
+                name="amount"
+                id="amount"
+              />
+            </div>
+          </div>
+          <div class="col">
+            <div class="mb-3">
+              <input
+                type="text"
+                placeholder="Enter Name"
+                name="customer"
+                id="customer"
+                class="form-control-sm"
+                disabled
               />
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <button class="btn mybtn">Add Entry</button>
+            <button class="btn mybtn" onclick="addEntry()">Add Entry</button>
           </div>
         </div>
+        <br />
+        <center>
+          {% for cat , msg in get_flashed_messages(with_categories=true)%} {% if
+          cat == 'error'%}
+          <div
+            class="alert alert-danger"
+            role="alert"
+            style="text-shadow: none; font-size: 1rem"
+          >
+            {{msg}}
+          </div>
+          {%endif%} {% if cat == 'success'%}
+          <div
+            class="alert alert-success"
+            role="alert"
+            style="text-shadow: none; font-size: 1rem"
+          >
+            {{msg}}
+          </div>
+          {%endif%} {%endfor%}
+        </center>
       </form>
     </div>
   </div>
@@ -70,6 +109,16 @@
 <script>
   $(document).ready(function () {
     $("#accountslink").addClass("sideactive");
+
+    $("#type").change(function () {
+      if (this.value == "due") {
+        $("#customer").removeAttr("disabled");
+      }
+    });
   });
+
+  function addEntry() {
+    $("#newtransactionform").submit();
+  }
 </script>
 {% endblock %}

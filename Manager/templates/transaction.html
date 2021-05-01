@@ -16,6 +16,22 @@
       <li>
         <a href="{{url_for('alldues')}}"> Dues</a>
       </li>
+      <li>
+        <form method="POST" id="sortby">
+          <select name="sort" id="sort" class="form-select-sm">
+            <option value="" selected disabled>Sort By</option>
+            <option value="all">All</option>
+            <option value="debit">Debit</option>
+            <option value="credit">Credit</option>
+            <option value="recharge">Recharge</option>
+            <option value="xerox">Xerox</option>
+            <option value="service">Service</option>
+            <option value="salary">Salary</option>
+            <option value="investor">Investor</option>
+            <option value="emergency">Emergency</option>
+          </select>
+        </form>
+      </li>
     </ul>
   </div>
   <div class="showAllproduct">
@@ -33,13 +49,27 @@
           <th scope="col">Balance</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        {% for x in trans %}
+        <tr>
+          <th>{{x['date']}}</th>
+          <th>{{x['reference']}}</th>
+          <th>{{x['account']}}</th>
+          <th><i class="fas fa-rupee-sign"></i> {{x['debit']}}</th>
+          <th><i class="fas fa-rupee-sign"></i> {{x['credit']}}</th>
+          <th><i class="fas fa-rupee-sign"></i> {{x['balance']}}</th>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>
 <script>
   $(document).ready(function () {
     $("#accountslink").addClass("sideactive");
+    $("#sort").change(function () {
+      $("#sortby").submit();
+    });
   });
 </script>
 {% endblock %}

@@ -224,7 +224,9 @@ def accounting():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        return render_template("account.html", username=g.user, role=g.role, date=date, time=time)
+        balance = dbQuery().getTransaction("bal")
+        dues = dbQuery().getTotalDues()
+        return render_template("account.html", username=g.user, role=g.role, date=date, time=time, bal=balance, due=dues)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -238,7 +240,13 @@ def transactions():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        return render_template("transaction.html", username=g.user, role=g.role, date=date, time=time)
+        if request.method == "GET":
+            trans = dbQuery().getTransaction("all")
+            return render_template("transaction.html", username=g.user, role=g.role, date=date, time=time, trans=trans)
+        if request.method == "POST":
+            param = request.form.get('sort')
+            trans = dbQuery().getTransaction(param)
+            return render_template("transaction.html", username=g.user, role=g.role, date=date, time=time, trans=trans)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -248,6 +256,13 @@ def transactions():
 @app.route("/newtransaction", methods=['GET', 'POST'])
 def newtransaction():
     if g.user:
+        if request.method == "POST":
+            data = request.form
+            status = dbQuery().addTransaction(data)
+            if status == "False":
+                flash("Error Addind Entry! Try Later", "error")
+            else:
+                flash("Entry Added", "success")
         date = datetime.today()
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
@@ -266,10 +281,44 @@ def alldues():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        return render_template("due.html", username=g.user, role=g.role, date=date, time=time)
+        if request.method == "GET":
+            dues = dbQuery().getAllDues("all")
+            return render_template("due.html", username=g.user, role=g.role, date=date, time=time, dues=dues)
+        if request.method == "POST":
+            values = request.form.get("search")
+            dues = dbQuery().getAllDues(values)
+            return render_template("due.html", username=g.user, role=g.role, date=date, time=time, dues=dues)
     else:
         return redirect(url_for('unauthenticated'))
 
+
+################ invoicing management page ################
+#### main page ####
+@app.route("/invoice", methods=['GET', 'POST'])
+def invoice():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+##########################
+#### main page ####
+@app.route("/makeinvoice", methods=['GET', 'POST'])
+def makeinvoice():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        allProd = dbQuery().getProducts()
+        return render_template("create.html", username=g.user, role=g.role, date=date, time=time, prods=allProd)
+    else:
+        return redirect(url_for('unauthenticated'))
 
 
 ################ remove session variable and redirect ################
@@ -290,6 +339,23 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+
+
+##############################
+#####  clear dues  ###########
+@app.route("/clearDues", methods=['GET', 'POST'])
+def clearDues():
+    if g.user:
+        if request.method == "POST":
+            reference = request.form.get("data")
+            status = dbQuery().clearDue(reference)
+            if status == 'success':
+                return "ok"
+            else:
+                flash("Something Went Wrong!", "error")
+                return "error"
+    else:
+        return "Please Login"
 
 # receive products from order list
 
@@ -405,8 +471,10 @@ def getProductofSeller():
     else:
         return "Unauthenticated"
 
+###################################################
+##### get product details of selected producct#####
 
-# get product details of selected producct
+
 @app.route("/getSelectedDetails", methods=['GET', 'POST'])
 def getSelectedDetails():
     if g.user:
@@ -435,6 +503,19 @@ def makePurchaseOrder():
         if request.method == "POST":
             details = request.form
             makeOrder = dbQuery().makePurchaseOrder(details)
+            return makeOrder
+    else:
+        return "Unauthenticated"
+
+# check for available balance
+
+
+@app.route("/checkBalance", methods=['GET', 'POST'])
+def checkBalance():
+    if g.user:
+        if request.method == "POST":
+            details = request.form
+            makeOrder = dbQuery().checkBal(details)
             return makeOrder
     else:
         return "Unauthenticated"

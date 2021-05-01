@@ -109,11 +109,10 @@
 
 .boxx {
   width: 250px;
-  height: 200px;
+  height: 100px;
   margin: 10px;
-  background-color: transparent;
-  color: #000000;
-  border: 1px solid black;
+  color: #ffffff;
+  border-radius: 25px;
   box-shadow: 0 5px 5px -5px black;
   text-transform: capitalize;
   font-size: 25px;
@@ -122,6 +121,18 @@
   justify-content: center;
 }
 
+.totalcash {
+  background-color: #e73434;
+}
+.totaldue {
+  background-color: #5534e7;
+}
+.totalinv {
+  background-color: #34e761;
+}
+.totalearn {
+  background-color: #e225a9;
+}
 .containers .buy {
   background: url("add.png");
   background-repeat: no-repeat;

@@ -19,6 +19,135 @@ cursor = db.cursor(dictionary=True)
 
 
 class dbQuery():
+    def checkBal(self, data):
+        grandtotal = int(data['totalpricef'])
+        cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+        lastBal = cursor.fetchall()
+        if len(lastBal) == 0:
+            lastBal = 0
+        else:
+            lastBal = int(lastBal[0]['balance'])
+
+        if grandtotal > lastBal:
+            return "error"
+        else:
+            return "available"
+
+    def clearDue(self, ref):
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        cursor.execute(f"SELECT * FROM alldues WHERE reference = '{ref}'")
+        allDues = cursor.fetchall()
+        cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+        lastBal = cursor.fetchall()
+        if len(lastBal) == 0:
+            lastBal = 0
+        else:
+            lastBal = int(lastBal[0]['balance'])
+        balance = lastBal + int(allDues[0]['amount'])
+        cursor.execute(
+            f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{allDues[0]['reference']}','{allDues[0]['account']}','{allDues[0]['amount']}','0','{balance}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "False"
+        else:
+            cursor.execute(f"DELETE FROM alldues WHERE reference = '{ref}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
+
+    def getTotalDues(self):
+        total = 0
+        cursor.execute("SELECT amount FROM alldues")
+        alltrans = cursor.fetchall()
+        for x in alltrans:
+            total = total + int(x['amount'])
+        return total
+
+    def getAllDues(self, param):
+        if param == "all":
+            cursor.execute("SELECT * FROM alldues")
+            alltrans = cursor.fetchall()
+            return alltrans
+        else:
+            cursor.execute(
+                f"SELECT * FROM alldues WHERE name LIKE '%{param}%'")
+            alltrans = cursor.fetchall()
+            return alltrans
+
+    def getTransaction(self, param):
+        if param == "all":
+            cursor.execute("SELECT * FROM transaction")
+            alltrans = cursor.fetchall()
+            return alltrans
+        elif param == "debit":
+            cursor.execute("SELECT * FROM transaction WHERE debit != '0'")
+            alltrans = cursor.fetchall()
+            return alltrans
+        elif param == "credit":
+            cursor.execute("SELECT * FROM transaction WHERE credit != '0'")
+            alltrans = cursor.fetchall()
+            return alltrans
+        elif param == "bal":
+            cursor.execute("SELECT * FROM transaction ORDER BY id DESC")
+            alltrans = cursor.fetchall()
+            return alltrans
+        else:
+            cursor.execute(
+                f"SELECT * FROM transaction WHERE account = '{param}'")
+            alltrans = cursor.fetchall()
+            return alltrans
+
+    def addTransaction(self, entry):
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        types = entry.get('type')
+        account = entry.get('account')
+        amount = entry.get('amount')
+        getRef = "ref22456"
+        cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+        lastBal = cursor.fetchall()
+        if len(lastBal) == 0:
+            lastBal = 0
+        else:
+            lastBal = int(lastBal[0]['balance'])
+        if types == "debit":
+            balance = lastBal + int(amount)
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{getRef}','{account}','{amount}','0','{balance}')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
+        elif types == "credit":
+            balance = lastBal - int(amount)
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{getRef}','{account}','0','{amount}','{balance}')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
+        elif types == "due":
+            custname = entry.get('customer')
+            cursor.execute(
+                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{todate}','{getRef}','{account}','{custname}','{amount}')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
+        else:
+            return "False"
+
     def getVarType(self):
         cursor.execute(f"SELECT * FROM variation")
         types = cursor.fetchall()
@@ -122,6 +251,12 @@ class dbQuery():
             orderid = products['orderid']
             vendor = products['vendor']
             date = products['date']
+            dateArr = date.split('-')
+            dateArr.reverse()
+            newdate = ""
+            for x in dateArr:
+                newdate += f"{x}-"
+            date = newdate.rstrip("-")
             product = products['product']
             qt = products['qt']
             price = products['price']
@@ -187,12 +322,23 @@ class dbQuery():
 
             # close
             workbook.close()
+            # get balance
+            cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+            lastBal = cursor.fetchall()
+            if len(lastBal) == 0:
+                lastBal = 0
+            else:
+                lastBal = int(lastBal[0]['balance'])
+            # make balance
+            balance = lastBal - int(grandtotal)
 
             # update purchaseorder database
             cursor.execute(
                 f"INSERT INTO purchaseorder(orderid,vendor,date,status) VALUES('{orderid}','{vendor}','{date}','processing')")
             cursor.execute(
                 f"INSERT INTO orderprocess(orderid,product,quantity) VALUES('{orderid}','{product}','{qt}')")
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','purchase','0','{grandtotal}','{balance}')")
             try:
                 db.commit()
             except Exception as e:
@@ -305,11 +451,23 @@ class dbQuery():
                 if i > int(products['totoalrow']):
                     break
 
+            # get balance
+            cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+            lastBal = cursor.fetchall()
+            if len(lastBal) == 0:
+                lastBal = 0
+            else:
+                lastBal = int(lastBal[0]['balance'])
+            # make balance
+            balance = lastBal - int(grandtotal)
+
             # update purchaseorder database
             cursor.execute(
                 f"INSERT INTO purchaseorder(orderid,vendor,date,status) VALUES('{orderid}','{vendor}','{date}','processing')")
             cursor.execute(
                 f"INSERT INTO orderprocess(orderid,product,quantity) VALUES('{orderid}','{prodDb}','{qtDb}')")
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','purchase','0','{grandtotal}','{balance}')")
             try:
                 db.commit()
             except Exception as e:
@@ -373,7 +531,7 @@ class dbQuery():
 class updateDb():
     def addProduct(self, details, imagename):
         today = date.today()
-        todate = today.strftime("%m/%d/%y")
+        todate = today.strftime("%d-%m-%Y")
         barcode = details['barcode']
         dimension = f"{details['length']}x{details['bredth']}x{details['height']} {details['measure']}"
         weight = f"{details['weight']} {details['weightmeasure']}"
@@ -391,7 +549,7 @@ class updateDb():
     def updateProduct(self, details, proid, imagename):
         product = proid.split('=')
         today = date.today()
-        todate = today.strftime("%m/%d/%y")
+        todate = today.strftime("%d-%m-%Y")
         barcode = details['barcode']
         dimension = f"{details['length']}x{details['bredth']}x{details['height']} {details['measure']}"
         weight = f"{details['weight']} {details['weightmeasure']}"
