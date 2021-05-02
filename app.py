@@ -16,6 +16,8 @@ import uuid
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
+    if session['user']:
+        return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
 ################  login page ################
@@ -103,6 +105,8 @@ def addmasterdata():
         if request.method == "POST":
             res = validateProduct(request.form, request.files)
             validate = res.startValidation()
+            balance = dbQuery().checkBalance(int(request.form.get("cost"))
+                                             * int(request.form.get("quantity")))
             if validate == "error1":
                 flash("Don't Do That", "error")
             elif validate == "error2":
@@ -110,6 +114,9 @@ def addmasterdata():
             elif validate == "error3":
                 flash(
                     "This Product Already In Inventory Place Order From Order Page", "error")
+            elif balance != "available":
+                flash(
+                    "You Dont Have Sufficient Balance To Add This Product", "error")
             else:
                 # upload image first
                 extinsion = request.files['image'].filename.rsplit('.')

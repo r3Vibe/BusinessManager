@@ -32,6 +32,17 @@
           </select>
         </form>
       </li>
+      <li>
+        <form method="post" id="searchform">
+          <input
+            class="form-control-sm"
+            type="search"
+            name="sort"
+            id="search"
+            placeholder="Search Product"
+          />
+        </form>
+      </li>
     </ul>
   </div>
   <div class="showAllproduct">
@@ -69,6 +80,9 @@
     $("#accountslink").addClass("sideactive");
     $("#sort").change(function () {
       $("#sortby").submit();
+    });
+    $("#search").change(function () {
+      $("#searchform").submit();
     });
   });
 </script>

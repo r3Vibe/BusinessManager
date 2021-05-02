@@ -1,7 +1,7 @@
 # all importd
 import mysql.connector
 import os
-from datetime import date
+from datetime import date, datetime
 import uuid
 import xlsxwriter
 
@@ -19,6 +19,20 @@ cursor = db.cursor(dictionary=True)
 
 
 class dbQuery():
+    def checkBalance(self, data):
+        grandtotal = int(data)
+        cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+        lastBal = cursor.fetchall()
+        if len(lastBal) == 0:
+            lastBal = 0
+        else:
+            lastBal = int(lastBal[0]['balance'])
+
+        if grandtotal > lastBal:
+            return "error"
+        else:
+            return "available"
+
     def checkBal(self, data):
         grandtotal = int(data['totalpricef'])
         cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
@@ -98,7 +112,7 @@ class dbQuery():
             return alltrans
         else:
             cursor.execute(
-                f"SELECT * FROM transaction WHERE account = '{param}'")
+                f"SELECT * FROM transaction WHERE account = '{param}' OR reference LIKE '%{param}%'")
             alltrans = cursor.fetchall()
             return alltrans
 
@@ -108,7 +122,6 @@ class dbQuery():
         types = entry.get('type')
         account = entry.get('account')
         amount = entry.get('amount')
-        getRef = "ref22456"
         cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
         lastBal = cursor.fetchall()
         if len(lastBal) == 0:
@@ -116,6 +129,7 @@ class dbQuery():
         else:
             lastBal = int(lastBal[0]['balance'])
         if types == "debit":
+            getRef = f"refdebit{account}{datetime.now().strftime('%H%M%S')}"
             balance = lastBal + int(amount)
             cursor.execute(
                 f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{getRef}','{account}','{amount}','0','{balance}')")
@@ -126,6 +140,7 @@ class dbQuery():
             else:
                 return "success"
         elif types == "credit":
+            getRef = f"refcredit{account}{today.yeardatetime.now().strftime('%H%M%S')}"
             balance = lastBal - int(amount)
             cursor.execute(
                 f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{getRef}','{account}','0','{amount}','{balance}')")
@@ -137,6 +152,7 @@ class dbQuery():
                 return "success"
         elif types == "due":
             custname = entry.get('customer')
+            getRef = f"refdue{custname}{account}{datetime.now().strftime('%H%M%S')}"
             cursor.execute(
                 f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{todate}','{getRef}','{account}','{custname}','{amount}')")
             try:
@@ -530,6 +546,12 @@ class dbQuery():
 
 class updateDb():
     def addProduct(self, details, imagename):
+        cursor.execute("SELECT * FROM purchaseorder ORDER BY id DESC")
+        allOrder = cursor.fetchall()
+        if len(allOrder) == 0:
+            orderid = "2287655"
+        else:
+            orderid = str(int(allOrder[0]['orderid']) + 1)
         today = date.today()
         todate = today.strftime("%d-%m-%Y")
         barcode = details['barcode']
@@ -537,8 +559,20 @@ class updateDb():
         weight = f"{details['weight']} {details['weightmeasure']}"
         if barcode == "":
             barcode = "nocode"
+        grandtotal = int(details['quantity']) * int(details['cost'])
+        # get balance
+        cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+        lastBal = cursor.fetchall()
+        if len(lastBal) == 0:
+            lastBal = 0
+        else:
+            lastBal = int(lastBal[0]['balance'])
+        # make balance
+        balance = lastBal - int(grandtotal)
         cursor.execute(
             f"INSERT INTO products(name,productid,status,barcode,vartype,vars,category,seller,quantity,unitprice,sellprice,tax,dimension,weight,image,date) VALUES('{details['name']}','{details['productid']}','active','{barcode}','{details['vartype']}','{details['vars']}','{details['catg']}','{details['seller']}','{details['quantity']}','{details['cost']}','{details['sellprice']}','{details['tax']}','{dimension}','{weight}','{imagename}','{todate}')")
+        cursor.execute(
+            f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{orderid}','purchase','0','{grandtotal}','{balance}')")
         try:
             db.commit()
         except Exception as e:
