@@ -19,6 +19,15 @@ cursor = db.cursor(dictionary=True)
 
 
 class dbQuery():
+    def getCustomerDetails(self, num):
+        return "anil kumer mal:shalbagan barasat"
+
+    def generateInvoiceid(seld):
+        d = datetime.now()
+        monthasnum = d.strftime("%m")
+        time = d.strftime('%H%M%S')
+        return f"Inv/{monthasnum}/{time}"
+
     def checkBalance(self, data):
         grandtotal = int(data)
         cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
@@ -206,6 +215,12 @@ class dbQuery():
             f"SELECT * FROM products WHERE id = '{product[1]}'")
         product = cursor.fetchall()
         return product
+
+    def getProd(self, pid):
+        cursor.execute(
+            f"SELECT * FROM products WHERE productid = '{pid}'")
+        product = cursor.fetchall()
+        return f"{product[0]['sellprice']}"
 
     def deleteProduct(self, pid):
         cursor.execute(f"DELETE FROM products WHERE id = '{pid}'")

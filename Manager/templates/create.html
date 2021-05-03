@@ -4,15 +4,16 @@
 <div class="notification">
   <div class="navigation2">
     <ul>
+      <li><a href="{{url_for('makeinvoice')}}" class="active"> Create</a></li>
       <li>
         <a href="{{url_for('invoice')}}"> List</a>
       </li>
-      <li><a href="{{url_for('makeinvoice')}}" class="active"> Create</a></li>
     </ul>
   </div>
   <div class="addproductform">
     <form method="post" style="width: 100%" id="invoicemaker">
       <input type="hidden" name="totoalrow" id="totoalrow" />
+      <center><h2>Customer Details</h2></center>
       <div class="row row-cols-3">
         <div class="col">
           <div class="mb-3">
@@ -21,7 +22,7 @@
               name="invid"
               id="invid"
               placeholder="Invoice ID"
-              class="form-control-sm"
+              class="form-control"
               value="{{invid}}"
             />
           </div>
@@ -29,7 +30,7 @@
         <div class="col"></div>
         <div class="col">
           <div class="mb-3">
-            <input type="date" name="date" id="date" class="form-control-sm" />
+            <input type="date" name="date" id="date" class="form-control" />
           </div>
         </div>
       </div>
@@ -38,7 +39,7 @@
           <div class="mb-3">
             <input
               type="text"
-              class="form-control-sm"
+              class="form-control"
               placeholder="Enter Phone Number"
               name="phone"
               id="phone"
@@ -49,9 +50,12 @@
           <div class="mb-3">
             <input
               type="text"
-              class="form-control-sm"
+              class="form-control"
               placeholder="Customer Name"
               disabled
+              id="custname"
+              name="custname"
+              style="text-transform: capitalize"
             />
             <input type="hidden" name="customer" id="customer" />
           </div>
@@ -59,17 +63,94 @@
         <div class="col">
           <div class="mb-3">
             <textarea
-              class="form-control-sm"
+              class="form-control"
               name="address"
               id="address"
               cols="30"
               rows="10"
               placeholder="Address"
-              style="height: 50px; width: 170px"
+              style="height: 70px; width: 348px; text-transform: capitalize"
               disabled
             ></textarea>
             <input type="hidden" name="custaddress" id="custaddress" />
           </div>
+        </div>
+      </div>
+      <hr />
+      <center><h2>Invoice</h2></center>
+      <br />
+      <div class="row row-cols-4" id="appendtoThis">
+        <div class="col">
+          <div class="mb-3">
+            <select
+              name="product"
+              id="product"
+              onchange="getDetails(this.value,this.id)"
+              class="form-select-sm"
+            >
+              <option selected disabled>Select Product</option>
+              {% for x in prods %}
+              <option value="{{x['productid']}}">{{x['name']}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="unitprice"
+              id="unitprice"
+              placeholder="Unit Price"
+              value=""
+              class="form-control-sm"
+              disabled
+            />
+            <input type="hidden" name="unitpricef" id="unitpricef" />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="quantity"
+              id="quantity"
+              placeholder="Enter Quantity"
+              class="form-control-sm"
+              onchange="maketotal(this.value,this.id)"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="totalprice"
+              id="totalprice"
+              placeholder="Total Price"
+              value=""
+              class="form-control-sm"
+              disabled
+            />
+            <input type="hidden" name="totalpricef" id="totalpricef" />
+          </div>
+        </div>
+      </div>
+      <div class="row row-cols-2">
+        <div class="col">Grand Total</div>
+        <div class="col" id="gtotal"><i class="fas fa-rupee-sign"></i> 0</div>
+        <input type="hidden" name="gto" id="gto" />
+      </div>
+      <br />
+      <div class="row row-cols-3">
+        <div class="col">
+          <button class="btn mybtn">Confirm</button>
+        </div>
+        <div class="col">
+          <button class="btn mybtn" id="addmore">Add More</button>
+        </div>
+        <div class="col">
+          <button class="btn mybtn" id="refresh">Refresh</button>
         </div>
       </div>
     </form>
@@ -77,7 +158,197 @@
 </div>
 <script>
   $(document).ready(function () {
+    var productRow = 1;
+    $("#totoalrow").val(productRow);
+
+    $("#addmore").click(function (e) {
+      e.preventDefault();
+      var check = $("#phone").val();
+      if (check == "") {
+        alert("Enter Phone Number First!");
+      } else {
+        productRow++;
+        $("#totoalrow").val(productRow);
+        //first column
+        var col = document.createElement("div");
+        col.setAttribute("class", "col");
+        //mb-3
+        var mb = document.createElement("div");
+        mb.setAttribute("class", "mb-3");
+        //select
+        var select = document.createElement("select");
+        select.setAttribute("name", "product" + productRow);
+        select.setAttribute("id", "product" + productRow);
+        select.setAttribute("class", "form-select-sm");
+        select.setAttribute("onchange", "getDetails(this.value,this.id)");
+        //option
+        var option = document.createElement("option");
+        option.setAttribute("selected", "");
+        option.setAttribute("disabled", "");
+        option.innerText = "Select Product";
+        select.appendChild(option);
+        ("{% for x in prods %}");
+        var option = document.createElement("option");
+        option.setAttribute("value", "{{x['productid']}}");
+        option.innerText = "{{x['name']}}";
+        select.appendChild(option);
+        ("{% endfor %}");
+        mb.appendChild(select);
+        col.appendChild(mb);
+        document.getElementById("appendtoThis").appendChild(col);
+        //second column
+        var col = document.createElement("div");
+        col.setAttribute("class", "col");
+        //mb-3
+        var mb = document.createElement("div");
+        mb.setAttribute("class", "mb-3");
+        //input
+        var inputs = document.createElement("input");
+        inputs.setAttribute("type", "text");
+        inputs.setAttribute("name", "unitprice" + productRow);
+        inputs.setAttribute("id", "unitprice" + productRow);
+        inputs.setAttribute("placeholder", "Unit Price");
+        inputs.setAttribute("class", "form-control-sm");
+        inputs.setAttribute("disabled", "");
+        mb.appendChild(inputs);
+        //input
+        var inputs = document.createElement("input");
+        inputs.setAttribute("type", "hidden");
+        inputs.setAttribute("name", "unitpricef" + productRow);
+        inputs.setAttribute("id", "unitpricef" + productRow);
+        mb.appendChild(inputs);
+        col.appendChild(mb);
+        document.getElementById("appendtoThis").appendChild(col);
+        //third column
+        var col = document.createElement("div");
+        col.setAttribute("class", "col");
+        //mb-3
+        var mb = document.createElement("div");
+        mb.setAttribute("class", "mb-3");
+        //input
+        var inputs = document.createElement("input");
+        inputs.setAttribute("type", "text");
+        inputs.setAttribute("name", "quantity" + productRow);
+        inputs.setAttribute("id", "quantity" + productRow);
+        inputs.setAttribute("placeholder", "Enter Quantity");
+        inputs.setAttribute("class", "form-control-sm");
+        inputs.setAttribute("onchange", "maketotal(this.value,this.id)");
+        mb.appendChild(inputs);
+        col.appendChild(mb);
+        document.getElementById("appendtoThis").appendChild(col);
+        //fourth column
+        var col = document.createElement("div");
+        col.setAttribute("class", "col");
+        //mb-3
+        var mb = document.createElement("div");
+        mb.setAttribute("class", "mb-3");
+        //input
+        var inputs = document.createElement("input");
+        inputs.setAttribute("type", "text");
+        inputs.setAttribute("name", "totalprice" + productRow);
+        inputs.setAttribute("id", "totalprice" + productRow);
+        inputs.setAttribute("placeholder", "Total Price");
+        inputs.setAttribute("class", "form-control-sm");
+        inputs.setAttribute("disabled", "");
+        mb.appendChild(inputs);
+        col.appendChild(mb);
+        //input
+        var inputs = document.createElement("input");
+        inputs.setAttribute("type", "hidden");
+        inputs.setAttribute("name", "totalpricef" + productRow);
+        inputs.setAttribute("id", "totalpricef" + productRow);
+        mb.appendChild(inputs);
+        col.appendChild(mb);
+        document.getElementById("appendtoThis").appendChild(col);
+      }
+    });
+
+    //make grand total
+    setInterval(function () {
+      var rows = $("#totoalrow").val();
+      if (rows == "1") {
+        var price = $("#totalprice").val();
+        if (price == "") {
+          price = "0";
+        }
+        $("#gtotal").html('<i class="fas fa-rupee-sign"></i> ' + price);
+        $("#gto").val($("#totalprice").val());
+      } else {
+        var price = $("#totalprice").val();
+        for (var i = 2; i <= rows; i++) {
+          var p2 = $("#totalprice" + i).val();
+          if (p2 == "") {
+            p2 = 0;
+          }
+          var price = parseInt(price) + parseInt(p2);
+        }
+
+        $("#gtotal").html('<i class="fas fa-rupee-sign"></i> ' + price);
+        $("#gto").val(price);
+      }
+    }, 10);
+
+    $("#refresh").click(function (e) {
+      e.preventDefault();
+      location.reload();
+    });
+
     $("#invoicinglink").addClass("sideactive");
+
+    $("#phone").change(function () {
+      var phoneno = $("#phone").val();
+      if ($("#phone").val().length == 10) {
+        $.post("/getCustomerDetails", { data: phoneno }, function (res) {
+          var details = res.split(":");
+          $("#custname").removeAttr("disabled");
+          $("#custname").val(details[0]);
+          $("#address").removeAttr("disabled");
+          $("#address").val(details[1]);
+        });
+      } else {
+        alert("Please Enter A Valid Number");
+      }
+    });
   });
+
+  function getDetails(val, id) {
+    if (id == "product") {
+      $.post("/getProd", { data: val }, function (res) {
+        $("#unitprice").val(res);
+        $("#unitpricef").val(res);
+      });
+    } else {
+      rownum = id.split("product");
+      $.post("/getProd", { data: val }, function (res) {
+        $("#unitprice" + rownum[1]).val(res);
+        $("#unitpricef" + rownum[1]).val(res);
+      });
+    }
+  }
+
+  function maketotal(val, id) {
+    if (id == "quantity") {
+      var pid = $("#product").val();
+      if (pid == null) {
+        alert("Select Product First!");
+      } else {
+        var quantity = val;
+        var up = $("#unitpricef").val();
+        var total = quantity * up;
+        $("#totalprice").val(total);
+      }
+    } else {
+      newid = id.split("quantity")[1];
+      var pid = $("#product" + newid).val();
+      if (pid == null) {
+        alert("Select Product First!");
+      } else {
+        var quantity = val;
+        var up = $("#unitpricef" + newid).val();
+        var total = quantity * up;
+        $("#totalprice" + newid).val(total);
+      }
+    }
+  }
 </script>
 {% endblock %}

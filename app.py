@@ -16,37 +16,45 @@ import uuid
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    if session['user']:
+    # if len(session) <= 1:
+    #     return redirect(url_for('login'))
+    # else:
+    #     return redirect(url_for('dashboard'))
+    if g.user:
         return redirect(url_for('dashboard'))
-    return redirect(url_for('login'))
-
+    else:
+        return redirect(url_for('login'))
 ################  login page ################
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    form = Login()
-    if form.validate_on_submit():
-        session.pop('user', None)
-        session.pop('role', None)
-        username = form.username.data
-        password = form.password.data
-        validate = validateUser(username, password)
-        validate = validate.validateNow()
-        if validate == "error1":
-            flash("Employee Does Not Exist! Contact Admin", "error")
-        elif validate == "error2":
-            flash(f"Password Did Not Match", "error")
-        elif validate == "error3":
-            flash("Profile Locked", "error")
-        else:
-            session['user'] = validate['username']
-            session['role'] = validate['role']
-            return redirect(url_for("dashboard"))
-    return render_template("login.html", form=form)
-
+    if not g.user:
+        form = Login()
+        if form.validate_on_submit():
+            session.pop('user', None)
+            session.pop('role', None)
+            username = form.username.data
+            password = form.password.data
+            validate = validateUser(username, password)
+            validate = validate.validateNow()
+            if validate == "error1":
+                flash("Employee Does Not Exist! Contact Admin", "error")
+            elif validate == "error2":
+                flash(f"Password Did Not Match", "error")
+            elif validate == "error3":
+                flash("Profile Locked", "error")
+            else:
+                session['user'] = validate['username']
+                session['role'] = validate['role']
+                return redirect(url_for("dashboard"))
+        return render_template("login.html", form=form)
+    else:
+        return redirect(url_for('dashboard'))
 
 ################ dashboard page ################
+
+
 @app.route("/dashboard", methods=['GET', 'POST'])
 def dashboard():
     if g.user:
@@ -300,7 +308,7 @@ def alldues():
 
 
 ################ invoicing management page ################
-#### main page ####
+#### invoice page ####
 @app.route("/invoice", methods=['GET', 'POST'])
 def invoice():
     if g.user:
@@ -314,7 +322,7 @@ def invoice():
 
 
 ##########################
-#### main page ####
+#### makeinvoice page ####
 @app.route("/makeinvoice", methods=['GET', 'POST'])
 def makeinvoice():
     if g.user:
@@ -323,7 +331,8 @@ def makeinvoice():
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
         allProd = dbQuery().getProducts()
-        return render_template("create.html", username=g.user, role=g.role, date=date, time=time, prods=allProd)
+        invoice = dbQuery().generateInvoiceid()
+        return render_template("create.html", username=g.user, role=g.role, date=date, time=time, prods=allProd, invid=invoice)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -336,6 +345,7 @@ def makeinvoice():
 def logout():
     session.pop('user', None)
     session.pop('role', None)
+    session.clear()
     return redirect(url_for("login"))
 
 
@@ -346,6 +356,34 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+
+#################################
+#########getThisproduct#########
+
+
+@app.route("/getProd", methods=['GET', 'POST'])
+def getProd():
+    if g.user:
+        if request.method == "POST":
+            pid = request.form.get("data")
+            status = dbQuery().getProd(pid)
+            return status
+    else:
+        return "Please Login"
+
+######################################
+######### getCustomerDetails #########
+
+
+@app.route("/getCustomerDetails", methods=['GET', 'POST'])
+def getCustomerDetails():
+    if g.user:
+        if request.method == "POST":
+            phonenumber = request.form.get("data")
+            status = dbQuery().getCustomerDetails(phonenumber)
+            return status
+    else:
+        return "Please Login"
 
 
 ##############################
