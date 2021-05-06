@@ -19,10 +19,43 @@ cursor = db.cursor(dictionary=True)
 
 
 class dbQuery():
-    def getCustomerDetails(self, num):
-        return "anil kumer mal:shalbagan barasat"
+    def addCustomer(self, details):
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        dob = details['dob']
+        dateArr = dob.split('-')
+        dateArr.reverse()
+        newdate = ""
+        for x in dateArr:
+            newdate += f"{x}-"
+        dob = newdate.rstrip("-")
+        cursor.execute(
+            f"INSERT INTO customer(name,phone,custid,address,gender,birthday,joindate) VALUES('{details['name']}','{details['phoneno']}','{details['phoneno']}','{details['custaddr']}','{details['gender']}','{dob}','{todate}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "False"
+        else:
+            return "success"
 
-    def generateInvoiceid(seld):
+    def makeNewInvoice(self, product):
+        print(product)
+        print(product['totoalrow'])
+        print(product['unitpricef'])
+        return "success"
+
+    def getCustomerDetails(self, num):
+        cursor.execute(f"SELECT * FROM customer WHERE custid='{num}'")
+        details = cursor.fetchall()
+        if len(details) == 0:
+            return "error"
+        else:
+            name = details[0]['name']
+            addr = details[0]['address']
+            returnn = f"{name}:{addr}"
+            return returnn
+
+    def generateInvoiceid(self):
         d = datetime.now()
         monthasnum = d.strftime("%m")
         time = d.strftime('%H%M%S')

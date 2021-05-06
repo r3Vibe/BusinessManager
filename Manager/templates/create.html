@@ -14,7 +14,8 @@
     <form method="post" style="width: 100%" id="invoicemaker">
       <input type="hidden" name="totoalrow" id="totoalrow" />
       <center><h2>Customer Details</h2></center>
-      <div class="row row-cols-3">
+      <br />
+      <div class="row row-cols-4">
         <div class="col">
           <div class="mb-3">
             <input
@@ -22,24 +23,16 @@
               name="invid"
               id="invid"
               placeholder="Invoice ID"
-              class="form-control"
+              class="form-control-sm"
               value="{{invid}}"
             />
           </div>
         </div>
-        <div class="col"></div>
-        <div class="col">
-          <div class="mb-3">
-            <input type="date" name="date" id="date" class="form-control" />
-          </div>
-        </div>
-      </div>
-      <div class="row row-cols-3">
         <div class="col">
           <div class="mb-3">
             <input
               type="text"
-              class="form-control"
+              class="form-control-sm"
               placeholder="Enter Phone Number"
               name="phone"
               id="phone"
@@ -50,20 +43,26 @@
           <div class="mb-3">
             <input
               type="text"
-              class="form-control"
+              class="form-control-sm"
               placeholder="Customer Name"
               disabled
               id="custname"
               name="custname"
               style="text-transform: capitalize"
             />
-            <input type="hidden" name="customer" id="customer" />
           </div>
         </div>
         <div class="col">
           <div class="mb-3">
+            <input type="date" name="date" id="date" class="form-control-sm" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="mb-3">
             <textarea
-              class="form-control"
+              class="form-control-sm"
               name="address"
               id="address"
               cols="30"
@@ -72,12 +71,11 @@
               style="height: 70px; width: 348px; text-transform: capitalize"
               disabled
             ></textarea>
-            <input type="hidden" name="custaddress" id="custaddress" />
           </div>
         </div>
       </div>
       <hr />
-      <center><h2>Invoice</h2></center>
+      <center><h2>Products</h2></center>
       <br />
       <div class="row row-cols-4" id="appendtoThis">
         <div class="col">
@@ -87,6 +85,7 @@
               id="product"
               onchange="getDetails(this.value,this.id)"
               class="form-select-sm"
+              style="width: 180px"
             >
               <option selected disabled>Select Product</option>
               {% for x in prods %}
@@ -137,16 +136,65 @@
         </div>
       </div>
       <div class="row row-cols-2">
-        <div class="col">Grand Total</div>
-        <div class="col" id="gtotal"><i class="fas fa-rupee-sign"></i> 0</div>
+        <div class="col"><h3>Grand Total</h3></div>
+        <div class="col" id="gtotal">
+          <h3><i class="fas fa-rupee-sign"></i> 0</h3>
+        </div>
         <input type="hidden" name="gto" id="gto" />
       </div>
+      <hr />
+      <center><h2>Payment</h2></center>
       <br />
       <div class="row row-cols-3">
         <div class="col">
-          <button class="btn mybtn">Confirm</button>
+          <div class="mb-3">
+            <select
+              name="pmode"
+              id="pmode"
+              class="form-select-sm"
+              style="width: 180px"
+              disabled
+            >
+              <option selected disabled>Select Payment Mode</option>
+              <option value="cash">Cash</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
         </div>
         <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="paid"
+              id="paid"
+              placeholder="Enter Amount Paid"
+              class="form-control-sm"
+              disabled
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="due"
+              id="due"
+              disabled
+              class="form-control-sm"
+              placeholder="Amount Due"
+            />
+            <input type="hidden" name="dues" id="dues" />
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="row row-cols-3">
+        <div class="col" id="newbtn">
+          <button class="btn mybtn" id="confirm" type="submit" disabled>
+            Confirm
+          </button>
+        </div>
+        <div class="col" id="newbtn2">
           <button class="btn mybtn" id="addmore">Add More</button>
         </div>
         <div class="col">
@@ -156,8 +204,145 @@
     </form>
   </div>
 </div>
+
+<!-- customer not found modal -->
+<div class="modal fade" id="mymodal">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Customer Not Found</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>The Number You Entered Is Not Registered With Us.</p>
+        <br />
+        <p>Please Add Customer To Databse</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="regestration">
+          Register
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- customer registration modal -->
+<div class="modal fade" id="mymodal2">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Customer Registration</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="customerreg">
+          <div class="col">
+            <div class="mb-3">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                placeholder="Enter Customer Name"
+                class="form-control"
+                name="name"
+                id="name"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="name">Phone Number</label>
+              <input
+                type="text"
+                placeholder="Enter Phone Number"
+                class="form-control"
+                name="phoneno"
+                id="phoneno"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="gender">Gender</label><br />
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="gender"
+                  id="gender"
+                  value="male"
+                />
+                <label class="form-check-label" for="gender">Male</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="gender"
+                  id="gender"
+                  value="female"
+                />
+                <label class="form-check-label" for="gender">Female</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="gender"
+                  id="gender"
+                  value="other"
+                />
+                <label class="form-check-label" for="gender">Other</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="dob">Date Of Birth</label>
+              <input
+                timezone="kolkata"
+                type="date"
+                name="dob"
+                id="dob"
+                class="form-control"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="custaddr">Address</label>
+              <textarea
+                name="custaddr"
+                id="custaddr"
+                cols="30"
+                rows="10"
+                placeholder="Enter Customer Address"
+                class="form-control"
+                style="height: 90px"
+              ></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" id="regester">
+          Register
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   $(document).ready(function () {
+    document.getElementById("date").valueAsDate = new Date();
+
     var productRow = 1;
     $("#totoalrow").val(productRow);
 
@@ -180,6 +365,7 @@
         select.setAttribute("name", "product" + productRow);
         select.setAttribute("id", "product" + productRow);
         select.setAttribute("class", "form-select-sm");
+        select.setAttribute("style", "width:180px");
         select.setAttribute("onchange", "getDetails(this.value,this.id)");
         //option
         var option = document.createElement("option");
@@ -261,6 +447,75 @@
         col.appendChild(mb);
         document.getElementById("appendtoThis").appendChild(col);
       }
+      function redirect() {
+        location.href = "/invoice";
+      }
+    });
+
+    $("#regestration").click(function () {
+      $("#mymodal").modal("toggle");
+      $("#mymodal2").modal("toggle");
+    });
+
+    $("#pmode").change(function () {
+      $("#paid").removeAttr("disabled");
+      $("#confirm").removeAttr("disabled");
+    });
+
+    $("#paid").keyup(function () {
+      var amt = parseInt(this.value);
+      var gtotal = parseInt($("#gto").val());
+      var due = gtotal - amt;
+      if (isNaN(due)) {
+        due = 0;
+      }
+      $("#due").val(due);
+      $("#dues").val(due);
+    });
+
+    $("#confirm").click(function (e) {
+      e.preventDefault();
+      var getdate = $("#date").val();
+      if (getdate == "") {
+        alert("Please Select Date");
+      } else {
+        var myform = document.getElementById("invoicemaker");
+        var myformdata = new FormData(myform);
+        $.ajax({
+          url: "/newInvoice",
+          data: myformdata,
+          cache: false,
+          processData: false,
+          contentType: false,
+          type: "POST",
+          success: function (res) {
+            if (res == "success") {
+              $("#confirm").remove();
+              $("#addmore").remove();
+              var bbtn = document.createElement("button");
+              bbtn.setAttribute("class", "btn mybtn");
+              bbtn.setAttribute("id", "print");
+              bbtn.setAttribute("style", "width:100px");
+              bbtn.innerText = "Print";
+              document.getElementById("newbtn").appendChild(bbtn);
+              var bbtn = document.createElement("button");
+              bbtn.setAttribute("class", "btn mybtn");
+              bbtn.setAttribute("id", "showorders");
+              bbtn.setAttribute("type", "button");
+              bbtn.setAttribute("onclick", "location.href='/invoice'");
+              bbtn.innerText = "Show Invoices";
+              document.getElementById("newbtn2").appendChild(bbtn);
+            } else {
+              alert("Unable To Process This Order now");
+            }
+          },
+        });
+      }
+    });
+
+    $("#showorders").on("click", function (e) {
+      e.preventDefault();
+      location.href = "/invoice";
     });
 
     //make grand total
@@ -271,10 +526,15 @@
         if (price == "") {
           price = "0";
         }
-        $("#gtotal").html('<i class="fas fa-rupee-sign"></i> ' + price);
+        $("#gtotal").html(
+          '<h3><i class="fas fa-rupee-sign"></i> ' + price + "</h3>"
+        );
         $("#gto").val($("#totalprice").val());
       } else {
         var price = $("#totalprice").val();
+        if (price == "") {
+          price = 0;
+        }
         for (var i = 2; i <= rows; i++) {
           var p2 = $("#totalprice" + i).val();
           if (p2 == "") {
@@ -283,7 +543,9 @@
           var price = parseInt(price) + parseInt(p2);
         }
 
-        $("#gtotal").html('<i class="fas fa-rupee-sign"></i> ' + price);
+        $("#gtotal").html(
+          '<h3><i class="fas fa-rupee-sign"></i> ' + price + "</h3>"
+        );
         $("#gto").val(price);
       }
     }, 10);
@@ -299,11 +561,15 @@
       var phoneno = $("#phone").val();
       if ($("#phone").val().length == 10) {
         $.post("/getCustomerDetails", { data: phoneno }, function (res) {
-          var details = res.split(":");
-          $("#custname").removeAttr("disabled");
-          $("#custname").val(details[0]);
-          $("#address").removeAttr("disabled");
-          $("#address").val(details[1]);
+          if (res == "error") {
+            $("#mymodal").modal("show");
+          } else {
+            var details = res.split(":");
+            $("#custname").removeAttr("disabled");
+            $("#custname").val(details[0]);
+            $("#address").removeAttr("disabled");
+            $("#address").val(details[1]);
+          }
         });
       } else {
         alert("Please Enter A Valid Number");
@@ -312,17 +578,23 @@
   });
 
   function getDetails(val, id) {
-    if (id == "product") {
-      $.post("/getProd", { data: val }, function (res) {
-        $("#unitprice").val(res);
-        $("#unitpricef").val(res);
-      });
+    var phone = $("#phone").val();
+    if (phone == "") {
+      alert("Enter Phone Number First!");
     } else {
-      rownum = id.split("product");
-      $.post("/getProd", { data: val }, function (res) {
-        $("#unitprice" + rownum[1]).val(res);
-        $("#unitpricef" + rownum[1]).val(res);
-      });
+      $("#pmode").removeAttr("disabled");
+      if (id == "product") {
+        $.post("/getProd", { data: val }, function (res) {
+          $("#unitprice").val(res);
+          $("#unitpricef").val(res);
+        });
+      } else {
+        rownum = id.split("product");
+        $.post("/getProd", { data: val }, function (res) {
+          $("#unitprice" + rownum[1]).val(res);
+          $("#unitpricef" + rownum[1]).val(res);
+        });
+      }
     }
   }
 
@@ -336,6 +608,7 @@
         var up = $("#unitpricef").val();
         var total = quantity * up;
         $("#totalprice").val(total);
+        $("#totalpricef").val(total);
       }
     } else {
       newid = id.split("quantity")[1];
@@ -347,8 +620,25 @@
         var up = $("#unitpricef" + newid).val();
         var total = quantity * up;
         $("#totalprice" + newid).val(total);
+        $("#totalpricef" + newid).val(total);
       }
     }
   }
+  $("#regester").click(function (e) {
+    var myform = document.getElementById("customerreg");
+    var myformdata = new FormData(myform);
+    $.ajax({
+      url: "/addCustomer",
+      data: myformdata,
+      cache: false,
+      processData: false,
+      contentType: false,
+      type: "POST",
+      success: function (res) {
+        $("#mymodal2").modal("toggle");
+        alert(res);
+      },
+    });
+  });
 </script>
 {% endblock %}

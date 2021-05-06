@@ -275,7 +275,7 @@ def newtransaction():
             data = request.form
             status = dbQuery().addTransaction(data)
             if status == "False":
-                flash("Error Addind Entry! Try Later", "error")
+                flash("Error Adding Entry! Try Later", "error")
             else:
                 flash("Entry Added", "success")
         date = datetime.today()
@@ -357,6 +357,22 @@ def unauthenticated():
 
 ############### api ##############
 
+
+###################################
+######## make customer invoice ####
+@app.route("/newInvoice", methods=['GET', 'POST'])
+def newInvoice():
+    if g.user:
+        if request.method == "POST":
+            details = request.form
+            status = dbQuery().makeNewInvoice(details)
+            if status == "success":
+                return "success"
+            else:
+                return "error"
+    else:
+        return "Please Login"
+
 #################################
 #########getThisproduct#########
 
@@ -371,6 +387,22 @@ def getProd():
     else:
         return "Please Login"
 
+
+###################################
+############addCustomer############
+@app.route("/addCustomer", methods=['GET', 'POST'])
+def addCustomer():
+    if g.user:
+        if request.method == "POST":
+            data = request.form
+            status = dbQuery().addCustomer(data)
+            if status == "success":
+                return "Customer Added"
+            else:
+                return "Unable To Add New Customer"
+    else:
+        return "Please Login"
+
 ######################################
 ######### getCustomerDetails #########
 
@@ -381,7 +413,10 @@ def getCustomerDetails():
         if request.method == "POST":
             phonenumber = request.form.get("data")
             status = dbQuery().getCustomerDetails(phonenumber)
-            return status
+            if status == False:
+                return "error"
+            else:
+                return status
     else:
         return "Please Login"
 
