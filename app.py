@@ -316,7 +316,8 @@ def invoice():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time)
+        allInv = dbQuery().getInvoices()
+        return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time, invoice=allInv)
     else:
         return redirect(url_for('unauthenticated'))
 

@@ -1,5 +1,5 @@
 {% extends 'basewithnav.html' %} {% block title %}
-<title>Inventory Management</title>
+<title>Invoicing</title>
 {% endblock %} {% block contents %}
 <div class="notification">
   <div class="navigation2">
@@ -19,13 +19,27 @@
         <tr>
           <th scope="col">File</th>
           <th scope="col">Invoice ID</th>
-          <th scope="col">Customer</th>
+          <th scope="col">Customer ID</th>
           <th scope="col">Date</th>
           <th scope="col">Status</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        {% for x in invoice %}
+        <tr>
+          <th>file</th>
+          <th>{{x['invid']}}</th>
+          <th>{{x['custid']}}</th>
+          <th>{{x['date']}}</th>
+          <th>{{x['status']}}</th>
+          <th>
+            <button type="button" class="btn mybtn">Refund</button>
+            <button type="button" class="btn mybtn">Return</button>
+          </th>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>

@@ -19,6 +19,11 @@ cursor = db.cursor(dictionary=True)
 
 
 class dbQuery():
+    def getInvoices(self):
+        cursor.execute(f"SELECT * FROM sellorder")
+        allinv = cursor.fetchall()
+        return allinv
+
     def addCustomer(self, details):
         today = date.today()
         todate = today.strftime("%d-%m-%Y")
@@ -39,10 +44,104 @@ class dbQuery():
             return "success"
 
     def makeNewInvoice(self, product):
-        print(product)
-        print(product['totoalrow'])
-        print(product['unitpricef'])
-        return "success"
+        # get the html date
+        dob = product['date']
+        # convert date to dd/mm/yyyy formate
+        dateArr = dob.split('-')
+        dateArr.reverse()
+        newdate = ""
+        for x in dateArr:
+            newdate += f"{x}-"
+        dob = newdate.rstrip("-")
+        # check balance
+        # if paid is 0 then update the dues database
+        if product['paid'] == "0":
+            # updating dues database
+            cursor.execute(
+                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{dob}','{product['invid']}','sale','{product['custname']}','{product['dues']}')")
+            # add new entry to sell list sellorder database
+            cursor.execute(
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{product['pmode']}','{product['invid']}','{product['phone']}','{dob}','sold')")
+            # get number of product available
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product['product']}'")
+            quantity = int(cursor.fetchall()[0]['quantity'])
+            newquantity = quantity - int(product['quantity'])
+            # update products db with new qt
+            cursor.execute(
+                f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
+        # if due is 0 then update the transaction database(fully paid)
+        elif product['dues'] == "0":
+            # update trnsactions
+            # get the cusrrent balance from db
+            cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+            lastBal = cursor.fetchall()
+            if len(lastBal) == 0:
+                lastBal = 0
+            else:
+                lastBal = int(lastBal[0]['balance'])
+            # add current balance with the new debit of sell price
+            balance = lastBal + int(product['paid'])
+            # add entry to transaction db
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{dob}','{product['invid']}','sale','{product['paid']}','0','{balance}')")
+            # add new entry to sell list sellorder database
+            cursor.execute(
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{product['pmode']}','{product['invid']}','{product['phone']}','{dob}','sold')")
+            # get number of product available
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product['product']}'")
+            quantity = int(cursor.fetchall()[0]['quantity'])
+            newquantity = quantity - int(product['quantity'])
+            # update products db with new qt
+            cursor.execute(
+                f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
+        else:
+            # update trnsactions
+            # get the cusrrent balance from db
+            cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+            lastBal = cursor.fetchall()
+            if len(lastBal) == 0:
+                lastBal = 0
+            else:
+                lastBal = int(lastBal[0]['balance'])
+            # add current balance with the new debit of sell price
+            balance = lastBal + int(product['paid'])
+            # add entry to transaction db
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{dob}','{product['invid']}','sale','{product['paid']}','0','{balance}')")
+            # add entry to dues db
+            cursor.execute(
+                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{dob}','{product['invid']}','sale','{product['custname']}','{product['dues']}')")
+            # add entry to sellorder db
+            cursor.execute(
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{product['pmode']}','{product['invid']}','{product['phone']}','{dob}','sold')")
+            # get number of product available
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product['product']}'")
+            quantity = int(cursor.fetchall()[0]['quantity'])
+            newquantity = quantity - int(product['quantity'])
+            # update products db with new qt
+            cursor.execute(
+                f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "False"
+            else:
+                return "success"
 
     def getCustomerDetails(self, num):
         cursor.execute(f"SELECT * FROM customer WHERE custid='{num}'")
@@ -58,8 +157,9 @@ class dbQuery():
     def generateInvoiceid(self):
         d = datetime.now()
         monthasnum = d.strftime("%m")
+        day = d.strftime("%d")
         time = d.strftime('%H%M%S')
-        return f"Inv/{monthasnum}/{time}"
+        return f"Inv/{day}/{monthasnum}/{time}"
 
     def checkBalance(self, data):
         grandtotal = int(data)
