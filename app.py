@@ -316,8 +316,13 @@ def invoice():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
-        allInv = dbQuery().getInvoices()
-        return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time, invoice=allInv)
+        if request.method == "GET":
+            allInv = dbQuery().getInvoices("all")
+            return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time, invoice=allInv)
+        if request.method == "POST":
+            parameter = request.form.get("search")
+            allInv = dbQuery().getInvoices(parameter)
+            return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time, invoice=allInv)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -358,9 +363,26 @@ def unauthenticated():
 
 ############### api ##############
 
+#######################################
+##########checkAvailable################
 
+
+@app.route("/checkAvailable", methods=['GET', 'POST'])
+def checkAvailable():
+    if g.user:
+        if request.method == "POST":
+            details = request.form
+            status = dbQuery().checkAvailable(details)
+            if status == "success":
+                return "success"
+            else:
+                return "error"
+    else:
+        return "Please Login"
 ###################################
 ######## make customer invoice ####
+
+
 @app.route("/newInvoice", methods=['GET', 'POST'])
 def newInvoice():
     if g.user:

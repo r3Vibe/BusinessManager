@@ -8,6 +8,17 @@
       <li>
         <a href="{{url_for('invoice')}}" class="active"> List</a>
       </li>
+      <li>
+        <form method="post" id="searchform">
+          <input
+            class="form-control-sm"
+            type="search"
+            name="search"
+            id="search"
+            placeholder="Search Product"
+          />
+        </form>
+      </li>
     </ul>
   </div>
   <div class="showAllproduct">
@@ -45,6 +56,9 @@
 </div>
 <script>
   $(document).ready(function () {
+    $("#search").change(function () {
+      $("#searchform").submit();
+    });
     $("#invoicinglink").addClass("sideactive");
   });
 </script>

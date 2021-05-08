@@ -219,9 +219,9 @@
         ></button>
       </div>
       <div class="modal-body">
-        <p>The Number You Entered Is Not Registered With Us.</p>
+        <p>The Phone Number Is Not Registered With Us.</p>
         <br />
-        <p>Please Add Customer To Databse</p>
+        <p>Please Add Customer To The Databse</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -333,7 +333,65 @@
           Close
         </button>
         <button type="submit" class="btn btn-primary" id="regester">
-          Register
+          Add Customer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- customer registration response modal -->
+<div class="modal fade" id="mymodal3">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Customer Registration</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p id="responce"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          onclick="location.reload()"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- quantity exced modal -->
+<div class="modal fade" id="mymodal4">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Quantity Exceded</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Please Sell Lower Quantity Of The Product <br />
+          As The Warehouse Dose Not Contain Provided Quantity Of This Product
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
         </button>
       </div>
     </div>
@@ -481,8 +539,9 @@
       } else {
         var myform = document.getElementById("invoicemaker");
         var myformdata = new FormData(myform);
+        //check if products available for sell
         $.ajax({
-          url: "/newInvoice",
+          url: "/checkAvailable",
           data: myformdata,
           cache: false,
           processData: false,
@@ -490,23 +549,37 @@
           type: "POST",
           success: function (res) {
             if (res == "success") {
-              $("#confirm").remove();
-              $("#addmore").remove();
-              var bbtn = document.createElement("button");
-              bbtn.setAttribute("class", "btn mybtn");
-              bbtn.setAttribute("id", "print");
-              bbtn.setAttribute("style", "width:100px");
-              bbtn.innerText = "Print";
-              document.getElementById("newbtn").appendChild(bbtn);
-              var bbtn = document.createElement("button");
-              bbtn.setAttribute("class", "btn mybtn");
-              bbtn.setAttribute("id", "showorders");
-              bbtn.setAttribute("type", "button");
-              bbtn.setAttribute("onclick", "location.href='/invoice'");
-              bbtn.innerText = "Show Invoices";
-              document.getElementById("newbtn2").appendChild(bbtn);
+              $.ajax({
+                url: "/newInvoice",
+                data: myformdata,
+                cache: false,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (res) {
+                  if (res == "success") {
+                    $("#confirm").remove();
+                    $("#addmore").remove();
+                    var bbtn = document.createElement("button");
+                    bbtn.setAttribute("class", "btn mybtn");
+                    bbtn.setAttribute("id", "print");
+                    bbtn.setAttribute("style", "width:100px");
+                    bbtn.innerText = "Print";
+                    document.getElementById("newbtn").appendChild(bbtn);
+                    var bbtn = document.createElement("button");
+                    bbtn.setAttribute("class", "btn mybtn");
+                    bbtn.setAttribute("id", "showorders");
+                    bbtn.setAttribute("type", "button");
+                    bbtn.setAttribute("onclick", "location.href='/invoice'");
+                    bbtn.innerText = "Show Invoices";
+                    document.getElementById("newbtn2").appendChild(bbtn);
+                  } else {
+                    alert("Unable To Process This Order now");
+                  }
+                },
+              });
             } else {
-              alert("Unable To Process This Order now");
+              $("#mymodal4").modal("toggle");
             }
           },
         });
@@ -636,7 +709,8 @@
       type: "POST",
       success: function (res) {
         $("#mymodal2").modal("toggle");
-        alert(res);
+        $("#responce").html(res);
+        $("#mymodal3").modal("toggle");
       },
     });
   });

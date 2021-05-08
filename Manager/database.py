@@ -19,10 +19,29 @@ cursor = db.cursor(dictionary=True)
 
 
 class dbQuery():
-    def getInvoices(self):
-        cursor.execute(f"SELECT * FROM sellorder")
-        allinv = cursor.fetchall()
-        return allinv
+    def checkAvailable(self, details):
+        rows = details['totoalrow']
+        if rows == "1":
+            quantity = details['quantity']
+            product = details['product']
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product}'")
+            quantityatdb = cursor.fetchall()[0]['quantity']
+            if quantity > quantityatdb:
+                return "error"
+            else:
+                return "success"
+
+    def getInvoices(self, param):
+        if param == "all":
+            cursor.execute(f"SELECT * FROM sellorder ORDER BY id DESC")
+            allinv = cursor.fetchall()
+            return allinv
+        else:
+            cursor.execute(
+                f"SELECT * FROM sellorder WHERE invid LIKE '%{param}%' OR custid LIKE '%{param}%'")
+            allinv = cursor.fetchall()
+            return allinv
 
     def addCustomer(self, details):
         today = date.today()
@@ -226,7 +245,7 @@ class dbQuery():
 
     def getAllDues(self, param):
         if param == "all":
-            cursor.execute("SELECT * FROM alldues")
+            cursor.execute("SELECT * FROM alldues ORDER BY id DESC")
             alltrans = cursor.fetchall()
             return alltrans
         else:
@@ -237,7 +256,7 @@ class dbQuery():
 
     def getTransaction(self, param):
         if param == "all":
-            cursor.execute("SELECT * FROM transaction")
+            cursor.execute("SELECT * FROM transaction ORDER BY id DESC")
             alltrans = cursor.fetchall()
             return alltrans
         elif param == "debit":
@@ -332,7 +351,7 @@ class dbQuery():
         return pids
 
     def getProducts(self):
-        cursor.execute("SELECT * FROM products")
+        cursor.execute("SELECT * FROM products ORDER BY id DESC")
         product = cursor.fetchall()
         return product
 
@@ -401,7 +420,7 @@ class dbQuery():
 
     def getCurrentOrders(self, parameter):
         if parameter == 'all':
-            cursor.execute(f"SELECT * FROM purchaseorder")
+            cursor.execute(f"SELECT * FROM purchaseorder ORDER BY id DESC")
             product = cursor.fetchall()
             return product
         else:
