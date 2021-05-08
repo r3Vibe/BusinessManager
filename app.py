@@ -635,6 +635,16 @@ def downloadOrder(filename):
     else:
         return "Unauthenticated"
 
+
+@app.route("/downloadOrder2/<filename>", methods=['GET', 'POST'])
+def downloadOrder2(filename):
+    if g.user:
+        filename = filename.split('=')
+        fileee = f"static/invoices/{filename[1]}.pdf"
+        return send_file(fileee, as_attachment=True)
+    else:
+        return "Unauthenticated"
+
 # print file
 
 

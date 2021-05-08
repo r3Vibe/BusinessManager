@@ -4,6 +4,7 @@ import os
 from datetime import date, datetime
 import uuid
 import xlsxwriter
+from fpdf import FPDF
 
 # connect to database
 db = mysql.connector.connect(
@@ -16,6 +17,156 @@ db = mysql.connector.connect(
 
 # database curso
 cursor = db.cursor(dictionary=True)
+
+
+class Makepdf():
+    def make(self, details):
+        global detailsar
+        detailsar = details
+        pdf = PDF()
+        pdf.add_page()
+        pdf.body()
+        try:
+            pdf.output(f"./Manager/static/invoices/{detailsar['invid']}.pdf")
+        except Exception as e:
+            print(e)
+            return "error"
+        else:
+            return "success"
+
+
+class PDF(FPDF):
+    def header(self):
+        self.set_font('helvetica', '', 30)
+        self.cell(w=0, h=10, txt="Rever Design", align="L")
+
+        self.set_font('helvetica', "", 15)
+        self.cell(0, 10, "Call:7044287686", ln=1, align="R")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, "Make Your Dream Design", align="L")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, "Wapp:7003391137", ln=1, align="R")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, f"Invoice: {detailsar['invid']}", 0, 0, "L")
+        self.cell(0, 10, "Email:reverdesign125@gmail.com", ln=1, align="R")
+        self.set_font('helvetica', 'B', 10)
+        self.set_fill_color(255, 265, 55)
+        self.cell(0, 8, "BILL OF SUPPLY", ln=1,
+                  align="C", border=1, fill=True)
+        self.ln(3)
+        self.set_font('helvetica', '', 25)
+        self.cell(0, 10, "Customer Details:-", 0, 1, "L")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, f"Name: {detailsar['custname']}", 0, 1, "L")
+        self.cell(0, 10, f"Contact: {detailsar['phone']}", 0, 1, "L")
+        self.cell(0, 10, f"Address: {detailsar['address']}", 0, 1, "L")
+        self.ln(3)
+    # Page footer
+
+    def footer(self):
+        # Position at 1.5 cm from bottom
+        self.set_y(-40)
+        self.set_font('Times', '', 15)
+        self.cell(110, 6, "* Terms & Conditions *", 0, 1, "L")
+        self.cell(110, 6, "1.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(20)
+        self.cell(40, 6, "(Autorized Signature)", 0, 1, "C", False)
+        self.cell(110, 6, "2.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(20)
+        self.cell(40, 6, "............................................................",
+                  0, 1, "C", False)
+        self.cell(110, 6, "3.lorem ipsom dolor sit amet", 0, 1, "L")
+        self.ln(4)
+        # helvetica italic 8
+        self.set_font('helvetica', '', 10)
+        self.set_fill_color(255, 265, 55)
+        # Page number
+        self.cell(
+            0, 8, '1st Floor Binapani Market Colony More Barasat kol-700124', 1, 0, 'C', fill=True)
+
+    def body(self):
+        if detailsar['totoalrow'] == "1":
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{detailsar['product']}'")
+            productname = cursor.fetchall()
+            self.set_font('Times', '', 12)
+            self.set_fill_color(10, 191, 219)
+            # header of table
+            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(30, 8, "Quantity", 1, 0, "C", True)
+            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Tax", 1, 0, "C", True)
+            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            # contrent of table
+
+            self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+
+            self.set_font('Times', '', 12)
+            self.set_fill_color(0, 255, 0)
+            self.cell(155, 8, "Grand total", 1, 0, "C", True)
+            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.set_font('Times', '', 15)
+            self.cell(120)
+            self.cell(35, 8, "Payment", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Paid", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Due", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+        else:
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{detailsar['product']}'")
+            productname = cursor.fetchall()
+            i = 2
+            self.set_font('Times', '', 12)
+            self.set_fill_color(10, 191, 219)
+            # header of table
+            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(30, 8, "Quantity", 1, 0, "C", True)
+            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Tax", 1, 0, "C", True)
+            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            # first row
+            self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+            # next rows
+            while i <= int(detailsar['totoalrow']):
+                cursor.execute(
+                    f"SELECT * FROM products WHERE productid = '{detailsar[f'product{i}']}'")
+                productname = cursor.fetchall()
+                self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+                self.cell(
+                    30, 8, f"{detailsar[f'quantity{i}']}", 1, 0, "C", False)
+                self.cell(
+                    35, 8, f"{detailsar[f'unitpricef{i}']}", 1, 0, "C", False)
+                self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
+                self.cell(
+                    35, 8, f"{detailsar[f'totalpricef{i}']}", 1, 1, "C", False)
+                i += 1
+            # last part
+            self.set_font('Times', '', 12)
+            self.set_fill_color(0, 255, 0)
+            self.cell(155, 8, "Grand total", 1, 0, "C", True)
+            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.set_font('Times', '', 15)
+            self.cell(120)
+            self.cell(35, 8, "Payment", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Paid", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Due", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
 
 
 class dbQuery():
@@ -31,6 +182,27 @@ class dbQuery():
                 return "error"
             else:
                 return "success"
+        else:
+            quantity = details['quantity']
+            product = details['product']
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{product}'")
+            quantityatdb = cursor.fetchall()[0]['quantity']
+            if quantity > quantityatdb:
+                return "error"
+            else:
+                i = 2
+                while i <= int(rows):
+                    quantity = details[f'quantity{i}']
+                    product = details[f'product{i}']
+                    cursor.execute(
+                        f"SELECT * FROM products WHERE productid = '{product}'")
+                    quantityatdb = cursor.fetchall()[0]['quantity']
+                    i += 1
+                    if quantity > quantityatdb:
+                        return "error"
+                    else:
+                        return "success"
 
     def getInvoices(self, param):
         if param == "all":
@@ -72,6 +244,7 @@ class dbQuery():
         for x in dateArr:
             newdate += f"{x}-"
         dob = newdate.rstrip("-")
+        # get product name
         # check balance
         # if paid is 0 then update the dues database
         if product['paid'] == "0":
@@ -89,12 +262,17 @@ class dbQuery():
             # update products db with new qt
             cursor.execute(
                 f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
-            try:
-                db.commit()
-            except Exception as e:
-                return "False"
+            status = Makepdf().make(product)
+            if status == "success":
+                try:
+                    db.commit()
+                except Exception as e:
+                    print(e)
+                    return "False"
+                else:
+                    return "success"
             else:
-                return "success"
+                return "False"
         # if due is 0 then update the transaction database(fully paid)
         elif product['dues'] == "0":
             # update trnsactions
@@ -121,12 +299,16 @@ class dbQuery():
             # update products db with new qt
             cursor.execute(
                 f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
-            try:
-                db.commit()
-            except Exception as e:
-                return "False"
+            status = Makepdf().make(product)
+            if status == "success":
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "False"
+                else:
+                    return "success"
             else:
-                return "success"
+                return "False"
         else:
             # update trnsactions
             # get the cusrrent balance from db
@@ -155,12 +337,16 @@ class dbQuery():
             # update products db with new qt
             cursor.execute(
                 f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
-            try:
-                db.commit()
-            except Exception as e:
-                return "False"
+            status = Makepdf().make(product)
+            if status == "success":
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "False"
+                else:
+                    return "success"
             else:
-                return "success"
+                return "False"
 
     def getCustomerDetails(self, num):
         cursor.execute(f"SELECT * FROM customer WHERE custid='{num}'")
@@ -178,7 +364,7 @@ class dbQuery():
         monthasnum = d.strftime("%m")
         day = d.strftime("%d")
         time = d.strftime('%H%M%S')
-        return f"Inv/{day}/{monthasnum}/{time}"
+        return f"Inv-{day}-{monthasnum}-{time}"
 
     def checkBalance(self, data):
         grandtotal = int(data)
@@ -411,12 +597,11 @@ class dbQuery():
         return product
 
     def getNewOrderID(self):
-        cursor.execute("SELECT * FROM purchaseorder ORDER BY id DESC")
-        allOrder = cursor.fetchall()
-        if len(allOrder) == 0:
-            return "2287655"
-        else:
-            return str(int(allOrder[0]['orderid']) + 1)
+        d = datetime.now()
+        monthasnum = d.strftime("%m")
+        day = d.strftime("%d")
+        time = d.strftime('%H%M%S')
+        return f"Ord-{day}-{monthasnum}-{time}"
 
     def getCurrentOrders(self, parameter):
         if parameter == 'all':

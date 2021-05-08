@@ -39,7 +39,11 @@
       <tbody>
         {% for x in invoice %}
         <tr>
-          <th>file</th>
+          <th>
+            <a onclick="downloadfile2(`{{x['invid']}}`)">
+              <img src="static/pdf.png" width="30" height="35" />
+            </a>
+          </th>
           <th>{{x['invid']}}</th>
           <th>{{x['custid']}}</th>
           <th>{{x['date']}}</th>
@@ -55,6 +59,9 @@
   </div>
 </div>
 <script>
+  function downloadfile2(id) {
+    location.href = "/downloadOrder2/filename=" + id;
+  }
   $(document).ready(function () {
     $("#search").change(function () {
       $("#searchform").submit();
