@@ -563,7 +563,11 @@ h2 {
   padding: 3px;
   color: white;
 }
-
+.status .attention {
+  background-color: orangered;
+  padding: 3px;
+  color: white;
+}
 .nothing {
   border: none;
   outline: none;

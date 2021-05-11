@@ -16,10 +16,6 @@ import uuid
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    # if len(session) <= 1:
-    #     return redirect(url_for('login'))
-    # else:
-    #     return redirect(url_for('dashboard'))
     if g.user:
         return redirect(url_for('dashboard'))
     else:
@@ -93,6 +89,7 @@ def inventory():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
+        dbQuery().checkQtStat()
         if request.method == "POST":
             specificProduct = dbQuery().getSpeProducts(request.form.get('search'))
             return render_template("inventory.html", username=g.user, role=g.role, date=date, time=time, products=specificProduct)
@@ -341,6 +338,22 @@ def makeinvoice():
         return render_template("create.html", username=g.user, role=g.role, date=date, time=time, prods=allProd, invid=invoice)
     else:
         return redirect(url_for('unauthenticated'))
+#############################
+####### serviceinvoice ######
+
+
+@app.route("/serviceinvoice", methods=['GET', 'POST'])
+def serviceinvoice():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        allProd = dbQuery().getServices()
+        invoice = dbQuery().generateInvoiceid()
+        return render_template("servicecreate.html", username=g.user, role=g.role, date=date, time=time, prods=allProd, invid=invoice)
+    else:
+        return redirect(url_for('unauthenticated'))
 
 
 ################ remove session variable and redirect ################
@@ -362,6 +375,50 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+
+
+#############################################
+###########   cancelOrder ###################
+@app.route("/cancelOrder", methods=['GET', 'POST'])
+def cancelOrder():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("data")
+            status = dbQuery().cancelOrder(details)
+            return "error"
+    else:
+        return "Please Login"
+###############################################
+############# newServiceInvoice ###############
+
+
+@app.route("/newServiceInvoice", methods=['GET', 'POST'])
+def newServiceInvoice():
+    if g.user:
+        if request.method == "POST":
+            details = request.form
+            status = dbQuery().makeInvoiceforService(details)
+            return "success"
+    else:
+        return "Please Login"
+
+###############################################
+###########  markAsSold  ######################
+
+
+@app.route("/markAsSold", methods=['GET', 'POST'])
+def markAsSold():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("data")
+            status = dbQuery().markAsSold(details)
+            if status == "success":
+                return "success"
+            else:
+                return "error"
+    else:
+        return "Please Login"
+
 
 #######################################
 ##########checkAvailable################
@@ -406,6 +463,17 @@ def getProd():
         if request.method == "POST":
             pid = request.form.get("data")
             status = dbQuery().getProd(pid)
+            return status
+    else:
+        return "Please Login"
+
+
+@app.route("/getServ", methods=['GET', 'POST'])
+def getServ():
+    if g.user:
+        if request.method == "POST":
+            pid = request.form.get("data")
+            status = dbQuery().getServ(pid)
             return status
     else:
         return "Please Login"
@@ -635,15 +703,6 @@ def downloadOrder(filename):
     else:
         return "Unauthenticated"
 
-
-@app.route("/downloadOrder2/<filename>", methods=['GET', 'POST'])
-def downloadOrder2(filename):
-    if g.user:
-        filename = filename.split('=')
-        fileee = f"static/invoices/{filename[1]}.pdf"
-        return send_file(fileee, as_attachment=True)
-    else:
-        return "Unauthenticated"
 
 # print file
 

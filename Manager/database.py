@@ -19,6 +19,22 @@ db = mysql.connector.connect(
 cursor = db.cursor(dictionary=True)
 
 
+class Makepdf2():
+    def make(self, details):
+        global detailsar
+        detailsar = details
+        pdf = PDF2()
+        pdf.add_page()
+        pdf.body()
+        try:
+            pdf.output(f"./Manager/static/invoices/{detailsar['invid']}.pdf")
+        except Exception as e:
+            print(e)
+            return "error"
+        else:
+            return "success"
+
+
 class Makepdf():
     def make(self, details):
         global detailsar
@@ -57,9 +73,11 @@ class PDF(FPDF):
         self.set_font('helvetica', '', 25)
         self.cell(0, 10, "Customer Details:-", 0, 1, "L")
         self.set_font('helvetica', '', 15)
-        self.cell(0, 10, f"Name: {detailsar['custname']}", 0, 1, "L")
+        self.cell(
+            0, 10, f"Name: {(detailsar['custname']).capitalize()}", 0, 1, "L")
         self.cell(0, 10, f"Contact: {detailsar['phone']}", 0, 1, "L")
-        self.cell(0, 10, f"Address: {detailsar['address']}", 0, 1, "L")
+        self.cell(
+            0, 10, f"Address: {(detailsar['address']).capitalize()}", 0, 1, "L")
         self.ln(3)
     # Page footer
 
@@ -87,7 +105,7 @@ class PDF(FPDF):
     def body(self):
         if detailsar['totoalrow'] == "1":
             cursor.execute(
-                f"SELECT * FROM products WHERE productid = '{detailsar['product']}'")
+                f"SELECT * FROM products WHERE productid = '{(detailsar['product']).capitalize()}'")
             productname = cursor.fetchall()
             self.set_font('Times', '', 12)
             self.set_fill_color(10, 191, 219)
@@ -95,11 +113,12 @@ class PDF(FPDF):
             self.cell(60, 8, "Item", 1, 0, "C", True)
             self.cell(30, 8, "Quantity", 1, 0, "C", True)
             self.cell(35, 8, "Unit Price", 1, 0, "C", True)
-            self.cell(30, 8, "Tax", 1, 0, "C", True)
+            self.cell(30, 8, "Tax (%)", 1, 0, "C", True)
             self.cell(35, 8, "Total Price", 1, 1, "C", True)
             # contrent of table
 
-            self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+            self.cell(
+                60, 8, f"{(productname[0]['name']).capitalize()}", 1, 0, "C", False)
             self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
             self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
             self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
@@ -112,7 +131,8 @@ class PDF(FPDF):
             self.set_font('Times', '', 15)
             self.cell(120)
             self.cell(35, 8, "Payment", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
+            self.cell(
+                35, 8, f"{(detailsar['pmode']).capitalize()}", 1, 1, "C", False)
             self.cell(120)
             self.cell(35, 8, "Paid", 1, 0, "C", False)
             self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
@@ -169,16 +189,312 @@ class PDF(FPDF):
             self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
 
 
+class PDF2(FPDF):
+    def header(self):
+        self.set_font('helvetica', '', 30)
+        self.cell(w=0, h=10, txt="Rever Design", align="L")
+
+        self.set_font('helvetica', "", 15)
+        self.cell(0, 10, "Call:7044287686", ln=1, align="R")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, "Make Your Dream Design", align="L")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, "Wapp:7003391137", ln=1, align="R")
+        self.set_font('helvetica', '', 15)
+        self.cell(0, 10, f"Invoice: {detailsar['invid']}", 0, 0, "L")
+        self.cell(0, 10, "Email:reverdesign125@gmail.com", ln=1, align="R")
+        self.set_font('helvetica', 'B', 10)
+        self.set_fill_color(255, 265, 55)
+        self.cell(0, 8, "BILL OF SUPPLY", ln=1,
+                  align="C", border=1, fill=True)
+        self.ln(3)
+        self.set_font('helvetica', '', 25)
+        self.cell(0, 10, "Customer Details:-", 0, 1, "L")
+        self.set_font('helvetica', '', 15)
+        self.cell(
+            0, 10, f"Name: {(detailsar['custname']).capitalize()}", 0, 1, "L")
+        self.cell(0, 10, f"Contact: {detailsar['phone']}", 0, 1, "L")
+        self.cell(
+            0, 10, f"Address: {(detailsar['address']).capitalize()}", 0, 1, "L")
+        self.ln(3)
+    # Page footer
+
+    def footer(self):
+        # Position at 1.5 cm from bottom
+        self.set_y(-40)
+        self.set_font('Times', '', 15)
+        self.cell(110, 6, "* Terms & Conditions *", 0, 1, "L")
+        self.cell(110, 6, "1.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(20)
+        self.cell(40, 6, "(Autorized Signature)", 0, 1, "C", False)
+        self.cell(110, 6, "2.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(20)
+        self.cell(40, 6, "............................................................",
+                  0, 1, "C", False)
+        self.cell(110, 6, "3.lorem ipsom dolor sit amet", 0, 1, "L")
+        self.ln(4)
+        # helvetica italic 8
+        self.set_font('helvetica', '', 10)
+        self.set_fill_color(255, 265, 55)
+        # Page number
+        self.cell(
+            0, 8, '1st Floor Binapani Market Colony More Barasat kol-700124', 1, 0, 'C', fill=True)
+
+    def body(self):
+        if detailsar['totoalrow'] == "1":
+            cursor.execute(
+                f"SELECT * FROM services WHERE serviceid = '{(detailsar['service'])}'")
+            productname = cursor.fetchall()
+            self.set_font('Times', '', 12)
+            self.set_fill_color(10, 191, 219)
+            # header of table
+            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(30, 8, "Quantity", 1, 0, "C", True)
+            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Tax (%)", 1, 0, "C", True)
+            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            # contrent of table
+
+            self.cell(
+                60, 8, f"{(productname[0]['name']).capitalize()}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+
+            self.set_font('Times', '', 12)
+            self.set_fill_color(0, 255, 0)
+            self.cell(155, 8, "Grand total", 1, 0, "C", True)
+            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.set_font('Times', '', 15)
+            self.cell(120)
+            self.cell(35, 8, "Payment", 1, 0, "C", False)
+            self.cell(
+                35, 8, f"{(detailsar['pmode']).capitalize()}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Paid", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Due", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+        else:
+            cursor.execute(
+                f"SELECT * FROM services WHERE serviceid = '{detailsar['service']}'")
+            productname = cursor.fetchall()
+            i = 2
+            self.set_font('Times', '', 12)
+            self.set_fill_color(10, 191, 219)
+            # header of table
+            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(30, 8, "Quantity", 1, 0, "C", True)
+            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Tax", 1, 0, "C", True)
+            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            # first row
+            self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+            # next rows
+            while i <= int(detailsar['totoalrow']):
+                cursor.execute(
+                    f"SELECT * FROM services WHERE serviceid = '{detailsar[f'service{i}']}'")
+                productname = cursor.fetchall()
+                self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+                self.cell(
+                    30, 8, f"{detailsar[f'quantity{i}']}", 1, 0, "C", False)
+                self.cell(
+                    35, 8, f"{detailsar[f'unitpricef{i}']}", 1, 0, "C", False)
+                self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
+                self.cell(
+                    35, 8, f"{detailsar[f'totalpricef{i}']}", 1, 1, "C", False)
+                i += 1
+            # last part
+            self.set_font('Times', '', 12)
+            self.set_fill_color(0, 255, 0)
+            self.cell(155, 8, "Grand total", 1, 0, "C", True)
+            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.set_font('Times', '', 15)
+            self.cell(120)
+            self.cell(35, 8, "Payment", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Paid", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(120)
+            self.cell(35, 8, "Due", 1, 0, "C", False)
+            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+
+
 class dbQuery():
+    def cancelOrder(self, id):
+        print(id)
+        return True
+
+    def makeInvoiceforService(self, services):
+        # make date in proper formate
+        date = services['date']
+        dateArr = date.split('-')
+        dateArr.reverse()
+        newdate = ""
+        for x in dateArr:
+            newdate += f"{x}-"
+        date = newdate.rstrip("-")
+        # get customer id
+        custid = services['phone']
+        # get payment mode
+        pmode = services['pmode']
+        # get customer name
+        custname = services['custname']
+        # get invoice id
+        orderid = services['invid']
+        # check which database to update
+        paid = int(services['paid'])
+        dues = int(services['dues'])
+        if paid == 0:
+            # update dues database
+            cursor.execute(
+                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','service','{custname}','{dues}')")
+            # sell order db update
+            cursor.execute(
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','sold')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                status = Makepdf2().make(services)
+                if status == "success":
+                    return "success"
+                else:
+                    return "error"
+        elif dues == 0:
+            # find current balance
+            cursor.execute("SELECT * FROM transaction ORDER BY id DESC")
+            balance = int(cursor.fetchall()[0]['balance'])
+            newbalance = balance + paid
+            # update transactions db
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','service','{paid}','0','{newbalance}')")
+            # sell order db update
+            cursor.execute(
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','sold')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                status = Makepdf2().make(services)
+                if status == "success":
+                    return "success"
+                else:
+                    return "error"
+        else:
+            # find current balance
+            cursor.execute("SELECT * FROM transaction ORDER BY id DESC")
+            balance = int(cursor.fetchall()[0]['balance'])
+            newbalance = balance + paid
+            # update transactions db
+            cursor.execute(
+                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','service','{paid}','0','{newbalance}')")
+            # sell order db update
+            cursor.execute(
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','sold')")
+            # update dues database
+            cursor.execute(
+                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','service','{custname}','{dues}')")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                status = Makepdf2().make(services)
+                if status == "success":
+                    return "success"
+                else:
+                    return "error"
+
+    def getServices(self):
+        cursor.execute("SELECT * FROM services")
+        allServ = cursor.fetchall()
+        return allServ
+
+    def checkQtStat(self):
+        cursor.execute(
+            "UPDATE products SET status = 'stopped' WHERE quantity = 0")
+        try:
+            db.commit()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            cursor.execute(
+                "UPDATE products SET status = 'active' WHERE quantity > 5")
+            try:
+                db.commit()
+            except Exception as e:
+                print(e)
+                return False
+            else:
+                cursor.execute(
+                    "UPDATE products SET status = 'attention' WHERE quantity <= 5 AND quantity > 0")
+                try:
+                    db.commit()
+                except Exception as e:
+                    print(e)
+                    return False
+                else:
+                    return True
+
+    def markAsSold(self, invoice):
+        # get product id and quantity
+        cursor.execute(
+            f"SELECT * FROM orderprocess WHERE orderid = '{invoice}'")
+        details = cursor.fetchall()[0]
+        products = details['product']
+        quantity = details['quantity']
+        singleProd = products.split(":")
+        singleQt = quantity.split(":")
+        i = 0
+        # update quantity from database
+        while i < len(singleProd):
+            # get current quantity iof product
+            cursor.execute(
+                f"SELECT * FROM products WHERE productid = '{singleProd[i]}'")
+            currentqt = int(cursor.fetchall()[0]['quantity'])
+            newqt = currentqt - int(singleQt[i])
+            cursor.execute(
+                f"UPDATE products SET quantity = '{newqt}' WHERE productid = '{singleProd[i]}'")
+            print(f"{singleProd[i]}:{singleQt[i]}")
+            i += 1
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            cursor.execute(
+                f"UPDATE sellorder SET status = 'sold' WHERE invid = '{invoice}'")
+            cursor.execute(
+                f"UPDATE orderprocess SET status = 'sold' WHERE orderid = '{invoice}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                return "success"
+        # # get current quantity
+        # cursor.execute("SELECT * FROM products WHERE productid = {}")
+
     def checkAvailable(self, details):
-        rows = details['totoalrow']
-        if rows == "1":
+        rows = int(details['totoalrow'])
+        if rows == 1:
             quantity = details['quantity']
             product = details['product']
             cursor.execute(
                 f"SELECT * FROM products WHERE productid = '{product}'")
             quantityatdb = cursor.fetchall()[0]['quantity']
-            if quantity > quantityatdb:
+            if int(quantity) > int(quantityatdb):
                 return "error"
             else:
                 return "success"
@@ -188,7 +504,7 @@ class dbQuery():
             cursor.execute(
                 f"SELECT * FROM products WHERE productid = '{product}'")
             quantityatdb = cursor.fetchall()[0]['quantity']
-            if quantity > quantityatdb:
+            if int(quantity) > int(quantityatdb):
                 return "error"
             else:
                 i = 2
@@ -198,11 +514,11 @@ class dbQuery():
                     cursor.execute(
                         f"SELECT * FROM products WHERE productid = '{product}'")
                     quantityatdb = cursor.fetchall()[0]['quantity']
+
                     i += 1
-                    if quantity > quantityatdb:
+                    if int(quantity) > int(quantityatdb):
                         return "error"
-                    else:
-                        return "success"
+                return "success"
 
     def getInvoices(self, param):
         if param == "all":
@@ -235,118 +551,108 @@ class dbQuery():
             return "success"
 
     def makeNewInvoice(self, product):
-        # get the html date
-        dob = product['date']
-        # convert date to dd/mm/yyyy formate
-        dateArr = dob.split('-')
+        # make date in proper formate
+        date = product['date']
+        dateArr = date.split('-')
         dateArr.reverse()
         newdate = ""
         for x in dateArr:
             newdate += f"{x}-"
-        dob = newdate.rstrip("-")
-        # get product name
-        # check balance
-        # if paid is 0 then update the dues database
-        if product['paid'] == "0":
-            # updating dues database
-            cursor.execute(
-                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{dob}','{product['invid']}','sale','{product['custname']}','{product['dues']}')")
-            # add new entry to sell list sellorder database
-            cursor.execute(
-                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{product['pmode']}','{product['invid']}','{product['phone']}','{dob}','sold')")
-            # get number of product available
-            cursor.execute(
-                f"SELECT * FROM products WHERE productid = '{product['product']}'")
-            quantity = int(cursor.fetchall()[0]['quantity'])
-            newquantity = quantity - int(product['quantity'])
-            # update products db with new qt
-            cursor.execute(
-                f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
-            status = Makepdf().make(product)
-            if status == "success":
-                try:
-                    db.commit()
-                except Exception as e:
-                    print(e)
-                    return "False"
-                else:
-                    return "success"
-            else:
-                return "False"
-        # if due is 0 then update the transaction database(fully paid)
-        elif product['dues'] == "0":
-            # update trnsactions
-            # get the cusrrent balance from db
-            cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
-            lastBal = cursor.fetchall()
-            if len(lastBal) == 0:
-                lastBal = 0
-            else:
-                lastBal = int(lastBal[0]['balance'])
-            # add current balance with the new debit of sell price
-            balance = lastBal + int(product['paid'])
-            # add entry to transaction db
-            cursor.execute(
-                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{dob}','{product['invid']}','sale','{product['paid']}','0','{balance}')")
-            # add new entry to sell list sellorder database
-            cursor.execute(
-                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{product['pmode']}','{product['invid']}','{product['phone']}','{dob}','sold')")
-            # get number of product available
-            cursor.execute(
-                f"SELECT * FROM products WHERE productid = '{product['product']}'")
-            quantity = int(cursor.fetchall()[0]['quantity'])
-            newquantity = quantity - int(product['quantity'])
-            # update products db with new qt
-            cursor.execute(
-                f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
-            status = Makepdf().make(product)
-            if status == "success":
-                try:
-                    db.commit()
-                except Exception as e:
-                    return "False"
-                else:
-                    return "success"
-            else:
-                return "False"
+        date = newdate.rstrip("-")
+        # get customer id
+        custid = product['phone']
+        # get payment mode
+        pmode = product['pmode']
+        # get customer name
+        custname = product['custname']
+        # get invoice id
+        orderid = product['invid']
+        # make single string product and quantity
+        rows = int(product['totoalrow'])
+        if rows == 1:
+            productid = product['product']
+            productqt = product['quantity']
         else:
-            # update trnsactions
-            # get the cusrrent balance from db
-            cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
-            lastBal = cursor.fetchall()
-            if len(lastBal) == 0:
-                lastBal = 0
-            else:
-                lastBal = int(lastBal[0]['balance'])
-            # add current balance with the new debit of sell price
-            balance = lastBal + int(product['paid'])
-            # add entry to transaction db
-            cursor.execute(
-                f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{dob}','{product['invid']}','sale','{product['paid']}','0','{balance}')")
-            # add entry to dues db
-            cursor.execute(
-                f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{dob}','{product['invid']}','sale','{product['custname']}','{product['dues']}')")
-            # add entry to sellorder db
-            cursor.execute(
-                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{product['pmode']}','{product['invid']}','{product['phone']}','{dob}','sold')")
-            # get number of product available
-            cursor.execute(
-                f"SELECT * FROM products WHERE productid = '{product['product']}'")
-            quantity = int(cursor.fetchall()[0]['quantity'])
-            newquantity = quantity - int(product['quantity'])
-            # update products db with new qt
-            cursor.execute(
-                f"UPDATE products SET quantity = '{newquantity}' WHERE productid = '{product['product']}'")
-            status = Makepdf().make(product)
-            if status == "success":
+            i = 2
+            productid = product['product']
+            productqt = product['quantity']
+            while i <= rows:
+                productid += f":{product[f'product{i}']}"
+                productqt += f":{product[f'quantity{i}']}"
+                i += 1
+        # update orderlist database
+        cursor.execute(
+            f"INSERT INTO orderprocess(orderid,product,quantity,status) VALUES('{orderid}','{productid}','{productqt}','Processing')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            # check which database to update
+            paid = int(product['paid'])
+            dues = int(product['dues'])
+            if paid == 0:
+                # update dues database
+                cursor.execute(
+                    f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','sale','{custname}','{dues}')")
+                # sell order db update
+                cursor.execute(
+                    f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing')")
                 try:
                     db.commit()
                 except Exception as e:
-                    return "False"
+                    return "error"
                 else:
-                    return "success"
+                    status = Makepdf().make(product)
+                    if status == "success":
+                        return "success"
+                    else:
+                        return "error"
+            elif dues == 0:
+                # find current balance
+                cursor.execute("SELECT * FROM transaction ORDER BY id DESC")
+                balance = int(cursor.fetchall()[0]['balance'])
+                newbalance = balance + paid
+                # update transactions db
+                cursor.execute(
+                    f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','sale','{paid}','0','{newbalance}')")
+                # sell order db update
+                cursor.execute(
+                    f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing')")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    status = Makepdf().make(product)
+                    if status == "success":
+                        return "success"
+                    else:
+                        return "error"
             else:
-                return "False"
+                # find current balance
+                cursor.execute("SELECT * FROM transaction ORDER BY id DESC")
+                balance = int(cursor.fetchall()[0]['balance'])
+                newbalance = balance + paid
+                # update transactions db
+                cursor.execute(
+                    f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','sale','{paid}','0','{newbalance}')")
+                # sell order db update
+                cursor.execute(
+                    f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing')")
+                # update dues database
+                cursor.execute(
+                    f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','sale','{custname}','{dues}')")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    status = Makepdf().make(product)
+                    if status == "success":
+                        return "success"
+                    else:
+                        return "error"
 
     def getCustomerDetails(self, num):
         cursor.execute(f"SELECT * FROM customer WHERE custid='{num}'")
@@ -558,7 +864,19 @@ class dbQuery():
         cursor.execute(
             f"SELECT * FROM products WHERE productid = '{pid}'")
         product = cursor.fetchall()
-        return f"{product[0]['sellprice']}"
+        tax = product[0]['tax']
+        price = product[0]['sellprice']
+        return f"{price}:{tax}"
+
+    def getServ(self, pid):
+        print(pid)
+        cursor.execute(
+            f"SELECT * FROM services WHERE serviceid = '{pid}'")
+        service = cursor.fetchall()
+        print(service)
+        tax = service[0]['tax']
+        price = service[0]['price']
+        return f"{price}:{tax}"
 
     def deleteProduct(self, pid):
         cursor.execute(f"DELETE FROM products WHERE id = '{pid}'")
@@ -719,7 +1037,13 @@ class dbQuery():
 
             orderid = products[f'orderid']
             vendor = products[f'vendor']
-            date = products[f'date']
+            date = products['date']
+            dateArr = date.split('-')
+            dateArr.reverse()
+            newdate = ""
+            for x in dateArr:
+                newdate += f"{x}-"
+            date = newdate.rstrip("-")
             grandtotal = products['totalpricef']
 
             # create workbook

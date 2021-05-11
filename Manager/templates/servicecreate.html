@@ -4,9 +4,9 @@
 <div class="notification">
   <div class="navigation2">
     <ul>
-      <li><a href="{{url_for('makeinvoice')}}" class="active"> Product</a></li>
+      <li><a href="{{url_for('makeinvoice')}}"> Product</a></li>
       <li>
-        <a href="{{url_for('serviceinvoice')}}"> Service</a>
+        <a href="{{url_for('serviceinvoice')}}" class="active"> Service</a>
       </li>
       <li>
         <a href="{{url_for('invoice')}}"> List</a>
@@ -78,21 +78,21 @@
         </div>
       </div>
       <hr />
-      <center><h2>Products</h2></center>
+      <center><h2>Services</h2></center>
       <br />
       <div class="row row-cols-5" id="appendtoThis">
         <div class="col">
           <div class="mb-3">
             <select
-              name="product"
-              id="product"
+              name="service"
+              id="service"
               onchange="getDetails(this.value,this.id)"
               class="form-select-sm"
               style="width: 180px"
             >
-              <option selected disabled>Select Product</option>
+              <option selected disabled>Select Service</option>
               {% for x in prods %}
-              <option value="{{x['productid']}}">{{x['name']}}</option>
+              <option value="{{x['serviceid']}}">{{x['name']}}</option>
               {% endfor %}
             </select>
           </div>
@@ -353,6 +353,7 @@
     </div>
   </div>
 </div>
+
 <!-- customer registration response modal -->
 <div class="modal fade" id="mymodal3">
   <div class="modal-dialog modal-dialog-centered">
@@ -440,7 +441,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Product Not Selected</h5>
+        <h5 class="modal-title">Service Not Selected</h5>
         <button
           type="button"
           class="btn-close"
@@ -449,7 +450,7 @@
         ></button>
       </div>
       <div class="modal-body">
-        <p>Please Select A Product</p>
+        <p>Please Select A Service</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -530,8 +531,8 @@
         mb.setAttribute("class", "mb-3");
         //select
         var select = document.createElement("select");
-        select.setAttribute("name", "product" + productRow);
-        select.setAttribute("id", "product" + productRow);
+        select.setAttribute("name", "service" + productRow);
+        select.setAttribute("id", "service" + productRow);
         select.setAttribute("class", "form-select-sm");
         select.setAttribute("style", "width:180px");
         select.setAttribute("onchange", "getDetails(this.value,this.id)");
@@ -543,7 +544,7 @@
         select.appendChild(option);
         ("{% for x in prods %}");
         var option = document.createElement("option");
-        option.setAttribute("value", "{{x['productid']}}");
+        option.setAttribute("value", "{{x['serviceid']}}");
         option.innerText = "{{x['name']}}";
         select.appendChild(option);
         ("{% endfor %}");
@@ -631,9 +632,6 @@
         col.appendChild(mb);
         document.getElementById("appendtoThis").appendChild(col);
       }
-      function redirect() {
-        location.href = "/invoice";
-      }
     });
 
     $("#regestration").click(function () {
@@ -659,56 +657,37 @@
 
     $("#confirm").click(function (e) {
       e.preventDefault();
-      var getdate = $("#date").val();
-      if (getdate == "") {
-      } else {
-        var myform = document.getElementById("invoicemaker");
-        var myformdata = new FormData(myform);
-        //check if products available for sell
-        $.ajax({
-          url: "/checkAvailable",
-          data: myformdata,
-          cache: false,
-          processData: false,
-          contentType: false,
-          type: "POST",
-          success: function (res) {
-            if (res == "success") {
-              $.ajax({
-                url: "/newInvoice",
-                data: myformdata,
-                cache: false,
-                processData: false,
-                contentType: false,
-                type: "POST",
-                success: function (res) {
-                  if (res == "success") {
-                    $("#confirm").remove();
-                    $("#addmore").remove();
-                    var bbtn = document.createElement("button");
-                    bbtn.setAttribute("class", "btn mybtn");
-                    bbtn.setAttribute("id", "print");
-                    bbtn.setAttribute("style", "width:100px");
-                    bbtn.innerText = "Print";
-                    document.getElementById("newbtn").appendChild(bbtn);
-                    var bbtn = document.createElement("button");
-                    bbtn.setAttribute("class", "btn mybtn");
-                    bbtn.setAttribute("id", "showorders");
-                    bbtn.setAttribute("type", "button");
-                    bbtn.setAttribute("onclick", "location.href='/invoice'");
-                    bbtn.innerText = "Show Invoices";
-                    document.getElementById("newbtn2").appendChild(bbtn);
-                  } else {
-                    $("#processerror").modal("toggle");
-                  }
-                },
-              });
-            } else {
-              $("#mymodal4").modal("toggle");
-            }
-          },
-        });
-      }
+      var myform = document.getElementById("invoicemaker");
+      var myformdata = new FormData(myform);
+      $.ajax({
+        url: "/newServiceInvoice",
+        data: myformdata,
+        cache: false,
+        processData: false,
+        contentType: false,
+        type: "POST",
+        success: function (res) {
+          if (res == "success") {
+            $("#confirm").remove();
+            $("#addmore").remove();
+            var bbtn = document.createElement("button");
+            bbtn.setAttribute("class", "btn mybtn");
+            bbtn.setAttribute("id", "print");
+            bbtn.setAttribute("style", "width:100px");
+            bbtn.innerText = "Print";
+            document.getElementById("newbtn").appendChild(bbtn);
+            var bbtn = document.createElement("button");
+            bbtn.setAttribute("class", "btn mybtn");
+            bbtn.setAttribute("id", "showorders");
+            bbtn.setAttribute("type", "button");
+            bbtn.setAttribute("onclick", "location.href='/invoice'");
+            bbtn.innerText = "Show Invoices";
+            document.getElementById("newbtn2").appendChild(bbtn);
+          } else {
+            $("#processerror").modal("toggle");
+          }
+        },
+      });
     });
 
     $("#showorders").on("click", function (e) {
@@ -784,8 +763,8 @@
       $("#product").val("Select Product");
     } else {
       $("#pmode").removeAttr("disabled");
-      if (id == "product") {
-        $.post("/getProd", { data: val }, function (res) {
+      if (id == "service") {
+        $.post("/getServ", { data: val }, function (res) {
           var price = res.split(":")[0];
           var tax = res.split(":")[1];
           $("#unitprice").val(price);
@@ -793,8 +772,8 @@
           $("#tax").val(tax);
         });
       } else {
-        rownum = id.split("product");
-        $.post("/getProd", { data: val }, function (res) {
+        rownum = id.split("service");
+        $.post("/getServ", { data: val }, function (res) {
           var price = res.split(":")[0];
           var tax = res.split(":")[1];
           $("#unitprice" + rownum[1]).val(price);
@@ -807,29 +786,27 @@
 
   function maketotal(val, id) {
     if (id == "quantity") {
-      var pid = $("#product").val();
+      var pid = $("#service").val();
       if (pid == null) {
         $("#producterror").modal("toggle");
         $("#quantity").val("");
       } else {
         var quantity = val;
         var up = $("#unitpricef").val();
-        var tax = $("#tax").val();
-        var total = (quantity * up * tax) / 100 + quantity * up;
+        var total = quantity * up;
         $("#totalprice").val(total);
         $("#totalpricef").val(total);
       }
     } else {
       newid = id.split("quantity")[1];
-      var pid = $("#product" + newid).val();
+      var pid = $("#service" + newid).val();
       if (pid == null) {
         $("#producterror").modal("toggle");
         $("#quantity" + newid).val("");
       } else {
         var quantity = val;
         var up = $("#unitpricef" + newid).val();
-        var tax = $("#tax" + newid).val();
-        var total = quantity * up + (quantity * up * tax) / 100;
+        var total = quantity * up;
         $("#totalprice" + newid).val(total);
         $("#totalpricef" + newid).val(total);
       }

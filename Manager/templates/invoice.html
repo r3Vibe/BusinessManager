@@ -4,7 +4,10 @@
 <div class="notification">
   <div class="navigation2">
     <ul>
-      <li><a href="{{url_for('makeinvoice')}}"> Create</a></li>
+      <li><a href="{{url_for('makeinvoice')}}"> Product</a></li>
+      <li>
+        <a href="{{url_for('serviceinvoice')}}"> Service</a>
+      </li>
       <li>
         <a href="{{url_for('invoice')}}" class="active"> List</a>
       </li>
@@ -40,17 +43,47 @@
         {% for x in invoice %}
         <tr>
           <th>
-            <a onclick="downloadfile2(`{{x['invid']}}`)">
-              <img src="static/pdf.png" width="30" height="35" />
-            </a>
+            <a target="_blank" href="../static/invoices/{{x['invid']}}.pdf"
+              ><img src="static/pdf.png" width="30" height="35"
+            /></a>
           </th>
           <th>{{x['invid']}}</th>
           <th>{{x['custid']}}</th>
           <th>{{x['date']}}</th>
           <th>{{x['status']}}</th>
           <th>
-            <button type="button" class="btn mybtn">Refund</button>
-            <button type="button" class="btn mybtn">Return</button>
+            {%if x['status'] == 'Processing' or x['status'] == 'processing'%}
+            <button
+              type="button"
+              class="btn mybtn"
+              type="button"
+              id="refund"
+              onclick="sold(`{{x['invid']}}`)"
+            >
+              Mark Sold
+            </button>
+            <button
+              type="button"
+              class="btn mybtn"
+              type="button"
+              id="return"
+              onclick="cancel(`{{x['invid']}}`)"
+            >
+              Cancel Order
+            </button>
+            {%elif x['status'] == 'sold' %}
+            <button
+              type="button"
+              class="btn mybtn"
+              type="button"
+              id="return"
+              onclick="refund(`{{x['invid']}}`)"
+            >
+              Refund
+            </button>
+            {%else%}
+            <center><span>No Action Available</span></center>
+            {%endif%}
           </th>
         </tr>
         {% endfor %}
@@ -58,14 +91,110 @@
     </table>
   </div>
 </div>
+
+<!-- success modal -->
+<div class="modal fade" id="mymodalsuccess">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Notification</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Product Marked As Sold</p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="location.reload()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- cancell modal -->
+<div class="modal fade" id="mymodalcancell">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Notification</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Order Cancelled</p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="location.reload()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- error modal -->
+<div class="modal fade" id="mymodalerror">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Notification</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>SomeThing Went Wrong Try Again later</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-  function downloadfile2(id) {
-    location.href = "/downloadOrder2/filename=" + id;
+  function refund(invoice) {
+    alert(invoice);
+  }
+  function sold(invoice) {
+    $.post("/markAsSold", { data: invoice }, function (res) {
+      if (res == "success") {
+        $("#mymodalsuccess").modal("toggle");
+      } else {
+        $("#mymodalerror").modal("toggle");
+      }
+    });
+  }
+  function cancel(invoice) {
+    $.post("/cancelOrder", { data: invoice }, function (res) {
+      if (res == "success") {
+        $("#mymodalcancell").modal("toggle");
+      } else {
+        $("#mymodalerror").modal("toggle");
+      }
+    });
   }
   $(document).ready(function () {
-    $("#search").change(function () {
-      $("#searchform").submit();
-    });
     $("#invoicinglink").addClass("sideactive");
   });
 </script>
