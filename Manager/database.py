@@ -329,8 +329,54 @@ class PDF2(FPDF):
 
 class dbQuery():
     def cancelOrder(self, id):
-        print(id)
-        return True
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        cursor.execute(
+            f"UPDATE orderprocess SET status = 'Cancelled' WHERE orderid = '{id}'")
+        cursor.execute(
+            f"UPDATE sellorder SET status = 'Cancelled' WHERE invid = '{id}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            cursor.execute(
+                f"SELECT * FROM transaction WHERE reference = '{id}'")
+            transaction = cursor.fetchall()
+            if int(len(transaction)) == 0:
+                cursor.execute(f"DELETE FROM alldues WHERE reference = '{id}'")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    return "success"
+            else:
+                cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+                lastamnt = int(cursor.fetchall()[0]['balance'])
+                debitamt = int(transaction[0]['debit'])
+                finalbal = lastamnt - debitamt
+                cursor.execute(
+                    f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{id}','refund','0','{debitamt}','{finalbal}')")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    cursor.execute(
+                        f"SELECT * FROM alldues WHERE reference = '{id}'")
+                    duess = cursor.fetchall()
+                    if int(len(duess)) == 0:
+                        return "success"
+                    else:
+                        cursor.execute(
+                            f"DELETE FROM alldues WHERE reference = '{id}'")
+                        try:
+                            db.commit()
+                        except Exception as e:
+                            return "error"
+                        else:
+                            return "success"
 
     def makeInvoiceforService(self, services):
         # make date in proper formate

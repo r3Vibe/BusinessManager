@@ -385,7 +385,7 @@ def cancelOrder():
         if request.method == "POST":
             details = request.form.get("data")
             status = dbQuery().cancelOrder(details)
-            return "error"
+            return status
     else:
         return "Please Login"
 ###############################################

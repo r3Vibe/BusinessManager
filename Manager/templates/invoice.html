@@ -188,7 +188,7 @@
   function cancel(invoice) {
     $.post("/cancelOrder", { data: invoice }, function (res) {
       if (res == "success") {
-        $("#mymodalcancell").modal("toggle");
+        location.reload();
       } else {
         $("#mymodalerror").modal("toggle");
       }
