@@ -683,12 +683,18 @@
                 type: "POST",
                 success: function (res) {
                   if (res == "success") {
+                    var invoice = $("#invid").val();
                     $("#confirm").remove();
                     $("#addmore").remove();
-                    var bbtn = document.createElement("button");
+                    var bbtn = document.createElement("a");
                     bbtn.setAttribute("class", "btn mybtn");
                     bbtn.setAttribute("id", "print");
                     bbtn.setAttribute("style", "width:100px");
+                    bbtn.setAttribute("target", "_blank");
+                    bbtn.setAttribute(
+                      "href",
+                      "../static/invoices/" + invoice + ".pdf"
+                    );
                     bbtn.innerText = "Print";
                     document.getElementById("newbtn").appendChild(bbtn);
                     var bbtn = document.createElement("button");

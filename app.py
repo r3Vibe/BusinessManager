@@ -313,6 +313,7 @@ def invoice():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
+        dbQuery().changeRefundPolicy()
         if request.method == "GET":
             allInv = dbQuery().getInvoices("all")
             return render_template("invoice.html", username=g.user, role=g.role, date=date, time=time, invoice=allInv)
@@ -356,6 +357,80 @@ def serviceinvoice():
         return redirect(url_for('unauthenticated'))
 
 
+#####################################################################
+##########################  customer management #####################
+#####################################################################
+
+####################################################
+################ customer order list ##################
+@app.route("/orders/<cust>", methods=['GET', 'POST'])
+def orders(cust):
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "GET":
+            orders = dbQuery().getSellOrder(cust)
+            customer = dbQuery().getCustomerDetails(cust)
+            customer = customer.split(":")[0]
+            return render_template("custorder.html", username=g.user, role=g.role, date=date, time=time, orders=orders, cname=customer)
+        elif request.method == "POST":
+            param = request.form.get("search")
+            orders = dbQuery().getCertOrder(param)
+            customer = dbQuery().getCustomerDetails(cust)
+            customer = customer.split(":")[0]
+            return render_template("custorder.html", username=g.user, role=g.role, date=date, time=time, orders=orders, cname=customer)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+####################################################
+################ list of customer ##################
+
+
+@app.route("/custmanager", methods=['GET', 'POST'])
+def custmanager():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "GET":
+            allCust = dbQuery().getAllCust("all")
+            return render_template("customermanager.html", username=g.user, role=g.role, date=date, time=time, cust=allCust)
+        elif request.method == "POST":
+            param = request.form.get("search")
+            allCust = dbQuery().getAllCust(param)
+            return render_template("customermanager.html", username=g.user, role=g.role, date=date, time=time, cust=allCust)
+    else:
+        return redirect(url_for('unauthenticated'))
+####################################################
+################ add new customer ##################
+
+
+@app.route("/addcustomer", methods=['GET', 'POST'])
+def addcustomer():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "GET":
+            return render_template("addcustomer.html", username=g.user, role=g.role, date=date, time=time)
+        elif request.method == "POST":
+            data = request.form
+            pstatus = dbQuery().addCustomer(data)
+            if pstatus == "success":
+                flash("Customer Added", "success")
+                return render_template("addcustomer.html", username=g.user, role=g.role, date=date, time=time)
+            else:
+                flash("Something Went Wrong", "error")
+                return render_template("addcustomer.html", username=g.user, role=g.role, date=date, time=time)
+
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
 ################ remove session variable and redirect ################
 # logout page
 
@@ -376,9 +451,36 @@ def unauthenticated():
 
 ############### api ##############
 
+############################################
+############# updateCustomer ##################
 
+
+@app.route("/updateCustomer", methods=['GET', 'POST'])
+def updateCustomer():
+    if g.user:
+        if request.method == "POST":
+            details = request.form
+            status = dbQuery().custUpdate(details)
+            return status
+    else:
+        return "Please Login"
+############################################
+############# refundOrder ##################
+
+
+@app.route("/refundOrder", methods=['GET', 'POST'])
+def refundOrder():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("data")
+            status = dbQuery().refundOrder(details)
+            return status
+    else:
+        return "Please Login"
 #############################################
 ###########   cancelOrder ###################
+
+
 @app.route("/cancelOrder", methods=['GET', 'POST'])
 def cancelOrder():
     if g.user:

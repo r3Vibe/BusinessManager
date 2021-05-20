@@ -57,7 +57,7 @@
               type="button"
               class="btn mybtn"
               type="button"
-              id="refund"
+              id="sold"
               onclick="sold(`{{x['invid']}}`)"
             >
               Mark Sold
@@ -66,12 +66,12 @@
               type="button"
               class="btn mybtn"
               type="button"
-              id="return"
+              id="cancel"
               onclick="cancel(`{{x['invid']}}`)"
             >
               Cancel Order
             </button>
-            {%elif x['status'] == 'sold' %}
+            {%elif x['status'] == 'sold' and x['refundable'] == 'yes' %}
             <button
               type="button"
               class="btn mybtn"
@@ -91,7 +91,6 @@
     </table>
   </div>
 </div>
-
 <!-- success modal -->
 <div class="modal fade" id="mymodalsuccess">
   <div class="modal-dialog modal-dialog-centered">
@@ -173,13 +172,22 @@
   </div>
 </div>
 <script>
+  $("#search").change(function () {
+    $("#searchform").submit();
+  });
   function refund(invoice) {
-    alert(invoice);
+    $.post("/refundOrder", { data: invoice }, function (res) {
+      if (res == "success") {
+        location.reload();
+      } else {
+        $("#mymodalerror").modal("toggle");
+      }
+    });
   }
   function sold(invoice) {
     $.post("/markAsSold", { data: invoice }, function (res) {
       if (res == "success") {
-        $("#mymodalsuccess").modal("toggle");
+        location.reload();
       } else {
         $("#mymodalerror").modal("toggle");
       }

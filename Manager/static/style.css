@@ -573,3 +573,9 @@ h2 {
   outline: none;
   background: none;
 }
+
+.glow {
+  color: yellow;
+  text-transform: capitalize;
+  text-shadow: 1px 1px black;
+}

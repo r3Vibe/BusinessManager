@@ -1,0 +1,281 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Customer Relation Manager</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('custmanager')}}" class="active"> Customers</a>
+      </li>
+      <li>
+        <a href="{{url_for('addcustomer')}}"> New</a>
+      </li>
+      <li>
+        <form method="post" id="searchform">
+          <input
+            class="form-control-sm"
+            type="search"
+            name="search"
+            id="search"
+            placeholder="Search Customer"
+          />
+        </form>
+      </li>
+    </ul>
+  </div>
+  <div class="showAllproduct">
+    <table
+      class="table table-hover table-striped"
+      style="text-transform: capitalize"
+    >
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Customer ID</th>
+          <th scope="col">Contact</th>
+          <th scope="col">Address</th>
+          <th scope="col">DOB</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in cust %}
+        <tr>
+          <th>{{x['name']}}</th>
+          <th>{{x['custid']}}</th>
+          <th>{{x['phone']}}</th>
+          <th>{{x['address']}}</th>
+          <th>{{x['birthday']}}</th>
+          <th>
+            <button
+              type="button"
+              class="btn mybtn"
+              onclick="showOrders(`{{x['custid']}}`)"
+            >
+              Orders
+            </button>
+            <button
+              type="button"
+              class="btn mybtn"
+              onclick="update(`{{x['custid']}}`)"
+            >
+              Update
+            </button>
+          </th>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal fade" id="mymodal">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Customer Details</h5>
+        <input type="hidden" id="custidhideden" />
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col">
+            <button
+              class="btn mybtn"
+              type="button"
+              onclick="contactUpdate(document.getElementById(`custidhideden`).value)"
+            >
+              Contact Update
+            </button>
+
+            <button
+              class="btn mybtn"
+              type="button"
+              onclick="addrtUpdate(document.getElementById(`custidhideden`).value)"
+            >
+              Address Update
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="mymodal2">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Customer Details</h5>
+        <input type="hidden" id="custidhideden" />
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="w-100">
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="phone" class="form-label">Contact Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="phone"
+                  id="phone"
+                  placeholder="Enter Contact Number"
+                />
+                <input type="hidden" id="customer" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn mybtn" onclick="sendDetails('phone')">
+          Update
+        </button>
+        <button type="button" class="btn mybtn" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="mymodal3">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Customer Details</h5>
+        <input type="hidden" id="custidhideden" />
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" class="w-100">
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="addr" class="form-label">Address</label>
+                <textarea
+                  type="text"
+                  class="form-control"
+                  name="addr"
+                  id="addr"
+                  placeholder="Enter Address"
+                ></textarea>
+                <input type="hidden" id="customer" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn mybtn" onclick="sendDetails('addr')">
+          Update
+        </button>
+        <button type="button" class="btn mybtn" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="errormodal">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Something Went Wrong</h5>
+        <input type="hidden" id="custidhideden" />
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Cannot Update Now Please Try Again later</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn mybtn" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#crmlink").addClass("sideactive");
+  });
+  function showOrders(cis) {
+    location.href = "/orders/" + cis;
+  }
+  function update(cid) {
+    $("#custidhideden").val(cid);
+    $("#mymodal").modal("toggle");
+  }
+  function addrtUpdate(val) {
+    $("#mymodal").modal("toggle");
+    $("#mymodal3").modal("toggle");
+    $("#customer").val(val);
+  }
+  function contactUpdate(val) {
+    $("#mymodal").modal("toggle");
+    $("#mymodal2").modal("toggle");
+    $("#customer").val(val);
+  }
+  function sendDetails(ty) {
+    if (ty == "phone") {
+      var newNo = $("#phone").val();
+      var cid = $("#customer").val();
+      $.post(
+        "/updateCustomer",
+        { type: "phone", number: newNo, custid: cid },
+        function (res) {
+          if (res == "success") {
+            location.reload();
+          } else {
+            $("#mymodal3").modal("toggle");
+            $("#errormodal").modal("toggle");
+          }
+        }
+      );
+    } else if (ty == "addr") {
+      var newNo = $("#addr").val();
+      var cid = $("#customer").val();
+      $.post(
+        "/updateCustomer",
+        { type: "addr", address: newNo, custid: cid },
+        function (res) {
+          if (res == "success") {
+            location.reload();
+          } else {
+            $("#mymodal3").modal("toggle");
+            $("#errormodal").modal("toggle");
+          }
+        }
+      );
+    }
+  }
+  $("#search").change(function () {
+    $("#searchform").submit();
+  });
+</script>
+{% endblock %}

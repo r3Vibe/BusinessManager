@@ -328,6 +328,132 @@ class PDF2(FPDF):
 
 
 class dbQuery():
+    def getCertOrder(self,param):
+        cursor.execute(f"SELECT * FROM sellorder WHERE invid LIKE '%{param}%' OR status LIKE '%{param}%'  ORDER BY id DESC")
+        allOrders = cursor.fetchall()
+        return allOrders 
+    def getSellOrder(self, cid):
+        cursor.execute(
+            f"SELECT * FROM sellorder WHERE custid = '{cid}' ORDER BY id DESC")
+        allOrders = cursor.fetchall()
+        return allOrders
+
+    def custUpdate(self, details):
+        print(details)
+        if details['type'] == "phone":
+            cursor.execute(
+                f"UPDATE customer SET phone = '{details['number']}', custid = '{details['number']}' WHERE custid = '{details['custid']}'")
+            cursor.execute(
+                f"UPDATE sellorder SET custid = '{details['number']}' WHERE custid = '{details['custid']}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                return "success"
+        elif details['type'] == "addr":
+            cursor.execute(
+                f"UPDATE customer SET address = '{details['address']}' WHERE custid = '{details['custid']}'")
+            try:
+                db.commit()
+            except Exception as e:
+                return "error"
+            else:
+                return "success"
+
+    def getAllCust(self, param):
+        if param == "all":
+            cursor.execute("SELECT * FROM customer ORDER BY id DESC")
+            allcust = cursor.fetchall()
+            return allcust
+        else:
+            cursor.execute(
+                f"SELECT * FROM customer WHERE name LIKE '%{param}%' OR custid LIKE '%{param}%' OR phone LIKE '%{param}%' ORDER BY id DESC")
+            allcust = cursor.fetchall()
+            return allcust
+
+    def changeRefundPolicy(self):
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        cursor.execute("SELECT * FROM sellorder")
+        orders = cursor.fetchall()
+        for x in orders:
+            orderdate = x['date']
+            days1 = int(orderdate.split("-")[0])
+            mnt1 = int(orderdate.split("-")[1])
+            year1 = int(orderdate.split("-")[2])
+
+            orderDate = date(year1, mnt1, days1)
+
+            days2 = int(todate.split("-")[0])
+            mnt2 = int(todate.split("-")[1])
+            year2 = int(todate.split("-")[2])
+
+            todaysDate = date(year2, mnt2, days2)
+
+            deltas = todaysDate - orderDate
+
+            if int(deltas.days) > 7:
+                cursor.execute(
+                    f"UPDATE sellorder SET refundable = 'no' WHERE invid = '{x['invid']}'")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    return "success"
+
+    def refundOrder(self, pid):
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        cursor.execute(
+            f"UPDATE orderprocess SET status = 'Refunded' WHERE orderid = '{pid}'")
+        cursor.execute(
+            f"UPDATE sellorder SET status = 'Refunded' WHERE invid = '{pid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            cursor.execute(
+                f"SELECT * FROM transaction WHERE reference = '{pid}'")
+            transaction = cursor.fetchall()
+            if int(len(transaction)) == 0:
+                cursor.execute(
+                    f"DELETE FROM alldues WHERE reference = '{pid}'")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    return "success"
+            else:
+                cursor.execute(f"SELECT * FROM transaction ORDER BY id DESC")
+                lastamnt = int(cursor.fetchall()[0]['balance'])
+                debitamt = int(transaction[0]['debit'])
+                finalbal = lastamnt - debitamt
+                cursor.execute(
+                    f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{pid}','refund','0','{debitamt}','{finalbal}')")
+                try:
+                    db.commit()
+                except Exception as e:
+                    return "error"
+                else:
+                    cursor.execute(
+                        f"SELECT * FROM alldues WHERE reference = '{pid}'")
+                    duess = cursor.fetchall()
+                    if int(len(duess)) == 0:
+                        return "success"
+                    else:
+                        cursor.execute(
+                            f"DELETE FROM alldues WHERE reference = '{pid}'")
+                        try:
+                            db.commit()
+                        except Exception as e:
+                            return "error"
+                        else:
+                            return "success"
+
     def cancelOrder(self, id):
         today = date.today()
         todate = today.strftime("%d-%m-%Y")
@@ -404,7 +530,7 @@ class dbQuery():
                 f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','service','{custname}','{dues}')")
             # sell order db update
             cursor.execute(
-                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','sold')")
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status,refundable) VALUES('{pmode}','{orderid}','{custid}','{date}','sold','no')")
             try:
                 db.commit()
             except Exception as e:
@@ -425,7 +551,7 @@ class dbQuery():
                 f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','service','{paid}','0','{newbalance}')")
             # sell order db update
             cursor.execute(
-                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','sold')")
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status,refundable) VALUES('{pmode}','{orderid}','{custid}','{date}','sold','no')")
             try:
                 db.commit()
             except Exception as e:
@@ -446,7 +572,7 @@ class dbQuery():
                 f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','service','{paid}','0','{newbalance}')")
             # sell order db update
             cursor.execute(
-                f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','sold')")
+                f"INSERT INTO sellorder(pmode,invid,custid,date,status,refundable) VALUES('{pmode}','{orderid}','{custid}','{date}','sold','no')")
             # update dues database
             cursor.execute(
                 f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','service','{custname}','{dues}')")
@@ -643,7 +769,7 @@ class dbQuery():
                     f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','sale','{custname}','{dues}')")
                 # sell order db update
                 cursor.execute(
-                    f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing')")
+                    f"INSERT INTO sellorder(pmode,invid,custid,date,status,refundable) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing','yes')")
                 try:
                     db.commit()
                 except Exception as e:
@@ -664,7 +790,7 @@ class dbQuery():
                     f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','sale','{paid}','0','{newbalance}')")
                 # sell order db update
                 cursor.execute(
-                    f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing')")
+                    f"INSERT INTO sellorder(pmode,invid,custid,date,status,refundable) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing','yes')")
                 try:
                     db.commit()
                 except Exception as e:
@@ -685,7 +811,7 @@ class dbQuery():
                     f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{date}','{orderid}','sale','{paid}','0','{newbalance}')")
                 # sell order db update
                 cursor.execute(
-                    f"INSERT INTO sellorder(pmode,invid,custid,date,status) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing')")
+                    f"INSERT INTO sellorder(pmode,invid,custid,date,status,refundable) VALUES('{pmode}','{orderid}','{custid}','{date}','Processing','yes')")
                 # update dues database
                 cursor.execute(
                     f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{date}','{orderid}','sale','{custname}','{dues}')")
