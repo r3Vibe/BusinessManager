@@ -431,6 +431,46 @@ def addcustomer():
         return redirect(url_for('unauthenticated'))
 
 
+##############################################
+##################recharge###################
+@app.route("/recharge", methods=['GET', 'POST'])
+def recharge():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        carrier = dbQuery().getCarrier()
+        if request.method == "GET":
+            return render_template("recharge.html", username=g.user, role=g.role, date=date, time=time, carrier=carrier)
+        if request.method == "POST":
+            status = dbQuery().addRecharge(request.form)
+            if status == "success":
+                flash("New Reccord Added", "success")
+            else:
+                flash("Something Went Wrong", "error")
+            return render_template("recharge.html", username=g.user, role=g.role, date=date, time=time, carrier=carrier)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+@app.route("/rechargelist", methods=['GET', 'POST'])
+def rechargelist():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "GET":
+            lists = dbQuery().getAllrc("all")
+            return render_template("rechargelist.html", username=g.user, role=g.role, date=date, time=time, lists=lists)
+        if request.method == "POST":
+            lists = dbQuery().getAllrc(request.form.get('search'))
+            return render_template("rechargelist.html", username=g.user, role=g.role, date=date, time=time, lists=lists)
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
 ################ remove session variable and redirect ################
 # logout page
 

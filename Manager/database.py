@@ -328,10 +328,47 @@ class PDF2(FPDF):
 
 
 class dbQuery():
-    def getCertOrder(self,param):
-        cursor.execute(f"SELECT * FROM sellorder WHERE invid LIKE '%{param}%' OR status LIKE '%{param}%'  ORDER BY id DESC")
+    def getAllrc(self, param):
+        if param == "all":
+            cursor.execute("SELECT * FROM rechargelist ORDER BY id DESC")
+        else:
+            cursor.execute(
+                f"SELECT * FROM rechargelist WHERE number LIKE '%{param}%'")
+        return cursor.fetchall()
+
+    def getCarrier(self):
+        cursor.execute("SELECT * FROM commission")
+        return cursor.fetchall()
+
+    def addRecharge(self, rc):
+        cursor.execute(
+            f"SELECT * FROM commission WHERE carrier = '{rc['carrier']}'")
+        comm = cursor.fetchall()[0]['comm']
+        amount = rc['amount']
+        profit = (int(amount)*float(comm))/100
+        cursor.execute(
+            f"INSERT INTO rechargelist(number,carrier,amount,profit) VALUES('{rc['number']}','{rc['carrier']}','{rc['amount']}','{profit}')")
+        today = date.today()
+        todate = today.strftime("%d-%m-%Y")
+        orderid = dbQuery().generateInvoiceid()
+        cursor.execute(
+            f"SELECT * FROM customer WHERE phone = '{rc['number']}'")
+        custname = cursor.fetchall()[0]['name']
+        cursor.execute(
+            f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{todate}','{orderid}','recharge','{custname}','{rc['amount']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def getCertOrder(self, param):
+        cursor.execute(
+            f"SELECT * FROM sellorder WHERE invid LIKE '%{param}%' OR status LIKE '%{param}%'  ORDER BY id DESC")
         allOrders = cursor.fetchall()
-        return allOrders 
+        return allOrders
+
     def getSellOrder(self, cid):
         cursor.execute(
             f"SELECT * FROM sellorder WHERE custid = '{cid}' ORDER BY id DESC")
