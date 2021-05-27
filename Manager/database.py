@@ -353,7 +353,11 @@ class dbQuery():
         orderid = dbQuery().generateInvoiceid()
         cursor.execute(
             f"SELECT * FROM customer WHERE phone = '{rc['number']}'")
-        custname = cursor.fetchall()[0]['name']
+        available = int(len(cursor.fetchall()))
+        if available == 0:
+            custname = rc['number']
+        elif available > 0:
+            custname = cursor.fetchall()[0]['name']
         cursor.execute(
             f"INSERT INTO alldues(date,reference,account,name,amount) VALUES('{todate}','{orderid}','recharge','{custname}','{rc['amount']}')")
         try:
@@ -429,16 +433,15 @@ class dbQuery():
             todaysDate = date(year2, mnt2, days2)
 
             deltas = todaysDate - orderDate
-
             if int(deltas.days) > 7:
                 cursor.execute(
                     f"UPDATE sellorder SET refundable = 'no' WHERE invid = '{x['invid']}'")
-                try:
-                    db.commit()
-                except Exception as e:
-                    return "error"
-                else:
-                    return "success"
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
 
     def refundOrder(self, pid):
         today = date.today()

@@ -1,0 +1,37 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Management</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('accounting')}}" class="active">Users </a>
+      </li>
+      <li>
+        <a href="{{url_for('transactions')}}"> Privilages</a>
+      </li>
+      <li>
+        <a href="{{url_for('newtransaction')}}"> Services</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}"> Category</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}"> Commissions</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}"> Vendors</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}"> Variations</a>
+      </li>
+    </ul>
+  </div>
+  <div class="showAllproduct" style="flex-direction: column"></div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#managementlink").addClass("sideactive");
+  });
+</script>
+{% endblock %}

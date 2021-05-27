@@ -471,6 +471,21 @@ def rechargelist():
         return redirect(url_for('unauthenticated'))
 
 
+######################################################################
+########################### management page ##########################
+######################################################################
+@app.route("/management", methods=['GET', 'POST'])
+def management():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "GET":
+            return render_template("management.html", username=g.user, role=g.role, date=date, time=time)
+    else:
+        return redirect(url_for('unauthenticated'))
+
 ################ remove session variable and redirect ################
 # logout page
 
