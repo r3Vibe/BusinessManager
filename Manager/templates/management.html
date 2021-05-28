@@ -5,7 +5,7 @@
   <div class="navigation2">
     <ul>
       <li>
-        <a href="{{url_for('accounting')}}" class="active">Users </a>
+        <a href="{{url_for('management')}}" class="active">Users </a>
       </li>
       <li>
         <a href="{{url_for('transactions')}}"> Privilages</a>
@@ -27,7 +27,57 @@
       </li>
     </ul>
   </div>
-  <div class="showAllproduct" style="flex-direction: column"></div>
+  <div class="showAllproduct" style="flex-direction: column">
+    <br />
+    <center>
+      <h2>Add/Remove Users</h2>
+    </center>
+    <div class="row row-cols-3">
+      <div class="col"></div>
+      <div class="col"></div>
+      <div class="col">
+        <button class="btn mybtn" type="button">Add User</button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <table
+        class="table table-hover table-striped"
+        style="text-transform: capitalize"
+      >
+        <thead>
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Username</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Address</th>
+            <th scope="col">Role</th>
+            <th scope="col">Last Login</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for x in emply %}
+          <tr>
+            <th>
+              <img src="static/uploads/{{x['image']}}" width="50" height="50" />
+            </th>
+            <th>{{x['username']}}</th>
+            <th>{{x['fullname']}}</th>
+            <th>{{x['email']}}</th>
+            <th>{{x['contact']}}</th>
+            <th>{{x['address']}}</th>
+            <th>{{x['role']}}</th>
+            <th>{{x['lastlogin']}}</th>
+            <th><button class="btn mybtn" type="button">Modify</button></th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 <script>
   $(document).ready(function () {

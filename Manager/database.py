@@ -328,6 +328,10 @@ class PDF2(FPDF):
 
 
 class dbQuery():
+    def getEmply(self):
+        cursor.execute("SELECT * FROM employee ORDER BY id DESC")
+        return cursor.fetchall()
+
     def getAllrc(self, param):
         if param == "all":
             cursor.execute("SELECT * FROM rechargelist ORDER BY id DESC")

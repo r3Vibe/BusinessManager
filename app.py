@@ -482,9 +482,11 @@ def management():
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
         if request.method == "GET":
-            return render_template("management.html", username=g.user, role=g.role, date=date, time=time)
+            emply = dbQuery().getEmply()
+            return render_template("management.html", username=g.user, role=g.role, date=date, time=time, emply=emply)
     else:
         return redirect(url_for('unauthenticated'))
+
 
 ################ remove session variable and redirect ################
 # logout page
