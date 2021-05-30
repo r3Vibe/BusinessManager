@@ -328,6 +328,19 @@ class PDF2(FPDF):
 
 
 class dbQuery():
+    def addPriv(self, pform):
+        cursor.execute(f"INSERT INTO privilage(privilage,access) VALUES('{pform['privilage']}','{pform['access']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def getPrivi(self):
+        cursor.execute(f"SELECT * FROM privilage")
+        return cursor.fetchall()
+
     def getEmply(self):
         cursor.execute("SELECT * FROM employee ORDER BY id DESC")
         return cursor.fetchall()

@@ -8,7 +8,7 @@
         <a href="{{url_for('management')}}" class="active">Users </a>
       </li>
       <li>
-        <a href="{{url_for('transactions')}}"> Privilages</a>
+        <a href="{{url_for('privilages')}}"> Privilages</a>
       </li>
       <li>
         <a href="{{url_for('newtransaction')}}"> Services</a>
@@ -36,7 +36,9 @@
       <div class="col"></div>
       <div class="col"></div>
       <div class="col">
-        <button class="btn mybtn" type="button">Add User</button>
+        <button class="btn mybtn" type="button" onclick="add()">
+          Add User
+        </button>
       </div>
     </div>
     <br />
@@ -79,9 +81,97 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="mymodal">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Employee</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="adduserform">
+          <!-- image -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3 felex">
+                <div class="showimage">
+                  <label class="form-label-sm" for="image">+</label>
+                  <img id="updateimage" src="../static/sleep.jpeg" />
+                </div>
+              </div>
+              <div class="mb-3" id="imageholder">
+                <input
+                  class="form-control-sm"
+                  id="image"
+                  name="image"
+                  required
+                  type="file"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- username -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  class="form-control"
+                  placeholder="Enter Username"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- full name -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="fullname" class="form-label">Full Name</label>
+                <input
+                  type="text"
+                  id="fullname"
+                  name="fullname"
+                  class="form-control"
+                  placeholder="Enter Full Name"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- email -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="adduser">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   $(document).ready(function () {
     $("#managementlink").addClass("sideactive");
+  });
+  function add() {
+    $("#mymodal").modal("toggle");
+  }
+  //live show selected image before upload to server
+  $(function () {
+    $("#image").change(function (event) {
+      var x = URL.createObjectURL(event.target.files[0]);
+      $("#updateimage").attr("src", x);
+    });
   });
 </script>
 {% endblock %}

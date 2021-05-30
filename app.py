@@ -488,6 +488,28 @@ def management():
         return redirect(url_for('unauthenticated'))
 
 
+######################################################################
+###################### privilages ####################################
+@app.route("/privilages", methods=['GET', 'POST'])
+def privilages():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        if request.method == "GET":
+            privi = dbQuery().getPrivi()
+            return render_template("privilages.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
+        if request.method == "POST":
+            privform = request.form
+            status = dbQuery().addPriv(privform)
+            if status == "error":
+                flash("Something Went Wrong", "error")
+            privi = dbQuery().getPrivi()
+            return render_template("privilages.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
+    else:
+        return redirect(url_for('unauthenticated'))
+
 ################ remove session variable and redirect ################
 # logout page
 
