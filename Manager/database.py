@@ -6,12 +6,22 @@ import uuid
 import xlsxwriter
 from fpdf import FPDF
 
+# # connect to database
+# db = mysql.connector.connect(
+#     host='localhost',
+#     user='root',
+#     passwd='',
+#     database='businessmanager',
+#     auth_plugin='mysql_native_password'
+# )
+
 # connect to database
 db = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    passwd='',
-    database='businessmanager',
+    host='remotemysql.com',
+    port='3306',
+    user='FeMJ5CDz4s',
+    passwd='rGPIIHwlek',
+    database='FeMJ5CDz4s',
     auth_plugin='mysql_native_password'
 )
 
@@ -329,7 +339,8 @@ class PDF2(FPDF):
 
 class dbQuery():
     def addPriv(self, pform):
-        cursor.execute(f"INSERT INTO privilage(privilage,access) VALUES('{pform['privilage']}','{pform['access']}')")
+        cursor.execute(
+            f"INSERT INTO privilage(privilage,access) VALUES('{pform['privilage']}','{pform['access']}')")
         try:
             db.commit()
         except Exception as e:
