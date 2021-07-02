@@ -3,27 +3,28 @@ import mysql.connector
 import os
 from datetime import date, datetime
 import uuid
+from mysql.connector.cursor import ERR_NO_RESULT_TO_FETCH
 import xlsxwriter
 from fpdf import FPDF
 
 # # connect to database
-# db = mysql.connector.connect(
-#     host='localhost',
-#     user='root',
-#     passwd='',
-#     database='businessmanager',
-#     auth_plugin='mysql_native_password'
-# )
-
-# connect to database
 db = mysql.connector.connect(
-    host='remotemysql.com',
-    port='3306',
-    user='FeMJ5CDz4s',
-    passwd='rGPIIHwlek',
-    database='FeMJ5CDz4s',
+    host='localhost',
+    user='root',
+    passwd='',
+    database='businessmanager',
     auth_plugin='mysql_native_password'
 )
+
+# connect to database
+# db = mysql.connector.connect(
+#     host='reverdesigndb.crqspfeoq4ka.us-east-2.rds.amazonaws.com',
+#     port='3306',
+#     user='reverdesign',
+#     passwd='Mohila2modon095',
+#     database='reverdesignmanager',
+#     auth_plugin='mysql_native_password'
+# )
 
 # database curso
 cursor = db.cursor(dictionary=True)
@@ -1458,6 +1459,15 @@ class dbQuery():
             return "Unable To Update Please Contact System Admin"
         else:
             return "success"
+
+    def delPriv(self, privid):
+        cursor.execute(f"DELETE FROM privilage WHERE id = '{privid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "ok"
 
 
 class updateDb():

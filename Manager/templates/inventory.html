@@ -79,6 +79,23 @@
             >
               Delete
             </button>
+            {% if x['feature'] == "true" %}
+            <button
+              style="width: 95px"
+              class="btn mybtn"
+              onclick="unfeature(`{{x['id']}}`)"
+            >
+              Unfeature
+            </button>
+            {% else %}
+            <button
+              style="width: 80px"
+              class="btn mybtn"
+              onclick="feature(`{{x['id']}}`)"
+            >
+              Feature
+            </button>
+            {% endif %}
           </th>
         </tr>
         {% endfor %}
@@ -96,6 +113,15 @@
   //modify product onclick
   function modProduct(id) {
     location.href = "/modify/product=" + id;
+  }
+  function feature(id) {
+    $.post("/featurethis", { id: id }, function (res) {
+      if (res == "success") {
+        location.reload();
+      } else {
+        alert("Something Went Wrong");
+      }
+    });
   }
   //delete product onclick
   function delProduct(id) {

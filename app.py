@@ -134,6 +134,7 @@ def addmasterdata():
                 try:
                     request.files['image'].save(destination)
                 except Exception as e:
+                    print(e)
                     flash("Unable To Upload Product Image. Contact Admin", "error")
                 else:
                     # update database with new product
@@ -499,14 +500,14 @@ def privilages():
         time = time.strftime("%H:%M:%S")
         if request.method == "GET":
             privi = dbQuery().getPrivi()
-            return render_template("privilages.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
+            return render_template("priv.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
         if request.method == "POST":
             privform = request.form
             status = dbQuery().addPriv(privform)
             if status == "error":
                 flash("Something Went Wrong", "error")
             privi = dbQuery().getPrivi()
-            return render_template("privilages.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
+            return render_template("priv.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -529,6 +530,33 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+
+
+################################################
+############### feature product on site ########
+@app.route("/featurethis", methods=['GET', 'POST'])
+def featurethis():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("id")
+            print(details)
+            return details
+    else:
+        return "Please Login"
+
+# delete privilage
+
+
+@app.route("/delPriv", methods=['GET', 'POST'])
+def delPriv():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("privid")
+
+            return dbQuery().delPriv(details)
+    else:
+        return "Please Login"
+
 
 ############################################
 ############# updateCustomer ##################
@@ -920,4 +948,4 @@ def before_request_func():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
