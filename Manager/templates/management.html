@@ -11,13 +11,13 @@
         <a href="{{url_for('privilages')}}"> Privilages</a>
       </li>
       <li>
-        <a href="{{url_for('newtransaction')}}"> Services</a>
+        <a href="{{url_for('services')}}"> Services</a>
       </li>
       <li>
-        <a href="{{url_for('alldues')}}"> Category</a>
+        <a href="{{url_for('category')}}"> Category</a>
       </li>
       <li>
-        <a href="{{url_for('alldues')}}"> Commissions</a>
+        <a href="{{url_for('commission')}}"> Commissions</a>
       </li>
       <li>
         <a href="{{url_for('alldues')}}"> Vendors</a>
@@ -146,6 +146,83 @@
             </div>
           </div>
           <!-- email -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  class="form-control"
+                  placeholder="Enter Email ID"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- contact -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="contact" class="form-label">Contact No.</label>
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  class="form-control"
+                  placeholder="Enter Contact Number"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- address -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="address" class="form-label"
+                  >Contact No.Address</label
+                >
+                <textarea
+                  name="address"
+                  id="address"
+                  cols="30"
+                  rows="10"
+                  placeholder="Enter Address"
+                  class="form-control"
+                  style="width: 320px; height: 120px"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <!-- password -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="text"
+                  id="password"
+                  name="password"
+                  class="form-control"
+                  placeholder="Enter Password"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- role -->
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-select">
+                  <option value="" selected disabled>Select Role</option>
+                  {% for x in privi %}
+                  <option value="{{x['privilage']}}">{{x['privilage']}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -172,6 +249,9 @@
       var x = URL.createObjectURL(event.target.files[0]);
       $("#updateimage").attr("src", x);
     });
+  });
+  $("#adduser").click(function () {
+    $("#adduserform").submit();
   });
 </script>
 {% endblock %}

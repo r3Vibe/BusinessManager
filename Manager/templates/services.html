@@ -1,0 +1,183 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Management</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('management')}}">Users </a>
+      </li>
+      <li>
+        <a href="{{url_for('privilages')}}"> Privilages</a>
+      </li>
+      <li>
+        <a href="{{url_for('services')}}" class="active"> Services</a>
+      </li>
+      <li>
+        <a href="{{url_for('category')}}"> Category</a>
+      </li>
+      <li>
+        <a href="{{url_for('commission')}}"> Commissions</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}"> Vendors</a>
+      </li>
+      <li>
+        <a href="{{url_for('alldues')}}"> Variations</a>
+      </li>
+    </ul>
+  </div>
+  <div class="showAllproduct" style="flex-direction: column">
+    <br />
+    <center>
+      <h2>Add/Remove Services</h2>
+    </center>
+    <div class="row row-cols-3">
+      <div class="col"></div>
+      <div class="col"></div>
+      <div class="col">
+        <button class="btn mybtn" type="button" onclick="add()">
+          Add Service
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <table
+        class="table table-hover table-striped"
+        style="text-transform: capitalize"
+      >
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">ID</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Tax</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for x in services %}
+          <tr>
+            <th>{{x['name']}}</th>
+            <th>{{x['serviceid']}}</th>
+            <th><i class="fas fa-rupee-sign"></i> {{x['price']}}</th>
+            <th>{{x['tax']}}%</th>
+            <th>
+              <button
+                class="btn mybtn"
+                type="button"
+                onclick="rem(`{{x['id']}}`)"
+              >
+                Remove
+              </button>
+            </th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="mymodal">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Service</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="/services" method="POST" id="addServiceForm">
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="service" class="form-label">Service</label>
+                <input
+                  type="text"
+                  name="service"
+                  id="service"
+                  class="form-control"
+                  placeholder="Enter Service Name"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="serviceid">Service ID</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="serviceid"
+                  id="serviceid"
+                  placeholder="Enter Service ID"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input
+                  type="text"
+                  name="price"
+                  id="price"
+                  class="form-control"
+                  placeholder="Enter Service Price"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="tax" class="form-label">Tax</label>
+                <input
+                  type="text"
+                  name="tax"
+                  id="tax"
+                  class="form-control"
+                  placeholder="Enter Service Tax"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="addServ">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#managementlink").addClass("sideactive");
+  });
+  function rem(xid) {
+    $.post("/deleteService", { servid: xid }, function (res) {
+      if (res == "success") {
+        location.reload();
+      }
+    });
+  }
+  function add() {
+    $("#mymodal").modal("toggle");
+  }
+  $("#addServ").click(function () {
+    $("#addServiceForm").submit();
+  });
+</script>
+{% endblock %}

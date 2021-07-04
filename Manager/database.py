@@ -4,6 +4,7 @@ import os
 from datetime import date, datetime
 import uuid
 from mysql.connector.cursor import ERR_NO_RESULT_TO_FETCH
+from werkzeug.wrappers import ETagRequestMixin
 import xlsxwriter
 from fpdf import FPDF
 
@@ -339,6 +340,10 @@ class PDF2(FPDF):
 
 
 class dbQuery():
+    def addEmploy(self, details):
+        print(details)
+        return "success"
+
     def addPriv(self, pform):
         cursor.execute(
             f"INSERT INTO privilage(privilage,access) VALUES('{pform['privilage']}','{pform['access']}')")
@@ -660,6 +665,71 @@ class dbQuery():
         cursor.execute("SELECT * FROM services")
         allServ = cursor.fetchall()
         return allServ
+
+    def delServ(self, details):
+        cursor.execute(f"DELETE FROM services WHERE id = '{details}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def addService(self, seerv):
+        cursor.execute(
+            f"INSERT INTO services(name,serviceid,price,tax) VALUES('{seerv['service']}','{seerv['serviceid']}','{seerv['price']}','{seerv['tax']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def getCategory(self):
+        cursor.execute("SELECT * FROM category")
+        return cursor.fetchall()
+
+    def delCatg(self, catid):
+        cursor.execute(f"DELETE FROM category WHERE id = '{catid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def addCategory(self, details):
+        cursor.execute(
+            f"INSERT INTO category(category) VALUES('{details['category']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def getcommission(self):
+        cursor.execute("SELECT * FROM commission")
+        return cursor.fetchall()
+
+    def delComm(self, details):
+        cursor.execute(f"DELETE FROM commission WHERE id = '{details}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def addComm(self, details):
+        cursor.execute(
+            f"INSERT INTO commission(carrier,comm) VALUES('{details['carrier']}','{details['comm']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
 
     def checkQtStat(self):
         cursor.execute(

@@ -1,4 +1,5 @@
 ################ all imports ################
+from re import S
 from flask import render_template, redirect, g, flash, url_for, session, request, send_file
 from Manager import app
 from Manager.form import Login, productImage
@@ -482,15 +483,96 @@ def management():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
+        emply = dbQuery().getEmply()
+        privi = dbQuery().getPrivi()
         if request.method == "GET":
-            emply = dbQuery().getEmply()
-            return render_template("management.html", username=g.user, role=g.role, date=date, time=time, emply=emply)
+            return render_template("management.html", username=g.user, role=g.role, date=date, time=time, emply=emply, privi=privi)
+        if request.method == "POST":
+            userDetails = request.form
+            status = dbQuery().addEmploy(userDetails)
+            if status == "success":
+                return redirect(url_for("management"))
+    else:
+        return redirect(url_for('unauthenticated'))
+######################################################################
+########################### allservices page ##########################
+######################################################################
+
+
+@app.route("/services", methods=['GET', 'POST'])
+def services():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        services = dbQuery().getServices()
+        if request.method == "GET":
+            return render_template("services.html", username=g.user, role=g.role, date=date, time=time, services=services)
+        if request.method == "POST":
+            serviceDetails = request.form
+
+            status = dbQuery().addService(serviceDetails)
+            if status == "success":
+                return redirect(url_for("services"))
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+######################################################################
+########################### category page ##########################
+######################################################################
+
+
+@app.route("/category", methods=['GET', 'POST'])
+def category():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        category = dbQuery().getCategory()
+        if request.method == "GET":
+            return render_template("category.html", username=g.user, role=g.role, date=date, time=time, category=category)
+        if request.method == "POST":
+            categoryDetails = request.form
+
+            status = dbQuery().addCategory(categoryDetails)
+            if status == "success":
+                return redirect(url_for("category"))
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+######################################################################
+########################### Commission page ##########################
+######################################################################
+
+
+@app.route("/commission", methods=['GET', 'POST'])
+def commission():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        comm = dbQuery().getcommission()
+        if request.method == "GET":
+            return render_template("commission.html", username=g.user, role=g.role, date=date, time=time, comm=comm)
+        if request.method == "POST":
+            commDetails = request.form
+            print(commDetails)
+            status = dbQuery().addComm(commDetails)
+            if status == "success":
+                return redirect(url_for("commission"))
     else:
         return redirect(url_for('unauthenticated'))
 
 
 ######################################################################
 ###################### privilages ####################################
+
+
 @app.route("/privilages", methods=['GET', 'POST'])
 def privilages():
     if g.user:
@@ -498,16 +580,16 @@ def privilages():
         date = date.strftime("%d/%m/%Y")
         time = datetime.now()
         time = time.strftime("%H:%M:%S")
+        privi = dbQuery().getPrivi()
         if request.method == "GET":
-            privi = dbQuery().getPrivi()
             return render_template("priv.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
         if request.method == "POST":
             privform = request.form
             status = dbQuery().addPriv(privform)
             if status == "error":
                 flash("Something Went Wrong", "error")
-            privi = dbQuery().getPrivi()
-            return render_template("priv.html", username=g.user, role=g.role, date=date, time=time, privi=privi)
+            else:
+                return redirect(url_for("privilages"))
     else:
         return redirect(url_for('unauthenticated'))
 
@@ -532,8 +614,38 @@ def unauthenticated():
 ############### api ##############
 
 
+@app.route("/deleteComm", methods=['GET', 'POST'])
+def deleteComm():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("commid")
+            return dbQuery().delComm(details)
+    else:
+        return "Please Login"
+
+
+@app.route("/deleteCategory", methods=['GET', 'POST'])
+def deleteCategory():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("catid")
+            return dbQuery().delCatg(details)
+    else:
+        return "Please Login"
+
+
+@app.route("/deleteService", methods=['GET', 'POST'])
+def deleteService():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("servid")
+            return dbQuery().delServ(details)
+    else:
+        return "Please Login"
 ################################################
 ############### feature product on site ########
+
+
 @app.route("/featurethis", methods=['GET', 'POST'])
 def featurethis():
     if g.user:
