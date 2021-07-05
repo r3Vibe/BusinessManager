@@ -9,24 +9,15 @@ import xlsxwriter
 from fpdf import FPDF
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# # connect to database
+
 db = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    passwd='',
-    database='businessmanager',
+    host='reverdesign.crqspfeoq4ka.us-east-2.rds.amazonaws.com',
+    port='3306',
+    user='owner',
+    passwd='Agsarnab095',
+    database='reverdesigndb',
     auth_plugin='mysql_native_password'
 )
-
-# connect to database
-# db = mysql.connector.connect(
-#     host='reverdesigndb.crqspfeoq4ka.us-east-2.rds.amazonaws.com',
-#     port='3306',
-#     user='reverdesign',
-#     passwd='Mohila2modon095',
-#     database='reverdesignmanager',
-#     auth_plugin='mysql_native_password'
-# )
 
 # database curso
 cursor = db.cursor(dictionary=True)
