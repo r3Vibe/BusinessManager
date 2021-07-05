@@ -14,13 +14,13 @@
         <a href="{{url_for('services')}}"> Services</a>
       </li>
       <li>
-        <a href="{{url_for('category')}}" class="active"> Category</a>
+        <a href="{{url_for('category')}}"> Category</a>
       </li>
       <li>
         <a href="{{url_for('commission')}}"> Commissions</a>
       </li>
       <li>
-        <a href="{{url_for('vendors')}}"> Vendors</a>
+        <a href="{{url_for('vendors')}}" class="active"> Vendors</a>
       </li>
       <li>
         <a href="{{url_for('variations')}}"> Variations</a>
@@ -30,14 +30,14 @@
   <div class="showAllproduct" style="flex-direction: column">
     <br />
     <center>
-      <h2>Add/Remove Category</h2>
+      <h2>Add/Remove Vendors</h2>
     </center>
     <div class="row row-cols-3">
       <div class="col"></div>
       <div class="col"></div>
       <div class="col">
         <button class="btn mybtn" type="button" onclick="add()">
-          Add Category
+          Add Vendor
         </button>
       </div>
     </div>
@@ -49,14 +49,18 @@
       >
         <thead>
           <tr>
-            <th scope="col">Category</th>
+            <th scope="col">Vendor</th>
+            <th scope="col">Contact</th>
+            <th scope="col">Address</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          {% for x in category %}
+          {% for x in vendor %}
           <tr>
-            <th>{{x['category']}}</th>
+            <th>{{x['seller']}}</th>
+            <th>{{x['contact']}}</th>
+            <th>{{x['address']}}</th>
             <th>
               <button
                 class="btn mybtn"
@@ -77,7 +81,7 @@
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Add Category</h5>
+        <h5 class="modal-title">Add Vendor</h5>
         <button
           type="button"
           class="btn-close"
@@ -86,18 +90,48 @@
         ></button>
       </div>
       <div class="modal-body">
-        <form action="/category" method="POST" id="addcategoryForm">
+        <form action="/vendors" method="POST" id="addVendorForm">
           <div class="row">
             <div class="col">
               <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
+                <label for="seller" class="form-label">Vendor</label>
                 <input
                   type="text"
-                  name="category"
-                  id="category"
+                  name="seller"
+                  id="seller"
                   class="form-control"
-                  placeholder="Enter Category Name"
+                  placeholder="Enter Vendor Name"
                 />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="contact">Contact</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="contact"
+                  id="contact"
+                  placeholder="Enter contact Number"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="address">Address</label>
+                <textarea
+                  name="address"
+                  id="address"
+                  cols="30"
+                  rows="10"
+                  placeholder="Enter Address"
+                  class="form-control"
+                  style="height: 70px"
+                ></textarea>
               </div>
             </div>
           </div>
@@ -107,7 +141,7 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Close
         </button>
-        <button type="button" class="btn btn-primary" id="addCatg">
+        <button type="button" class="btn btn-primary" id="addVendor">
           Submit
         </button>
       </div>
@@ -119,7 +153,7 @@
     $("#managementlink").addClass("sideactive");
   });
   function rem(xid) {
-    $.post("/deleteCategory", { catid: xid }, function (res) {
+    $.post("/removeVendor", { venid: xid }, function (res) {
       if (res == "success") {
         location.reload();
       }
@@ -128,8 +162,8 @@
   function add() {
     $("#mymodal").modal("toggle");
   }
-  $("#addCatg").click(function () {
-    $("#addcategoryForm").submit();
+  $("#addVendor").click(function () {
+    $("#addVendorForm").submit();
   });
 </script>
 {% endblock %}

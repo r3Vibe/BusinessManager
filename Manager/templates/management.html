@@ -20,13 +20,34 @@
         <a href="{{url_for('commission')}}"> Commissions</a>
       </li>
       <li>
-        <a href="{{url_for('alldues')}}"> Vendors</a>
+        <a href="{{url_for('vendors')}}"> Vendors</a>
       </li>
       <li>
-        <a href="{{url_for('alldues')}}"> Variations</a>
+        <a href="{{url_for('variations')}}"> Variations</a>
       </li>
     </ul>
   </div>
+  <br />
+  <center>
+    {% for cat , msg in get_flashed_messages(with_categories=true)%} {% if cat
+    == 'error'%}
+    <div
+      class="alert alert-danger"
+      role="alert"
+      style="text-shadow: none; font-size: 1rem"
+    >
+      {{msg}}
+    </div>
+    {%endif%} {% if cat == 'success'%}
+    <div
+      class="alert alert-success"
+      role="alert"
+      style="text-shadow: none; font-size: 1rem"
+    >
+      {{msg}}
+    </div>
+    {%endif%} {%endfor%}
+  </center>
   <div class="showAllproduct" style="flex-direction: column">
     <br />
     <center>
@@ -56,7 +77,6 @@
             <th scope="col">Phone</th>
             <th scope="col">Address</th>
             <th scope="col">Role</th>
-            <th scope="col">Last Login</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -64,16 +84,27 @@
           {% for x in emply %}
           <tr>
             <th>
-              <img src="static/uploads/{{x['image']}}" width="50" height="50" />
+              <img
+                src="static/userimage/{{x['image']}}"
+                width="50"
+                height="50"
+              />
             </th>
             <th>{{x['username']}}</th>
             <th>{{x['fullname']}}</th>
-            <th>{{x['email']}}</th>
+            <th style="text-transform: none !important">{{x['email']}}</th>
             <th>{{x['contact']}}</th>
             <th>{{x['address']}}</th>
             <th>{{x['role']}}</th>
-            <th>{{x['lastlogin']}}</th>
-            <th><button class="btn mybtn" type="button">Modify</button></th>
+            <th>
+              <button
+                class="btn mybtn"
+                type="button"
+                onclick="rem(`{{x['id']}}`)"
+              >
+                Remove
+              </button>
+            </th>
           </tr>
           {% endfor %}
         </tbody>
@@ -94,7 +125,7 @@
         ></button>
       </div>
       <div class="modal-body">
-        <form method="post" id="adduserform">
+        <form method="post" id="adduserform" enctype="multipart/form-data">
           <!-- image -->
           <div class="row">
             <div class="col">
@@ -253,5 +284,12 @@
   $("#adduser").click(function () {
     $("#adduserform").submit();
   });
+  function rem(uid) {
+    $.post("/removeUser", { userid: uid }, function (res) {
+      if (res == "success") {
+        location.reload();
+      }
+    });
+  }
 </script>
 {% endblock %}

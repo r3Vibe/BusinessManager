@@ -126,10 +126,9 @@ def addmasterdata():
             else:
                 # upload image first
                 extinsion = request.files['image'].filename.rsplit('.')
-                originalFilename = extinsion[0]
                 extinsion = extinsion[1].lower()
                 rootPath = os.path.join(
-                    app.root_path, 'static', 'uploads')
+                    app.root_path, 'static', 'productimage')
                 newname = str(uuid.uuid4().hex)+'.'+str(extinsion)
                 destination = "/".join([rootPath, newname])
                 try:
@@ -489,9 +488,23 @@ def management():
             return render_template("management.html", username=g.user, role=g.role, date=date, time=time, emply=emply, privi=privi)
         if request.method == "POST":
             userDetails = request.form
-            status = dbQuery().addEmploy(userDetails)
-            if status == "success":
-                return redirect(url_for("management"))
+            extinsion = request.files['image'].filename.rsplit('.')
+            extinsion = extinsion[1].lower()
+            rootPath = os.path.join(
+                app.root_path, 'static', 'userimage')
+            newname = str(uuid.uuid4().hex)+'.'+str(extinsion)
+            destination = "/".join([rootPath, newname])
+            try:
+                request.files['image'].save(destination)
+            except Exception as e:
+                flash("Something Went Wrong", "error")
+            else:
+                status = dbQuery().addEmploy(userDetails, newname)
+                if status == "success":
+                    flash("Employee Added", "success")
+                else:
+                    flash("Something Went Wrong", "error")
+            return redirect(url_for("management"))
     else:
         return redirect(url_for('unauthenticated'))
 ######################################################################
@@ -593,6 +606,57 @@ def privilages():
     else:
         return redirect(url_for('unauthenticated'))
 
+
+######################################################################
+###################### vendors ####################################
+
+
+@app.route("/vendors", methods=['GET', 'POST'])
+def vendors():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        vendor = dbQuery().getVendor()
+        if request.method == "GET":
+            return render_template("vendors.html", username=g.user, role=g.role, date=date, time=time, vendor=vendor)
+        if request.method == "POST":
+            venform = request.form
+            status = dbQuery().addVendor(venform)
+            if status == "error":
+                flash("Something Went Wrong", "error")
+            else:
+                return redirect(url_for("vendors"))
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
+######################################################################
+###################### variations ####################################
+
+
+@app.route("/variations", methods=['GET', 'POST'])
+def variations():
+    if g.user:
+        date = datetime.today()
+        date = date.strftime("%d/%m/%Y")
+        time = datetime.now()
+        time = time.strftime("%H:%M:%S")
+        variations = dbQuery().getvariations()
+        if request.method == "GET":
+            return render_template("variations.html", username=g.user, role=g.role, date=date, time=time, variations=variations)
+        if request.method == "POST":
+            variationsform = request.form
+            status = dbQuery().addVariations(variationsform)
+            if status == "error":
+                flash("Something Went Wrong", "error")
+            else:
+                return redirect(url_for("variations"))
+    else:
+        return redirect(url_for('unauthenticated'))
+
+
 ################ remove session variable and redirect ################
 # logout page
 
@@ -612,6 +676,37 @@ def unauthenticated():
     return render_template("unauth.html")
 
 ############### api ##############
+
+
+@app.route("/removeVariation", methods=['GET', 'POST'])
+def removeVariation():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("varid")
+            return dbQuery().delVar(details)
+    else:
+        return "Please Login"
+
+
+
+@app.route("/removeVendor", methods=['GET', 'POST'])
+def removeVendor():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("venid")
+            return dbQuery().delVen(details)
+    else:
+        return "Please Login"
+
+
+@app.route("/removeUser", methods=['GET', 'POST'])
+def removeUser():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("userid")
+            return dbQuery().delUser(details)
+    else:
+        return "Please Login"
 
 
 @app.route("/deleteComm", methods=['GET', 'POST'])
@@ -651,10 +746,22 @@ def featurethis():
     if g.user:
         if request.method == "POST":
             details = request.form.get("id")
-            print(details)
-            return details
+            status = dbQuery().featureThis(details)
+            return status
     else:
         return "Please Login"
+
+
+@app.route("/unfeaturethis", methods=['GET', 'POST'])
+def unfeaturethis():
+    if g.user:
+        if request.method == "POST":
+            details = request.form.get("id")
+            status = dbQuery().unfeatureThis(details)
+            return status
+    else:
+        return "Please Login"
+
 
 # delete privilage
 

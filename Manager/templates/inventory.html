@@ -43,7 +43,6 @@
           <th scope="col">Quantity</th>
           <th scope="col">Vendor</th>
           <th scope="col" style="width: 80px">Price</th>
-          <th scope="col">Date</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
@@ -51,7 +50,11 @@
         {% for x in products %}
         <tr id="rem{{x['id']}}">
           <th>
-            <img src="static/uploads/{{x['image']}}" width="50" height="50" />
+            <img
+              src="static/productimage/{{x['image']}}"
+              width="50"
+              height="50"
+            />
           </th>
           <th>{{x['name']}}</th>
           <th>{{x['productid']}}</th>
@@ -63,17 +66,16 @@
           <th>{{x['quantity']}}</th>
           <th>{{x['seller']}}</th>
           <th><i class="fas fa-rupee-sign"></i> {{x['sellprice']}}</th>
-          <th>{{x['date']}}</th>
           <th>
             <button
-              style="width: 80px"
+              style="width: 95px"
               class="btn mybtn"
               onclick="modProduct(`{{x['id']}}`)"
             >
               Modify
             </button>
             <button
-              style="width: 80px"
+              style="width: 95px"
               class="btn mybtn"
               onclick="delProduct(`{{x['id']}}`)"
             >
@@ -89,7 +91,7 @@
             </button>
             {% else %}
             <button
-              style="width: 80px"
+              style="width: 95px"
               class="btn mybtn"
               onclick="feature(`{{x['id']}}`)"
             >
@@ -123,6 +125,17 @@
       }
     });
   }
+
+  function unfeature(id) {
+    $.post("/unfeaturethis", { id: id }, function (res) {
+      if (res == "success") {
+        location.reload();
+      } else {
+        alert("Something Went Wrong");
+      }
+    });
+  }
+
   //delete product onclick
   function delProduct(id) {
     $.post("/removeProduct", { id: id }, function (res) {

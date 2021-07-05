@@ -7,6 +7,7 @@ from mysql.connector.cursor import ERR_NO_RESULT_TO_FETCH
 from werkzeug.wrappers import ETagRequestMixin
 import xlsxwriter
 from fpdf import FPDF
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # # connect to database
 db = mysql.connector.connect(
@@ -340,9 +341,71 @@ class PDF2(FPDF):
 
 
 class dbQuery():
-    def addEmploy(self, details):
-        print(details)
-        return "success"
+    def addVariations(seld, details):
+        cursor.execute(
+            f"INSERT INTO variation(type,variations) VALUES('{details['name']}','{details['variations']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def delVar(self, varid):
+        cursor.execute(f"DELETE FROM variation WHERE id = '{varid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def getvariations(self):
+        cursor.execute("SELECT * FROM variation")
+        return cursor.fetchall()
+
+    def addVendor(seld, details):
+        cursor.execute(
+            f"INSERT INTO seller(seller,contact,address) VALUES('{details['seller']}','{details['contact']}','{details['address']}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def delVen(self, venid):
+        cursor.execute(f"DELETE FROM seller WHERE id = '{venid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def getVendor(self):
+        cursor.execute("SELECT * FROM seller")
+        return cursor.fetchall()
+
+    def addEmploy(self, details, dest):
+        password_hash = generate_password_hash(details['password'], "sha256")
+        cursor.execute(
+            f"INSERT INTO employee(username,fullname,email,contact,address,password,role,image) VALUES('{details['username']}','{details['fullname']}','{details['email']}','{details['contact']}','{details['address']}','{password_hash}','{details['role']}','{dest}')")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def delUser(self, userid):
+        cursor.execute(f"DELETE FROM employee WHERE id = '{userid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
 
     def addPriv(self, pform):
         cursor.execute(
@@ -1539,8 +1602,29 @@ class dbQuery():
         else:
             return "ok"
 
+    def featureThis(self, pid):
+        cursor.execute(
+            f"UPDATE products SET feature = 'true' WHERE id = '{pid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
+    def unfeatureThis(self, pid):
+        cursor.execute(
+            f"UPDATE products SET feature = 'false' WHERE id = '{pid}'")
+        try:
+            db.commit()
+        except Exception as e:
+            return "error"
+        else:
+            return "success"
+
 
 class updateDb():
+
     def addProduct(self, details, imagename):
         cursor.execute("SELECT * FROM purchaseorder ORDER BY id DESC")
         allOrder = cursor.fetchall()
@@ -1566,7 +1650,7 @@ class updateDb():
         # make balance
         balance = lastBal - int(grandtotal)
         cursor.execute(
-            f"INSERT INTO products(name,productid,status,barcode,vartype,vars,category,seller,quantity,unitprice,sellprice,tax,dimension,weight,image,date) VALUES('{details['name']}','{details['productid']}','active','{barcode}','{details['vartype']}','{details['vars']}','{details['catg']}','{details['seller']}','{details['quantity']}','{details['cost']}','{details['sellprice']}','{details['tax']}','{dimension}','{weight}','{imagename}','{todate}')")
+            f"INSERT INTO products(name,productid,status,barcode,vartype,vars,category,seller,quantity,unitprice,sellprice,tax,dimension,weight,image,feature,offer,date) VALUES('{details['name']}','{details['productid']}','active','{barcode}','{details['vartype']}','{details['vars']}','{details['catg']}','{details['seller']}','{details['quantity']}','{details['cost']}','{details['sellprice']}','{details['tax']}','{dimension}','{weight}','{imagename}','false','none','{todate}')")
         cursor.execute(
             f"INSERT INTO transaction(date,reference,account,debit,credit,balance) VALUES('{todate}','{orderid}','purchase','0','{grandtotal}','{balance}')")
         try:
