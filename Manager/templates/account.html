@@ -28,9 +28,13 @@
             </div>
             <div class="row">
               <center>
+                {% if bal %}
                 <span
                   ><i class="fas fa-rupee-sign"></i> {{bal[0]['balance']}}</span
                 >
+                {% else %}
+                <span><i class="fas fa-rupee-sign"></i> 0</span>
+                {% endif %}
               </center>
             </div>
           </div>
