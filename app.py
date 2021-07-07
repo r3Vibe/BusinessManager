@@ -10,11 +10,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 import os
 import uuid
-from flask import Flask
-
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = "520a9466bd1a413396d886e098bd73d2"
+from Manager import app
 
 
 ################ home page ################
