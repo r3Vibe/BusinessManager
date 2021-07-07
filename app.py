@@ -1,7 +1,6 @@
 ################ all imports ################
 from re import S
 from flask import render_template, redirect, g, flash, url_for, session, request, send_file
-from Manager import app
 from Manager.form import Login, productImage
 from Manager.validation import validateUser, validateProduct
 from Manager.database import dbQuery, updateDb
@@ -11,6 +10,12 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 import os
 import uuid
+from flask import Flask
+
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = "520a9466bd1a413396d886e098bd73d2"
+
 
 ################ home page ################
 
