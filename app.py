@@ -140,7 +140,7 @@ def addmasterdata():
                     # update database with new product
                     res = updateDb().addProduct(request.form, newname)
                     if res == "success":
-                        flash("New Product Added Successfully", "success")
+                        return redirect(url_for("inventory"))
                     else:
                         flash("Can Not Update Database. Contact Admin", "error")
         date = datetime.today()
@@ -688,7 +688,6 @@ def removeVariation():
         return "Please Login"
 
 
-
 @app.route("/removeVendor", methods=['GET', 'POST'])
 def removeVendor():
     if g.user:
@@ -1167,4 +1166,4 @@ def before_request_func():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

@@ -80,7 +80,7 @@
       <hr />
       <center><h2>Products</h2></center>
       <br />
-      <div class="row row-cols-5" id="appendtoThis">
+      <div class="row row-cols-6" id="appendtoThis">
         <div class="col">
           <div class="mb-3">
             <select
@@ -88,7 +88,7 @@
               id="product"
               onchange="getDetails(this.value,this.id)"
               class="form-select-sm"
-              style="width: 180px"
+              style="width: 170px"
             >
               <option selected disabled>Select Product</option>
               {% for x in prods %}
@@ -107,6 +107,7 @@
               value=""
               class="form-control-sm"
               disabled
+              style="width: 170px"
             />
             <input type="hidden" name="unitpricef" id="unitpricef" />
           </div>
@@ -119,6 +120,7 @@
               id="tax"
               placeholder="Enter Tax"
               class="form-control-sm"
+              style="width: 170px"
             />
           </div>
         </div>
@@ -131,6 +133,20 @@
               placeholder="Enter Quantity"
               class="form-control-sm"
               onchange="maketotal(this.value,this.id)"
+              style="width: 170px"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="discount"
+              id="discount"
+              placeholder="Enter Discount"
+              class="form-control-sm"
+              style="width: 170px"
+              onchange="updatePrice(this.value,this.id)"
             />
           </div>
         </div>
@@ -144,6 +160,7 @@
               value=""
               class="form-control-sm"
               disabled
+              style="width: 170px"
             />
             <input type="hidden" name="totalpricef" id="totalpricef" />
           </div>
@@ -533,7 +550,7 @@
         select.setAttribute("name", "product" + productRow);
         select.setAttribute("id", "product" + productRow);
         select.setAttribute("class", "form-select-sm");
-        select.setAttribute("style", "width:180px");
+        select.setAttribute("style", "width:170px");
         select.setAttribute("onchange", "getDetails(this.value,this.id)");
         //option
         var option = document.createElement("option");
@@ -564,6 +581,7 @@
         inputs.setAttribute("placeholder", "Unit Price");
         inputs.setAttribute("class", "form-control-sm");
         inputs.setAttribute("disabled", "");
+        inputs.setAttribute("style", "width:170px");
         mb.appendChild(inputs);
         //input
         var inputs = document.createElement("input");
@@ -586,6 +604,7 @@
         inputs.setAttribute("id", "tax" + productRow);
         inputs.setAttribute("placeholder", "Enter Tax");
         inputs.setAttribute("class", "form-control-sm");
+        inputs.setAttribute("style", "width:170px");
         mb.appendChild(inputs);
         col.appendChild(mb);
         document.getElementById("appendtoThis").appendChild(col);
@@ -603,6 +622,25 @@
         inputs.setAttribute("placeholder", "Enter Quantity");
         inputs.setAttribute("class", "form-control-sm");
         inputs.setAttribute("onchange", "maketotal(this.value,this.id)");
+        inputs.setAttribute("style", "width:170px");
+        mb.appendChild(inputs);
+        col.appendChild(mb);
+        document.getElementById("appendtoThis").appendChild(col);
+        //third column new
+        var col = document.createElement("div");
+        col.setAttribute("class", "col");
+        //mb-3
+        var mb = document.createElement("div");
+        mb.setAttribute("class", "mb-3");
+        //input
+        var inputs = document.createElement("input");
+        inputs.setAttribute("type", "text");
+        inputs.setAttribute("name", "discount" + productRow);
+        inputs.setAttribute("id", "discount" + productRow);
+        inputs.setAttribute("placeholder", "Enter Discount");
+        inputs.setAttribute("class", "form-control-sm");
+        inputs.setAttribute("onchange", "updatePrice(this.value,this.id)");
+        inputs.setAttribute("style", "width:170px");
         mb.appendChild(inputs);
         col.appendChild(mb);
         document.getElementById("appendtoThis").appendChild(col);
@@ -620,6 +658,7 @@
         inputs.setAttribute("placeholder", "Total Price");
         inputs.setAttribute("class", "form-control-sm");
         inputs.setAttribute("disabled", "");
+        inputs.setAttribute("style", "width:170px");
         mb.appendChild(inputs);
         col.appendChild(mb);
         //input
@@ -858,5 +897,22 @@
       },
     });
   });
+  function updatePrice(amount, id) {
+    if (id == "discount") {
+      var price = $("#totalprice").val();
+
+      var newPrice = parseInt(price) - parseInt(amount);
+
+      $("#totalprice").val(newPrice);
+    } else {
+      var newid = id.split("discount")[1];
+
+      var price = $("#totalprice" + newid).val();
+
+      var newPrice = parseInt(price) - parseInt(amount);
+
+      $("#totalprice" + newid).val(newPrice);
+    }
+  }
 </script>
 {% endblock %}

@@ -10,12 +10,20 @@ from fpdf import FPDF
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+# db = mysql.connector.connect(
+#     host='reverdesign.crqspfeoq4ka.us-east-2.rds.amazonaws.com',
+#     port='3306',
+#     user='owner',
+#     passwd='Agsarnab095',
+#     database='reverdesigndb',
+#     auth_plugin='mysql_native_password'
+# )
+
 db = mysql.connector.connect(
-    host='reverdesign.crqspfeoq4ka.us-east-2.rds.amazonaws.com',
-    port='3306',
-    user='owner',
-    passwd='Agsarnab095',
-    database='reverdesigndb',
+    host='localhost',
+    user='root',
+    passwd='',
+    database='businessmanager',
     auth_plugin='mysql_native_password'
 )
 
@@ -61,11 +69,11 @@ class PDF(FPDF):
         self.cell(w=0, h=10, txt="Rever Design", align="L")
 
         self.set_font('helvetica', "", 15)
-        self.cell(0, 10, "Call:7044287686", ln=1, align="R")
+        self.cell(0, 10, "Call:9408736464", ln=1, align="R")
         self.set_font('helvetica', '', 15)
         self.cell(0, 10, "Make Your Dream Design", align="L")
         self.set_font('helvetica', '', 15)
-        self.cell(0, 10, "Wapp:7003391137", ln=1, align="R")
+        self.cell(0, 10, "Wapp:9408736464", ln=1, align="R")
         self.set_font('helvetica', '', 15)
         self.cell(0, 10, f"Invoice: {detailsar['invid']}", 0, 0, "L")
         self.cell(0, 10, "Email:reverdesign125@gmail.com", ln=1, align="R")
@@ -90,14 +98,14 @@ class PDF(FPDF):
         self.set_y(-40)
         self.set_font('Times', '', 15)
         self.cell(110, 6, "* Terms & Conditions *", 0, 1, "L")
-        self.cell(110, 6, "1.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(110, 6, "1.Once Sold Cannot Be Returned", 0, 0, "L")
         self.cell(20)
         self.cell(40, 6, "(Autorized Signature)", 0, 1, "C", False)
-        self.cell(110, 6, "2.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(110, 6, "2.Check Design Before Sublimation", 0, 0, "L")
         self.cell(20)
         self.cell(40, 6, "............................................................",
                   0, 1, "C", False)
-        self.cell(110, 6, "3.lorem ipsom dolor sit amet", 0, 1, "L")
+        self.cell(110, 6, "3.Replacable If Broken During Delivery", 0, 1, "L")
         self.ln(4)
         # helvetica italic 8
         self.set_font('helvetica', '', 10)
@@ -114,35 +122,37 @@ class PDF(FPDF):
             self.set_font('Times', '', 12)
             self.set_fill_color(10, 191, 219)
             # header of table
-            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(40, 8, "Item", 1, 0, "C", True)
             self.cell(30, 8, "Quantity", 1, 0, "C", True)
-            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Unit Price", 1, 0, "C", True)
             self.cell(30, 8, "Tax (%)", 1, 0, "C", True)
-            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            self.cell(30, 8, "Discount", 1, 0, "C", True)
+            self.cell(30, 8, "Total Price", 1, 1, "C", True)
             # contrent of table
 
             self.cell(
-                60, 8, f"{(productname[0]['name']).capitalize()}", 1, 0, "C", False)
+                40, 8, f"{(productname[0]['name']).capitalize()}", 1, 0, "C", False)
             self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
             self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+            self.cell(30, 8, f"{detailsar['discount']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
 
             self.set_font('Times', '', 12)
             self.set_fill_color(0, 255, 0)
-            self.cell(155, 8, "Grand total", 1, 0, "C", True)
-            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.cell(160, 8, "Grand total", 1, 0, "C", True)
+            self.cell(30, 8, f"{detailsar['gto']}", 1, 1, "C", True)
             self.set_font('Times', '', 15)
-            self.cell(120)
-            self.cell(35, 8, "Payment", 1, 0, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Payment", 1, 0, "C", False)
             self.cell(
-                35, 8, f"{(detailsar['pmode']).capitalize()}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Paid", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Due", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+                30, 8, f"{(detailsar['pmode']).capitalize()}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Paid", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Due", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['dues']}", 1, 1, "C", False)
         else:
             cursor.execute(
                 f"SELECT * FROM products WHERE productid = '{detailsar['product']}'")
@@ -151,46 +161,50 @@ class PDF(FPDF):
             self.set_font('Times', '', 12)
             self.set_fill_color(10, 191, 219)
             # header of table
-            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(40, 8, "Item", 1, 0, "C", True)
             self.cell(30, 8, "Quantity", 1, 0, "C", True)
-            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Unit Price", 1, 0, "C", True)
             self.cell(30, 8, "Tax", 1, 0, "C", True)
-            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            self.cell(30, 8, "Discount", 1, 0, "C", True)
+            self.cell(30, 8, "Total Price", 1, 1, "C", True)
             # first row
-            self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+            self.cell(40, 8, f"{productname[0]['name']}", 1, 0, "C", False)
             self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
             self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+            self.cell(30, 8, f"{detailsar['discount']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
             # next rows
             while i <= int(detailsar['totoalrow']):
                 cursor.execute(
                     f"SELECT * FROM products WHERE productid = '{detailsar[f'product{i}']}'")
                 productname = cursor.fetchall()
-                self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+                self.cell(40, 8, f"{productname[0]['name']}", 1, 0, "C", False)
                 self.cell(
                     30, 8, f"{detailsar[f'quantity{i}']}", 1, 0, "C", False)
                 self.cell(
-                    35, 8, f"{detailsar[f'unitpricef{i}']}", 1, 0, "C", False)
+                    30, 8, f"{detailsar[f'unitpricef{i}']}", 1, 0, "C", False)
                 self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
                 self.cell(
-                    35, 8, f"{detailsar[f'totalpricef{i}']}", 1, 1, "C", False)
+                    30, 8, f"{detailsar[f'discount{i}']}", 1, 0, "C", False)
+                self.cell(
+                    30, 8, f"{detailsar[f'totalpricef{i}']}", 1, 1, "C", False)
                 i += 1
             # last part
             self.set_font('Times', '', 12)
             self.set_fill_color(0, 255, 0)
-            self.cell(155, 8, "Grand total", 1, 0, "C", True)
-            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.cell(160, 8, "Grand total", 1, 0, "C", True)
+            self.cell(30, 8, f"{detailsar['gto']}", 1, 1, "C", True)
             self.set_font('Times', '', 15)
-            self.cell(120)
-            self.cell(35, 8, "Payment", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Paid", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Due", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Payment", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Paid", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Due", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['dues']}", 1, 1, "C", False)
 
 
 class PDF2(FPDF):
@@ -199,11 +213,11 @@ class PDF2(FPDF):
         self.cell(w=0, h=10, txt="Rever Design", align="L")
 
         self.set_font('helvetica', "", 15)
-        self.cell(0, 10, "Call:7044287686", ln=1, align="R")
+        self.cell(0, 10, "Call:9408736464", ln=1, align="R")
         self.set_font('helvetica', '', 15)
         self.cell(0, 10, "Make Your Dream Design", align="L")
         self.set_font('helvetica', '', 15)
-        self.cell(0, 10, "Wapp:7003391137", ln=1, align="R")
+        self.cell(0, 10, "Wapp:9408736464", ln=1, align="R")
         self.set_font('helvetica', '', 15)
         self.cell(0, 10, f"Invoice: {detailsar['invid']}", 0, 0, "L")
         self.cell(0, 10, "Email:reverdesign125@gmail.com", ln=1, align="R")
@@ -228,14 +242,14 @@ class PDF2(FPDF):
         self.set_y(-40)
         self.set_font('Times', '', 15)
         self.cell(110, 6, "* Terms & Conditions *", 0, 1, "L")
-        self.cell(110, 6, "1.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(110, 6, "1.Once Sold Cannot Be Returned", 0, 0, "L")
         self.cell(20)
         self.cell(40, 6, "(Autorized Signature)", 0, 1, "C", False)
-        self.cell(110, 6, "2.lorem ipsom dolor sit amet", 0, 0, "L")
+        self.cell(110, 6, "2.Check Design Before Sublimation", 0, 0, "L")
         self.cell(20)
         self.cell(40, 6, "............................................................",
                   0, 1, "C", False)
-        self.cell(110, 6, "3.lorem ipsom dolor sit amet", 0, 1, "L")
+        self.cell(110, 6, "3.Replacable If Broken During Delivery", 0, 1, "L")
         self.ln(4)
         # helvetica italic 8
         self.set_font('helvetica', '', 10)
@@ -252,35 +266,37 @@ class PDF2(FPDF):
             self.set_font('Times', '', 12)
             self.set_fill_color(10, 191, 219)
             # header of table
-            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(40, 8, "Item", 1, 0, "C", True)
             self.cell(30, 8, "Quantity", 1, 0, "C", True)
-            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Unit Price", 1, 0, "C", True)
             self.cell(30, 8, "Tax (%)", 1, 0, "C", True)
-            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            self.cell(30, 8, "Discount", 1, 0, "C", True)
+            self.cell(30, 8, "Total Price", 1, 1, "C", True)
             # contrent of table
 
             self.cell(
-                60, 8, f"{(productname[0]['name']).capitalize()}", 1, 0, "C", False)
+                40, 8, f"{(productname[0]['name']).capitalize()}", 1, 0, "C", False)
             self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
             self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+            self.cell(30, 8, f"{detailsar['discount']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
 
             self.set_font('Times', '', 12)
             self.set_fill_color(0, 255, 0)
-            self.cell(155, 8, "Grand total", 1, 0, "C", True)
-            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.cell(160, 8, "Grand total", 1, 0, "C", True)
+            self.cell(30, 8, f"{detailsar['gto']}", 1, 1, "C", True)
             self.set_font('Times', '', 15)
-            self.cell(120)
-            self.cell(35, 8, "Payment", 1, 0, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Payment", 1, 0, "C", False)
             self.cell(
-                35, 8, f"{(detailsar['pmode']).capitalize()}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Paid", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Due", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+                30, 8, f"{(detailsar['pmode']).capitalize()}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Paid", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Due", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['dues']}", 1, 1, "C", False)
         else:
             cursor.execute(
                 f"SELECT * FROM services WHERE serviceid = '{detailsar['service']}'")
@@ -289,46 +305,50 @@ class PDF2(FPDF):
             self.set_font('Times', '', 12)
             self.set_fill_color(10, 191, 219)
             # header of table
-            self.cell(60, 8, "Item", 1, 0, "C", True)
+            self.cell(40, 8, "Item", 1, 0, "C", True)
             self.cell(30, 8, "Quantity", 1, 0, "C", True)
-            self.cell(35, 8, "Unit Price", 1, 0, "C", True)
+            self.cell(30, 8, "Unit Price", 1, 0, "C", True)
             self.cell(30, 8, "Tax", 1, 0, "C", True)
-            self.cell(35, 8, "Total Price", 1, 1, "C", True)
+            self.cell(30, 8, "Discount", 1, 0, "C", True)
+            self.cell(30, 8, "Total Price", 1, 1, "C", True)
             # first row
-            self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+            self.cell(40, 8, f"{productname[0]['name']}", 1, 0, "C", False)
             self.cell(30, 8, f"{detailsar['quantity']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['unitpricef']}", 1, 0, "C", False)
             self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
+            self.cell(30, 8, f"{detailsar['discount']}", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['totalpricef']}", 1, 1, "C", False)
             # next rows
             while i <= int(detailsar['totoalrow']):
                 cursor.execute(
                     f"SELECT * FROM services WHERE serviceid = '{detailsar[f'service{i}']}'")
                 productname = cursor.fetchall()
-                self.cell(60, 8, f"{productname[0]['name']}", 1, 0, "C", False)
+                self.cell(40, 8, f"{productname[0]['name']}", 1, 0, "C", False)
                 self.cell(
                     30, 8, f"{detailsar[f'quantity{i}']}", 1, 0, "C", False)
                 self.cell(
-                    35, 8, f"{detailsar[f'unitpricef{i}']}", 1, 0, "C", False)
+                    30, 8, f"{detailsar[f'unitpricef{i}']}", 1, 0, "C", False)
                 self.cell(30, 8, f"{productname[0]['tax']}", 1, 0, "C", False)
                 self.cell(
-                    35, 8, f"{detailsar[f'totalpricef{i}']}", 1, 1, "C", False)
+                    30, 8, f"{detailsar[f'discount{i}']}", 1, 0, "C", False)
+                self.cell(
+                    30, 8, f"{detailsar[f'totalpricef{i}']}", 1, 1, "C", False)
                 i += 1
             # last part
             self.set_font('Times', '', 12)
             self.set_fill_color(0, 255, 0)
-            self.cell(155, 8, "Grand total", 1, 0, "C", True)
-            self.cell(35, 8, f"{detailsar['gto']}", 1, 1, "C", True)
+            self.cell(160, 8, "Grand total", 1, 0, "C", True)
+            self.cell(30, 8, f"{detailsar['gto']}", 1, 1, "C", True)
             self.set_font('Times', '', 15)
-            self.cell(120)
-            self.cell(35, 8, "Payment", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Paid", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['paid']}", 1, 1, "C", False)
-            self.cell(120)
-            self.cell(35, 8, "Due", 1, 0, "C", False)
-            self.cell(35, 8, f"{detailsar['dues']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Payment", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['pmode']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Paid", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['paid']}", 1, 1, "C", False)
+            self.cell(130)
+            self.cell(30, 8, "Due", 1, 0, "C", False)
+            self.cell(30, 8, f"{detailsar['dues']}", 1, 1, "C", False)
 
 
 class dbQuery():
