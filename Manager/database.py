@@ -20,10 +20,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # )
 
 db = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    passwd='',
-    database='businessmanager',
+    host='us-cdbr-east-04.cleardb.com',
+    user='ba8f3e37433355',
+    passwd='de82bbb6',
+    database='heroku_2d383e58f1af7a5',
     auth_plugin='mysql_native_password'
 )
 
