@@ -1,16 +1,20 @@
+from flask import Flask
 ################ all imports ################
-from re import S
 from flask import render_template, redirect, g, flash, url_for, session, request, send_file
-from BusinessManager.form import Login, productImage
-from BusinessManager.validation import validateUser, validateProduct
-from BusinessManager.database import dbQuery, updateDb
+from form import Login, productImage
+from validation import validateUser, validateProduct
+from database import dbQuery, updateDb
 import time
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 import os
 import uuid
-from BusinessManager import app
+
+
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = "520a9466bd1a413396d886e098bd73d2"
 
 
 ################ home page ################
