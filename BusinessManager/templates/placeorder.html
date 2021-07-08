@@ -1,0 +1,396 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Inventory Management</title>
+{% endblock %} {% block contents %}
+<style>
+  select,
+  input {
+    text-align: center;
+    text-transform: capitalize;
+    font-weight: bold;
+    color: black;
+    font-size: 15px;
+  }
+</style>
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li><a href="{{url_for('inventory')}}"> Products</a></li>
+      <li>
+        <a href="{{url_for('placeorder')}}" class="active"> Order</a>
+      </li>
+      <li>
+        <a href="{{url_for('addmasterdata')}}"> New</a>
+      </li>
+      <li>
+        <a href="{{url_for('orderlist')}}"> Order List</a>
+      </li>
+    </ul>
+  </div>
+  <div class="addproductform">
+    <form method="post" style="width: 100%" id="orderlistform">
+      <center>
+        <h1 style="color: white; text-shadow: 1px 1px black">
+          Place new Order
+        </h1>
+      </center>
+      <br />
+      <input type="hidden" name="totoalrow" id="totoalrow" />
+      <div class="row row-cols-3">
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="text"
+              name="orderid"
+              id="orderid"
+              placeholder="Order ID"
+              class="form-control-sm"
+              value="{{orderid}}"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <select
+              name="vendor"
+              id="vendor"
+              class="form-select-sm"
+              onchange="findProducts(this.value)"
+            >
+              <option selected disabled value="0">Select Vendor</option>
+              {% for x in vendor %}
+              <option value="{{x['seller']}}">{{x['seller']}}</option>
+              {%endfor%}
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <input
+              type="date"
+              timezone="kolkata"
+              name="date"
+              id="date"
+              class="form-control-sm"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-hover border-white">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+              <th scope="col">Tax</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyproduct">
+            <tr>
+              <td id="tdproduct">
+                <select
+                  name="product"
+                  id="product"
+                  class="nothing form-select-sm"
+                >
+                  <option selected disabled>Please Select Vendor</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="qt"
+                  id="qt"
+                  placeholder="Enter Quantity"
+                  onchange="calculate(this.value,this.id)"
+                  disabled
+                />
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="price"
+                  id="price"
+                  value="0"
+                  disabled
+                />
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="tax"
+                  id="tax"
+                  value="0"
+                  disabled
+                />
+              </td>
+              <td>
+                <input
+                  class="nothing form-input-sm"
+                  type="text"
+                  name="sttl"
+                  id="sttl"
+                  value="0"
+                  disabled
+                />
+              </td>
+            </tr>
+          </tbody>
+          <tr>
+            <td colspan="4" style="font-weight: bold; font-size: 15px">
+              Total
+            </td>
+            <td style="font-weight: bold; font-size: 15p" id="totalprice">0</td>
+            <input type="hidden" name="totalpricef" id="totalpricef" />
+          </tr>
+        </table>
+        <div class="row" id="allButtons">
+          <div class="col" id="validateorderCol">
+            <button
+              type="button"
+              class="btn mybtn"
+              id="validateorder"
+              style="width: 100px; margin-left: 10px"
+            >
+              Confirm
+            </button>
+          </div>
+          <div class="col" id="addRowCol">
+            <button
+              type="button"
+              class="btn mybtn"
+              id="addRow"
+              style="width: 100px; margin-left: 10px"
+            >
+              Add More
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    document.getElementById("date").valueAsDate = new Date();
+    var productRow = 1;
+    $("#totoalrow").val(productRow);
+
+    //heightlight current page link
+    $("#inventorylink").addClass("sideactive");
+
+    //add row
+    $("#addRow").click(function () {
+      var check = $("#vendor").val();
+      if (check == null) {
+        alert("Select Vendor First!");
+      } else {
+        //count how many products
+        productRow++;
+        $("#totoalrow").val(productRow);
+        //create tr td select for first column
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        var select = document.createElement("select");
+        var option = document.createElement("option");
+        option.innerText = "Select One";
+        option.setAttribute("selected", "");
+        option.setAttribute("disabled", "");
+        select.appendChild(option);
+        var vendor = $("#vendor").val();
+        $.post("/getProductofSeller", { data: vendor }, function (res) {
+          for (var i = 0; i < res["productname"].length; i++) {
+            var option = document.createElement("option");
+            option.setAttribute("value", res["productid"][i]);
+            option.innerText = res["productname"][i];
+            select.appendChild(option);
+          }
+        });
+        select.setAttribute("class", "form-select-sm nothing");
+        select.setAttribute("id", "product" + productRow);
+        select.setAttribute("name", "product" + productRow);
+        select.setAttribute("onchange", "update(this.value,this.id)");
+        td.appendChild(select);
+        tr.appendChild(td);
+        //create td and input 2nd column quantity
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("placeholder", "Enter Quantity");
+        input.setAttribute("disabled", "disabled");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "qt" + productRow);
+        input.setAttribute("id", "qt" + productRow);
+        input.setAttribute("onchange", "calculate(this.value,this.id)");
+        td.appendChild(input);
+        tr.appendChild(td);
+        //create td and input for 3rd column price
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("disabled", "disabled");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "price" + productRow);
+        input.setAttribute("id", "price" + productRow);
+        input.setAttribute("value", "0");
+        td.appendChild(input);
+        tr.appendChild(td);
+        //create td and input for 4rd column tax
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("disabled", "disabled");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "tax" + productRow);
+        input.setAttribute("id", "tax" + productRow);
+        input.setAttribute("value", "0");
+        td.appendChild(input);
+        tr.appendChild(td);
+        //create td and input for 5rd column subtotal
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.setAttribute("class", "nothing form-input-sm");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", "sttl" + productRow);
+        input.setAttribute("id", "sttl" + productRow);
+        input.setAttribute("disabled", "disabled");
+        input.setAttribute("value", "0");
+        td.appendChild(input);
+        tr.appendChild(td);
+        document.getElementById("tbodyproduct").appendChild(tr);
+      }
+    });
+  });
+  //get details of a selected product when product is selected
+  function update(e, f) {
+    if (f == "product") {
+      $.post("/getSelectedDetails", { data: e }, function (res) {
+        for (var i = 0; i < res["quantity"].length; i++) {
+          $("#price").removeAttr("disabled");
+          $("#qt").removeAttr("disabled");
+          $("#tax").removeAttr("disabled");
+          $("#sttl").removeAttr("disabled");
+          $("#price").val(res["price"][i]);
+          $("#tax").val(res["tax"][i]);
+        }
+      });
+    } else {
+      var rowNo = f.split("product")[1];
+      $.post("/getSelectedDetails", { data: e }, function (res) {
+        for (var i = 0; i < res["quantity"].length; i++) {
+          $("#price" + rowNo).removeAttr("disabled");
+          $("#qt" + rowNo).removeAttr("disabled");
+          $("#tax" + rowNo).removeAttr("disabled");
+          $("#sttl" + rowNo).removeAttr("disabled");
+          $("#price" + rowNo).val(res["price"][i]);
+          $("#tax" + rowNo).val(res["tax"][i]);
+        }
+      });
+    }
+  }
+
+  //calculate total price
+  function calculate(e, f) {
+    if (f == "qt") {
+      var pp = $("#price").val();
+      var tot = pp * e;
+      var tottax = (tot * $("#tax").val()) / 100;
+      var subt = tot + tottax;
+      $("#sttl").val(subt);
+      $("#totalprice").html(subt);
+      $("#totalpricef").val(subt);
+    } else {
+      var rowNo = f.split("qt")[1];
+      var pp = $("#price" + rowNo).val();
+      var tot = pp * e;
+      var tottax = (tot * $("#tax" + rowNo).val()) / 100;
+      var subt = tot + tottax;
+      $("#sttl" + rowNo).val(subt);
+      var add = 0;
+      for (var i = 1; i < rowNo; i++) {
+        add = parseInt(add) + parseInt($("#sttl" + (i + 1)).val());
+      }
+      var addup = parseInt(add) + parseInt($("#sttl").val());
+      $("#totalprice").html(addup);
+      $("#totalpricef").val(addup);
+    }
+  }
+
+  //when vendor is selected we find products specific to that vendor
+  function findProducts(vendor) {
+    $.post("/getProductofSeller", { data: vendor }, function (res) {
+      $("#tdproduct").html(
+        "<select name='product' id='product' class='nothing form-select-sm' onchange='update(this.value,this.id)'>"
+      );
+      $("#product").append("<option selected disabled>Select One</option>");
+      for (var i = 0; i < res["productname"].length; i++) {
+        $("#product").append(
+          "<option value=" +
+            res["productid"][i] +
+            ">" +
+            res["productname"][i] +
+            "</option>"
+        );
+      }
+    });
+  }
+
+  function fresh() {
+    location.reload();
+  }
+
+  $("#validateorder").on("click", function () {
+    var datestate = $("#date").val();
+    if (datestate == "") {
+      alert("Please Select Date");
+    } else {
+      var myform = document.getElementById("orderlistform");
+      var myformdata = new FormData(myform);
+      $.ajax({
+        url: "/checkBalance",
+        data: myformdata,
+        cache: false,
+        processData: false,
+        contentType: false,
+        type: "POST",
+        success: function (res) {
+          if (res == "available") {
+            $("#validateorderCol").css("display", "none");
+            $("#addRowCol").css("display", "none");
+            $("#allButtons").append(
+              '<div class="col"><button type="button" class="btn mybtn" id="view" onclick="viewlist()" style="width: 200px; margin-left: 10px">Show Orders</button></div>'
+            );
+            $("#allButtons").append(
+              '<div class="col"><button type="button" class="btn mybtn" id="refresh" onclick="fresh()" style="width: 200px; margin-left: 10px">Refresh</button></div>'
+            );
+            $.ajax({
+              url: "/makePurchaseOrder",
+              data: myformdata,
+              cache: false,
+              processData: false,
+              contentType: false,
+              type: "POST",
+              success: function (res) {
+                // do something with the result
+                alert("Order Placed");
+              },
+            });
+          } else {
+            alert("You Dont Have Enough Balance To MAke A Purchase");
+          }
+        },
+      });
+    }
+  });
+
+  function viewlist() {
+    location.href = "/orderlist";
+  }
+</script>
+{% endblock %}
+
+<!-- update select field depending on tthe productRow number -->

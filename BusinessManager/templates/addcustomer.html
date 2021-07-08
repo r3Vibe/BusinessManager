@@ -1,0 +1,151 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Customer Relation Manager</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('custmanager')}}"> Customers</a>
+      </li>
+      <li>
+        <a href="{{url_for('addcustomer')}}" class="active"> New</a>
+      </li>
+    </ul>
+  </div>
+  <div class="addproductform">
+    <form method="post" id="addcustform" class="w-100">
+      <h3 style="color: white; text-shadow: 1px 1px black">Add New Customer</h3>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <div class="mb-3">
+            <label for="name" class="form-label">Customer Name</label>
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              id="name"
+              placeholder="Enter Customer Name"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <label for="phoneno" class="form-label">Contact Number</label>
+            <input
+              type="text"
+              name="phoneno"
+              id="phoneno"
+              class="form-control"
+              placeholder="Enter Contact Number"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <label for="gender">Gender</label><br />
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="gender"
+                id="gender"
+                value="male"
+              />
+              <label class="form-check-label" for="gender">Male</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="gender"
+                id="gender"
+                value="female"
+              />
+              <label class="form-check-label" for="gender">Female</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="gender"
+                id="gender"
+                value="other"
+              />
+              <label class="form-check-label" for="gender">Other</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="mb-3">
+            <label for="dob">Date Of Birth</label>
+            <input
+              timezone="kolkata"
+              type="date"
+              name="dob"
+              id="dob"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <label for="custaddr">Address</label>
+            <textarea
+              name="custaddr"
+              id="custaddr"
+              cols="30"
+              rows="10"
+              placeholder="Enter Customer Address"
+              class="form-control"
+              style="height: 90px"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <button class="btn mybtn" type="submit">Submit</button>
+        </div>
+        <div class="col">
+          <button class="btn mybtn" type="button" onclick="location.reload()">
+            Refresh
+          </button>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <center>
+          {% for cat , msg in get_flashed_messages(with_categories=true)%} {% if
+          cat == 'error'%}
+          <div
+            class="alert alert-danger"
+            role="alert"
+            style="text-shadow: none; font-size: 1rem"
+          >
+            {{msg}}
+          </div>
+          {%endif%} {% if cat == 'success'%}
+          <div
+            class="alert alert-success"
+            role="alert"
+            style="text-shadow: none; font-size: 1rem"
+          >
+            {{msg}}
+          </div>
+          <a href="{{url_for('custmanager')}}" class="btn mybtn">View</a>
+          {%endif%} {%endfor%}
+        </center>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#crmlink").addClass("sideactive");
+  });
+</script>
+{% endblock %}

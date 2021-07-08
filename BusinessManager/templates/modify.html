@@ -1,0 +1,582 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Inventory Management</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li><a href="{{url_for('inventory')}}"> Products</a></li>
+      <li><a href="{{url_for('placeorder')}}"> Order</a></li>
+      <li>
+        <a href="/modify/{{pid}}" class="active"> Modify</a>
+      </li>
+      <li><a href="{{url_for('orderlist')}}"> Order List</a></li>
+    </ul>
+  </div>
+  <style>
+    .col {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-direction: column;
+    }
+  </style>
+  <div class="addproductform">
+    <form
+      method="POST"
+      style="width: auto"
+      class="needs-validation"
+      novalidate
+      enctype="multipart/form-data"
+    >
+      {{form.hidden_tag()}}
+      <center><h3>Update Master Data</h3></center>
+      <br />
+      <div class="row row-cols-4">
+        <div class="col">
+          <center><h3>General Info</h3></center>
+          <br />
+          <div class="mb-3 felex">
+            <div class="showimage">
+              {{form.image.label(class="form-label-sm")}}
+              <img
+                id="updateimage"
+                src="../static/uploads/{{details['image']}}"
+              />
+            </div>
+          </div>
+          <div class="mb-3" id="imageholder">
+            {{form.image(class="form-control-sm")}}
+            <div class="invalid-feedback">Please Choose An Image</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.name(class="form-control-sm")}}
+            <div class="invalid-feedback">Please Enter Name</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.productid(class="form-control-sm")}}
+            <div class="invalid-feedback">Please Enter Product Id</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">{{form.barcode(class="form-control-sm")}}</div>
+        </div>
+        <div class="col">
+          <center><h3>Product Info</h3></center>
+          <br />
+          <div class="mb-3" style="margin-top: 63%">
+            <select
+              required
+              class="form-select-sm"
+              name="vartype"
+              id="vartype"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Variation Type</option>
+              <option
+                value="addvartype"
+                id="addvartype"
+                type="button"
+                data-bs-target="#addvartypemodal"
+                data-bs-toggle="modal"
+              >
+                Add Variation Type
+              </option>
+              {% for x in vartype %}
+              <option value="{{x['type']}}">{{x['type']}}</option>
+              {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please Choose Type</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            <select
+              required
+              class="form-select-sm"
+              name="vars"
+              id="vars"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Variation</option>
+              <option
+                value="addvars"
+                id="addvars"
+                type="button"
+                data-bs-target="#addvarsmodal"
+                data-bs-toggle="modal"
+              >
+                Add Variation
+              </option>
+            </select>
+            <div class="invalid-feedback">Please Choose Variation</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            <select
+              required
+              class="form-select-sm"
+              name="catg"
+              id="catg"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Category</option>
+              <option
+                value="catg"
+                id="catgs"
+                type="button"
+                data-bs-target="#catgmodal"
+                data-bs-toggle="modal"
+              >
+                Add Category
+              </option>
+              {% for x in catg %}
+              <option value="{{x['category']}}">{{x['category']}}</option>
+              {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please Choose Category</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            <select
+              required
+              class="form-select-sm"
+              name="seller"
+              id="seller"
+              style="text-transform: capitalize"
+            >
+              <option selected disabled>Select Vendor</option>
+              <option
+                value="seller"
+                id="sellers"
+                type="button"
+                data-bs-target="#sellermodal"
+                data-bs-toggle="modal"
+              >
+                Add Vendor
+              </option>
+              {% for x in seller %}
+              <option value="{{x['seller']}}">{{x['seller']}}</option>
+              {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please Choose Vendor</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.quantity(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalp"
+            ></span>
+            <div class="invalid-feedback">Please Enter Quantity</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+        </div>
+        <div class="col">
+          <center><h3>Pricing Info</h3></center>
+          <br />
+          <div class="mb-3" style="margin-top: 115%">
+            {{form.cost(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpcost"
+            ></span>
+            <div class="invalid-feedback">Please Enter Cost</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.sellprice(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpsp"
+            ></span>
+            <div class="invalid-feedback">Please Enter Sale Price</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.tax(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalptax"
+            ></span>
+            <div class="invalid-feedback">Please Enter Tax</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+        </div>
+        <div class="col">
+          <center><h3>Logistics Info</h3></center>
+          <br />
+          <div class="mb-3" style="margin-top: 27%">
+            <select required name="measure" id="measure" class="form-select-sm">
+              <option selected disabled>Select Measurement</option>
+              <option value="cm">Centimeter</option>
+              <option value="mm">Milimeter</option>
+              <option value="in">Inch</option>
+            </select>
+            <div class="invalid-feedback">Please Choose a Measure</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.length(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalplen"
+            ></span>
+            <div class="invalid-feedback">Please Enter Length</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.bredth(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpbre"
+            ></span>
+            <div class="invalid-feedback">Please Enter Breadth</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.height(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalphei"
+            ></span>
+            <div class="invalid-feedback">Please Enter Height</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            <select
+              required
+              name="weightmeasure"
+              id="weightmeasure"
+              class="form-select-sm"
+            >
+              <option selected disabled>Select Measurement</option>
+              <option value="kg">Kilo Gram</option>
+              <option value="gm">Gram</option>
+            </select>
+            <div class="invalid-feedback">Please Choose a Measure</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+          <div class="mb-3">
+            {{form.weight(class="form-control-sm")}}
+            <span
+              style="display: none; color: red; font-size: small"
+              id="noalpwei"
+            ></span>
+            <div class="invalid-feedback">Please Enter Weight</div>
+            <div class="valid-feedback">Looks Good!</div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="width: 100%">
+        <div class="mb-3">{{form.submit(class="btn mybtn")}}</div>
+        <div class="mb-3">
+          <center id="errormsg">
+            {% for cat , msg in get_flashed_messages(with_categories=true)%} {%
+            if cat == 'error'%}
+            <div
+              class="alert alert-danger"
+              role="alert"
+              style="text-shadow: none; font-size: 1rem"
+            >
+              {{msg}}
+            </div>
+            {%endif%} {% if cat == 'success'%}
+            <div
+              class="alert alert-success"
+              role="alert"
+              style="text-shadow: none; font-size: 1rem"
+            >
+              {{msg}}
+            </div>
+            {%endif%} {%endfor%}
+          </center>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- all modals here -->
+
+<!-- Add Variation Type Modal -->
+<div
+  class="modal fade"
+  id="addvartypemodal"
+  tabindex="-1"
+  aria-labelledby="addvartypeLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvartypeLabel">var type title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add variation modal -->
+<div
+  class="modal fade"
+  id="addvarsmodal"
+  tabindex="-1"
+  aria-labelledby="addvarsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvarsLabel">vaariations title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add Category modal -->
+<div
+  class="modal fade"
+  id="catgmodal"
+  tabindex="-1"
+  aria-labelledby="addvarsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvarsLabel">Category title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add seller modal -->
+<div
+  class="modal fade"
+  id="sellermodal"
+  tabindex="-1"
+  aria-labelledby="addvarsLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvarsLabel">seller title</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident,
+        impedit.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    //update form
+    var dimension = "{{details['dimension']}}";
+    var length = dimension.split("x")[0];
+    var bredth = dimension.split("x")[1];
+    var height = dimension.split("x")[2].split(" ")[0];
+    var measure = dimension.split("x")[2].split(" ")[1];
+    var weightmeasure = "{{details['weight']}}".split(" ")[1];
+    var weight = "{{details['weight']}}".split(" ")[0];
+    $("#name").val("{{details['name']}}");
+    $("#image").removeAttr("required");
+    $("#submit").val("Update");
+    $("#productid").val("{{details['productid']}}");
+    $("#barcode").val("{{details['barcode']}}");
+    $("#quantity").val("{{details['quantity']}}");
+    $("#cost").val("{{details['unitprice']}}");
+    $("#sellprice").val("{{details['sellprice']}}");
+    $("#tax").val("{{details['tax']}}");
+    $("#length").val(length);
+    $("#bredth").val(bredth);
+    $("#height").val(height);
+    $("#weight").val(weight);
+    $("#measure").val(measure);
+    $("#weightmeasure").val(weightmeasure);
+    $("#vartype").val("{{details['vartype']}}");
+    var x = "{{details['vartype']}}";
+    $("#vars").html(
+      '<option selected disabled>Select Variation</option><option value="addvars" id="addvars" type="button" data-bs-target="#addvarsmodal" data-bs-toggle="modal">Add Variation</option>'
+    );
+    $.post("/getvars", { data: x }, function (res) {
+      var allVar = res.split(",");
+      for (var i = 0; i < allVar.length; i++) {
+        $("#vars").append(
+          "<option value=" + allVar[i] + ">" + allVar[i] + "</option>"
+        );
+      }
+      $("#vars").val("{{details['vars']}}");
+    });
+    $("#catg").val("{{details['category']}}");
+    $("#seller").val("{{details['seller']}}");
+    //check for alphabate input in numeric sections
+    //quantity
+    $("#quantity").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalp").html("Only Numbers Allowed");
+        $("#noalp").css("display", "block");
+        $("#quantity").val("");
+      } else {
+        $("#noalp").css("display", "none");
+      }
+    });
+    //cost
+    $("#cost").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpcost").html("Only Numbers Allowed");
+        $("#noalpcost").css("display", "block");
+        $("#cost").val("");
+      } else {
+        $("#noalpcost").css("display", "none");
+      }
+    });
+    //sell price
+    $("#sellprice").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpsp").html("Only Numbers Allowed");
+        $("#noalpsp").css("display", "block");
+        $("#sellprice").val("");
+      } else {
+        $("#noalpsp").css("display", "none");
+      }
+    });
+    //tax
+    $("#tax").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalptax").html("Only Numbers Allowed");
+        $("#noalptax").css("display", "block");
+        $("#tax").val("");
+      } else {
+        $("#noalptax").css("display", "none");
+      }
+    });
+    //length
+    $("#length").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalplen").html("Only Numbers Allowed");
+        $("#noalplen").css("display", "block");
+        $("#length").val("");
+      } else {
+        $("#noalplen").css("display", "none");
+      }
+    });
+    //breadth
+    $("#bredth").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpbre").html("Only Numbers Allowed");
+        $("#noalpbre").css("display", "block");
+        $("#bredth").val("");
+      } else {
+        $("#noalpbre").css("display", "none");
+      }
+    });
+    //height
+    $("#height").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalphei").html("Only Numbers Allowed");
+        $("#noalphei").css("display", "block");
+        $("#height").val("");
+      } else {
+        $("#noalphei").css("display", "none");
+      }
+    });
+    //weight
+    $("#weight").change(function () {
+      if (isNaN($(this).val()) == true) {
+        $("#noalpwei").html("Only Numbers Allowed");
+        $("#noalpwei").css("display", "block");
+        $("#weight").val("");
+      } else {
+        $("#noalpwei").css("display", "none");
+      }
+    });
+    //heightlight current page link
+    $("#inventorylink").addClass("sideactive");
+
+    //live show selected image before upload to server
+    $(function () {
+      $("#image").change(function (event) {
+        var x = URL.createObjectURL(event.target.files[0]);
+        $("#updateimage").attr("src", x);
+      });
+    });
+
+    //get all variation  from server and update select field
+    $("#vartype").change(function () {
+      var x = $(this).val();
+      $("#vars").html(
+        '<option selected disabled>Select Variation</option><option value="addvars" id="addvars" type="button" data-bs-target="#addvarsmodal" data-bs-toggle="modal">Add Variation</option>'
+      );
+      $.post("/getvars", { data: x }, function (res) {
+        var allVar = res.split(",");
+        for (var i = 0; i < allVar.length; i++) {
+          $("#vars").append(
+            "<option value=" + allVar[i] + ">" + allVar[i] + "</option>"
+          );
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Management</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('management')}}">Users </a>
+      </li>
+      <li>
+        <a href="{{url_for('privilages')}}"> Privilages</a>
+      </li>
+      <li>
+        <a href="{{url_for('services')}}"> Services</a>
+      </li>
+      <li>
+        <a href="{{url_for('category')}}"> Category</a>
+      </li>
+      <li>
+        <a href="{{url_for('commission')}}"> Commissions</a>
+      </li>
+      <li>
+        <a href="{{url_for('vendors')}}"> Vendors</a>
+      </li>
+      <li>
+        <a href="{{url_for('variations')}}" class="active"> Variations</a>
+      </li>
+    </ul>
+  </div>
+  <div class="showAllproduct" style="flex-direction: column">
+    <br />
+    <center>
+      <h2>Add/Remove Variations</h2>
+    </center>
+    <div class="row row-cols-3">
+      <div class="col"></div>
+      <div class="col"></div>
+      <div class="col">
+        <button class="btn mybtn" type="button" onclick="add()">
+          Add Variation
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <table
+        class="table table-hover table-striped"
+        style="text-transform: capitalize"
+      >
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Variations</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for x in variations %}
+          <tr>
+            <th>{{x['type']}}</th>
+            <th>{{x['variations']}}</th>
+            <th>
+              <button
+                class="btn mybtn"
+                type="button"
+                onclick="rem(`{{x['id']}}`)"
+              >
+                Remove
+              </button>
+            </th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="mymodal">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Variation</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="/variations" method="POST" id="addVariationsForm">
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  class="form-control"
+                  placeholder="Enter Variation Name"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="variations">Variations</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="variations"
+                  id="variations"
+                  placeholder="Enter Variations Separated By Commas"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="addVariations">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#managementlink").addClass("sideactive");
+  });
+  function rem(xid) {
+    $.post("/removeVariation", { varid: xid }, function (res) {
+      if (res == "success") {
+        location.reload();
+      }
+    });
+  }
+  function add() {
+    $("#mymodal").modal("toggle");
+  }
+  $("#addVariations").click(function () {
+    $("#addVariationsForm").submit();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends 'basewithnav.html' %} {% block title %}
+<title>Inventory Management</title>
+{% endblock %} {% block contents %}
+<div class="notification">
+  <div class="navigation2">
+    <ul>
+      <li>
+        <a href="{{url_for('inventory')}}" class="active"> Products</a>
+      </li>
+      <li><a href="{{url_for('placeorder')}}"> Order</a></li>
+      <li>
+        <a href="{{url_for('addmasterdata')}}"> New</a>
+      </li>
+      <li>
+        <a href="{{url_for('orderlist')}}"> Order List</a>
+      </li>
+      <li>
+        <form method="post" id="searchform">
+          <input
+            class="form-control-sm"
+            type="search"
+            name="search"
+            id="search"
+            placeholder="Search Product"
+          />
+        </form>
+      </li>
+    </ul>
+  </div>
+  <div class="showAllproduct">
+    <table
+      class="table table-hover table-striped"
+      style="text-transform: capitalize"
+    >
+      <thead>
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Name</th>
+          <th scope="col">Id</th>
+          <th scope="col">Status</th>
+          <th scope="col">Category</th>
+          <th scope="col">Variation</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Vendor</th>
+          <th scope="col" style="width: 80px">Price</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in products %}
+        <tr id="rem{{x['id']}}">
+          <th>
+            <img
+              src="static/productimage/{{x['image']}}"
+              width="50"
+              height="50"
+            />
+          </th>
+          <th>{{x['name']}}</th>
+          <th>{{x['productid']}}</th>
+          <th class="status" id="change{{x['id']}}">
+            <span class="{{x['status']}}">{{x['status']}}</span>
+          </th>
+          <th>{{x['category']}}</th>
+          <th>{{x['vars']}}</th>
+          <th>{{x['quantity']}}</th>
+          <th>{{x['seller']}}</th>
+          <th><i class="fas fa-rupee-sign"></i> {{x['sellprice']}}</th>
+          <th>
+            <button
+              style="width: 95px"
+              class="btn mybtn"
+              onclick="modProduct(`{{x['id']}}`)"
+            >
+              Modify
+            </button>
+            <button
+              style="width: 95px"
+              class="btn mybtn"
+              onclick="delProduct(`{{x['id']}}`)"
+            >
+              Delete
+            </button>
+            {% if x['feature'] == "true" %}
+            <button
+              style="width: 95px"
+              class="btn mybtn"
+              onclick="unfeature(`{{x['id']}}`)"
+            >
+              Unfeature
+            </button>
+            {% else %}
+            <button
+              style="width: 95px"
+              class="btn mybtn"
+              onclick="feature(`{{x['id']}}`)"
+            >
+              Feature
+            </button>
+            {% endif %}
+          </th>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#inventorylink").addClass("sideactive");
+    $("#search").change(function () {
+      $("#searchform").submit();
+    });
+  });
+  //modify product onclick
+  function modProduct(id) {
+    location.href = "/modify/product=" + id;
+  }
+  function feature(id) {
+    $.post("/featurethis", { id: id }, function (res) {
+      if (res == "success") {
+        location.reload();
+      } else {
+        alert("Something Went Wrong");
+      }
+    });
+  }
+
+  function unfeature(id) {
+    $.post("/unfeaturethis", { id: id }, function (res) {
+      if (res == "success") {
+        location.reload();
+      } else {
+        alert("Something Went Wrong");
+      }
+    });
+  }
+
+  //delete product onclick
+  function delProduct(id) {
+    $.post("/removeProduct", { id: id }, function (res) {
+      if (res == "True") {
+        $("#rem" + id).remove();
+      } else {
+        alert("Unable To Delete Record!");
+      }
+    });
+  }
+  //change status
+  function changeProduct(id) {
+    $.post("/statusToggle", { id: id }, function (res) {
+      if (res == "false") {
+        alert("Unable To Change Status!");
+      } else {
+        $("#change" + id).html("<span class=" + res + ">" + res + "</span>");
+      }
+    });
+  }
+</script>
+{% endblock %}
