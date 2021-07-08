@@ -1,4 +1,4 @@
-from database import cursor, db, dbQuery
+from Manager.database import cursor, db, dbQuery
 from werkzeug.security import check_password_hash
 from datetime import datetime
 # user validation

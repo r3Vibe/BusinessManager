@@ -1,20 +1,15 @@
-from flask import Flask
 ################ all imports ################
 from flask import render_template, redirect, g, flash, url_for, session, request, send_file
-from form import Login, productImage
-from validation import validateUser, validateProduct
-from database import dbQuery, updateDb
+from Manager.form import Login, productImage
+from Manager.validation import validateUser, validateProduct
+from Manager.database import dbQuery, updateDb
 import time
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 import os
 import uuid
-
-
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = "520a9466bd1a413396d886e098bd73d2"
+from Manager import app
 
 
 ################ home page ################
@@ -1171,4 +1166,4 @@ def before_request_func():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)
